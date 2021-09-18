@@ -68,25 +68,19 @@ fn new_map() -> Vec<TileType> {
 fn draw_map(map: &[TileType], ctx: &mut Rltk) {
     let mut y = 0;
     let mut x = 0;
+    let grey = RGB::from_f32(0.5, 0.5, 0.5);
+    let black = RGB::from_f32(0., 0., 0.);
+    let green = RGB::from_f32(0., 1., 0.);
+    let floor = rltk::to_cp437('.');
+    let wall = rltk::to_cp437('#');
+
     for tile in map.iter() {
         match tile {
             TileType::Floor => {
-                ctx.set(
-                    x,
-                    y,
-                    RGB::from_f32(0.5, 0.5, 0.5),
-                    RGB::from_f32(0., 0., 0.),
-                    rltk::to_cp437('.'),
-                );
+                ctx.set(x, y, grey, black, floor);
             }
             TileType::Wall => {
-                ctx.set(
-                    x,
-                    y,
-                    RGB::from_f32(0.0, 1.0, 0.0),
-                    RGB::from_f32(0., 0., 0.),
-                    rltk::to_cp437('#'),
-                );
+                ctx.set(x, y, green, black, wall);
             }
         }
 
