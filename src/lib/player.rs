@@ -1,4 +1,4 @@
-use rltk::{VirtualKeyCode};
+use rltk::VirtualKeyCode;
 use specs::prelude::*;
 use std::cmp::{max, min};
 
@@ -29,4 +29,3 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) {
         };
     }
 }
-

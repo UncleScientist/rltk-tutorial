@@ -1,4 +1,4 @@
-use rltk::{Rltk, GameState};
+use rltk::{GameState, Rltk};
 use specs::prelude::*;
 
 pub mod components;
@@ -9,6 +9,9 @@ pub use map::*;
 
 pub mod player;
 pub use player::*;
+
+pub mod rect;
+pub use rect::*;
 
 // ------------------------------------------------------------
 // World state section
