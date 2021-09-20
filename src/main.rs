@@ -14,9 +14,10 @@ fn main() -> rltk::BError {
     gs.ecs.register::<LeftMover>();
     gs.ecs.register::<Player>();
 
-    let (rooms, map) = new_map_rooms_and_corridors();
+    let map = Map::new_map_rooms_and_corridors();
+
+    let (player_x, player_y) = map.rooms[0].center();
     gs.ecs.insert(map);
-    let (player_x, player_y) = rooms[0].center();
 
     gs.ecs
         .create_entity()
