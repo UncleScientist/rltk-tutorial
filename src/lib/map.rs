@@ -16,6 +16,7 @@ pub struct Map {
     pub rooms: Vec<Rect>,
     pub width: i32,
     pub height: i32,
+    pub revealed_tiles: Vec<bool>,
 }
 
 impl Map {
@@ -60,6 +61,7 @@ impl Map {
             rooms: Vec::new(),
             width: 80,
             height: 50,
+            revealed_tiles: vec![false; 80 * 50],
         };
 
         const MAX_ROOMS: i32 = 30;
@@ -123,32 +125,27 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let floor = rltk::to_cp437('.');
     let wall = rltk::to_cp437('#');
 
-    let mut viewsheds = ecs.write_storage::<Viewshed>();
-    let mut players = ecs.write_storage::<Player>();
     let map = ecs.fetch::<Map>();
 
-    for (_player, viewshed) in (&mut players, &mut viewsheds).join() {
-        let mut y = 0;
-        let mut x = 0;
+    let mut y = 0;
+    let mut x = 0;
 
-        for tile in map.tiles.iter() {
-            let pt = Point::new(x, y);
-            if viewshed.visible_tiles.contains(&pt) {
-                match tile {
-                    TileType::Floor => {
-                        ctx.set(x, y, grey, black, floor);
-                    }
-                    TileType::Wall => {
-                        ctx.set(x, y, green, black, wall);
-                    }
+    for (idx, tile) in map.tiles.iter().enumerate() {
+        if map.revealed_tiles[idx] {
+            match tile {
+                TileType::Floor => {
+                    ctx.set(x, y, grey, black, floor);
+                }
+                TileType::Wall => {
+                    ctx.set(x, y, green, black, wall);
                 }
             }
+        }
 
-            x += 1;
-            if x > 79 {
-                x = 0;
-                y += 1;
-            }
+        x += 1;
+        if x > 79 {
+            x = 0;
+            y += 1;
         }
     }
 }
