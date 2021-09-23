@@ -16,6 +16,9 @@ pub use rect::*;
 pub mod visibility_system;
 pub use visibility_system::*;
 
+pub mod monster_ai_system;
+pub use monster_ai_system::*;
+
 // ------------------------------------------------------------
 // World state section
 
@@ -48,6 +51,9 @@ impl State {
     fn run_systems(&mut self) {
         let mut vis = VisibilitySystem {};
         vis.run_now(&self.ecs);
+
+        let mut mob = MonsterAI {};
+        mob.run_now(&self.ecs);
 
         self.ecs.maintain();
     }

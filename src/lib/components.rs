@@ -15,7 +15,7 @@ pub struct Renderable {
     pub bg: RGB,
 }
 
-#[derive(Component, Debug)]
+#[derive(Component)]
 pub struct Player {}
 
 #[derive(Component)]
@@ -24,3 +24,6 @@ pub struct Viewshed {
     pub range: i32,
     pub dirty: bool,
 }
+
+#[derive(Component)]
+pub struct Monster {}
