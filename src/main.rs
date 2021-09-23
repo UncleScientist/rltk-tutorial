@@ -17,7 +17,25 @@ fn main() -> rltk::BError {
     let map = Map::new_map_rooms_and_corridors();
 
     let (player_x, player_y) = map.rooms[0].center();
-    gs.ecs.insert(map);
+
+    for room in map.rooms.iter().skip(1) {
+        let (x, y) = room.center();
+
+        gs.ecs
+            .create_entity()
+            .with(Position { x, y })
+            .with(Renderable {
+                glyph: rltk::to_cp437('g'),
+                fg: RGB::named(rltk::RED),
+                bg: RGB::named(rltk::BLACK),
+            })
+            .with(Viewshed {
+                visible_tiles: Vec::new(),
+                range: 8,
+                dirty: true,
+            })
+            .build();
+    }
 
     gs.ecs
         .create_entity()
@@ -37,6 +55,8 @@ fn main() -> rltk::BError {
             dirty: true,
         })
         .build();
+
+    gs.ecs.insert(map);
 
     rltk::main_loop(context, gs)
 }
