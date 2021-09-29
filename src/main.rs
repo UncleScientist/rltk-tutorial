@@ -1,4 +1,4 @@
-use rltk::{RandomNumberGenerator, RGB};
+use rltk::{RandomNumberGenerator, Point, RGB};
 use specs::prelude::*;
 
 use tutorial::*;
@@ -67,6 +67,7 @@ fn main() -> rltk::BError {
         })
         .build();
 
+    gs.ecs.insert(Point::new(player_x, player_y));
     gs.ecs.insert(map);
 
     rltk::main_loop(context, gs)
