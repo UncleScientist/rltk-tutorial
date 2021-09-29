@@ -1,4 +1,4 @@
-use rltk::VirtualKeyCode;
+use rltk::{Rltk, VirtualKeyCode};
 use specs::prelude::*;
 use std::cmp::{max, min};
 
@@ -20,7 +20,7 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     }
 }
 
-pub fn player_input(gs: &mut State, ctx: &mut Rltk) {
+pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
     if let Some(key) = ctx.key {
         use VirtualKeyCode::*;
 
@@ -29,7 +29,12 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) {
             Right | Numpad6 | L => try_move_player(1, 0, &mut gs.ecs),
             Up | Numpad8 | K => try_move_player(0, -1, &mut gs.ecs),
             Down | Numpad2 | J => try_move_player(0, 1, &mut gs.ecs),
-            _ => {}
-        };
+            _ => {
+                return RunState::Paused;
+            }
+        }
+        RunState::Running
+    } else {
+        RunState::Paused
     }
 }
