@@ -45,6 +45,9 @@ impl State {
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
 
+        let mut mapindex = MapIndexingSystem {};
+        mapindex.run_now(&self.ecs);
+
         self.ecs.maintain();
     }
 }

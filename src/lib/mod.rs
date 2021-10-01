@@ -20,3 +20,6 @@ pub use monster_ai_system::*;
 
 pub mod game_state;
 pub use game_state::*;
+
+pub mod map_indexing_system;
+pub use map_indexing_system::*;

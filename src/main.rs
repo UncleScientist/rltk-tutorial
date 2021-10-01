@@ -18,6 +18,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<Monster>();
     gs.ecs.register::<Name>();
+    gs.ecs.register::<BlocksTile>();
 
     let map = Map::new_map_rooms_and_corridors();
 
@@ -49,6 +50,7 @@ fn main() -> rltk::BError {
             .with(Name {
                 name: format!("{} #{}", &name, i),
             })
+            .with(BlocksTile {})
             .build();
     }
 
