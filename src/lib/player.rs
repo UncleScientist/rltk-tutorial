@@ -33,6 +33,10 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Right | Numpad6 | L => try_move_player(1, 0, &mut gs.ecs),
             Up | Numpad8 | K => try_move_player(0, -1, &mut gs.ecs),
             Down | Numpad2 | J => try_move_player(0, 1, &mut gs.ecs),
+            Numpad9 | U => try_move_player(1, -1, &mut gs.ecs),
+            Numpad7 | Y => try_move_player(-1, -1, &mut gs.ecs),
+            Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
+            Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
             _ => {
                 return RunState::Paused;
             }
