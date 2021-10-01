@@ -1,4 +1,4 @@
-use rltk::{Rltk, Point, VirtualKeyCode};
+use rltk::{Point, Rltk, VirtualKeyCode};
 use specs::prelude::*;
 use std::cmp::{max, min};
 
@@ -22,7 +22,6 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
             ppos.y = pos.y;
         }
     }
-
 }
 
 pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
