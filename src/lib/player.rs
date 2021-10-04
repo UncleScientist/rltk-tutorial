@@ -13,16 +13,25 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
     let map = ecs.fetch::<Map>();
 
-    for (entity, _player, pos, viewshed) in (&entities, &players, &mut positions, &mut viewsheds).join() {
+    for (entity, _player, pos, viewshed) in
+        (&entities, &players, &mut positions, &mut viewsheds).join()
+    {
         let dest = map.xy_idx(pos.x + delta_x, pos.y + delta_y);
 
         for potential_target in map.tile_content[dest].iter() {
             let target = combat_stats.get(*potential_target);
 
             if target.is_some() {
-                wants_to_melee.insert(entity, WantsToMelee{ target: *potential_target }).expect("Add target failed");
+                wants_to_melee
+                    .insert(
+                        entity,
+                        WantsToMelee {
+                            target: *potential_target,
+                        },
+                    )
+                    .expect("Add target failed");
                 return;
-             }
+            }
         }
 
         if !map.blocked[dest] {

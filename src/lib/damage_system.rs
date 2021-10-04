@@ -1,11 +1,13 @@
-use specs::prelude::*;
 use crate::{CombatStats, SufferDamage};
+use specs::prelude::*;
 
 pub struct DamageSystem {}
 
 impl<'a> System<'a> for DamageSystem {
-    type SystemData = (WriteStorage<'a, CombatStats>,
-                       WriteStorage<'a, SufferDamage>);
+    type SystemData = (
+        WriteStorage<'a, CombatStats>,
+        WriteStorage<'a, SufferDamage>,
+    );
 
     fn run(&mut self, data: Self::SystemData) {
         let (mut stats, mut damage) = data;
@@ -19,13 +21,15 @@ impl<'a> System<'a> for DamageSystem {
 }
 
 pub fn delete_the_dead(ecs: &mut World) {
-    let mut dead : Vec<Entity> = Vec::new();
+    let mut dead: Vec<Entity> = Vec::new();
 
     {
         let combat_stats = ecs.read_storage::<CombatStats>();
         let entities = ecs.entities();
         for (entity, stats) in (&entities, &combat_stats).join() {
-            if stats.hp < 1 { dead.push(entity); }
+            if stats.hp < 1 {
+                dead.push(entity);
+            }
         }
     }
 

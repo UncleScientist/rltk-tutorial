@@ -54,7 +54,12 @@ fn main() -> rltk::BError {
                 name: format!("{} #{}", &name, i),
             })
             .with(BlocksTile {})
-            .with(CombatStats{ max_hp: 16, hp: 16, defense: 1, power: 4})
+            .with(CombatStats {
+                max_hp: 16,
+                hp: 16,
+                defense: 1,
+                power: 4,
+            })
             .build();
     }
 
@@ -75,8 +80,15 @@ fn main() -> rltk::BError {
             range: 8,
             dirty: true,
         })
-        .with(Name { name: "Player".to_string() })
-        .with(CombatStats{ max_hp: 30, hp: 30, defense: 2, power: 5})
+        .with(Name {
+            name: "Player".to_string(),
+        })
+        .with(CombatStats {
+            max_hp: 30,
+            hp: 30,
+            defense: 2,
+            power: 5,
+        })
         .build();
 
     gs.ecs.insert(Point::new(player_x, player_y));
