@@ -16,6 +16,7 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut Rltk) {
         if self.runstate == RunState::Running {
             self.run_systems();
+            damage_system::delete_the_dead(&mut self.ecs);
             self.runstate = RunState::Paused;
         } else {
             self.runstate = player_input(self, ctx);
@@ -47,6 +48,12 @@ impl State {
 
         let mut mapindex = MapIndexingSystem {};
         mapindex.run_now(&self.ecs);
+
+        let mut melee_combat_system = MeleeCombatSystem {};
+        melee_combat_system.run_now(&self.ecs);
+
+        let mut damage_system = DamageSystem {};
+        damage_system.run_now(&self.ecs);
 
         self.ecs.maintain();
     }

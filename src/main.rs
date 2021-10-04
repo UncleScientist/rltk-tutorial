@@ -20,6 +20,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Name>();
     gs.ecs.register::<BlocksTile>();
     gs.ecs.register::<CombatStats>();
+    gs.ecs.register::<WantsToMelee>();
+    gs.ecs.register::<SufferDamage>();
 
     let map = Map::new_map_rooms_and_corridors();
 
@@ -73,6 +75,7 @@ fn main() -> rltk::BError {
             range: 8,
             dirty: true,
         })
+        .with(Name { name: "Player".to_string() })
         .with(CombatStats{ max_hp: 30, hp: 30, defense: 2, power: 5})
         .build();
 
