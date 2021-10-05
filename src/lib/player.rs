@@ -60,11 +60,11 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
             Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
             _ => {
-                return RunState::Paused;
+                return RunState::AwaitingInput;
             }
         }
-        RunState::Running
+        RunState::PlayerTurn
     } else {
-        RunState::Paused
+        RunState::AwaitingInput
     }
 }
