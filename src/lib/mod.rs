@@ -29,3 +29,6 @@ pub use melee_combat_system::*;
 
 pub mod damage_system;
 pub use damage_system::*;
+
+pub mod gui;
+pub use gui::*;

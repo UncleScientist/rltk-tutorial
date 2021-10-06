@@ -11,9 +11,9 @@ pub enum TileType {
     Floor,
 }
 
-const MAPWIDTH : usize = 80;
-const MAPHEIGHT : usize = 50;
-const MAPCOUNT : usize = MAPWIDTH * MAPHEIGHT;
+const MAPWIDTH : i32 = 80;
+const MAPHEIGHT : i32 = 50;
+const MAPCOUNT : usize = (MAPWIDTH * MAPHEIGHT) as usize;
 
 pub struct Map {
     pub tiles: Vec<TileType>,
