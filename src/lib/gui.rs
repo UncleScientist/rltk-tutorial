@@ -1,4 +1,4 @@
-use crate::{CombatStats, Player, GameLog};
+use crate::{CombatStats, GameLog, Player};
 use rltk::{Rltk, BLACK, RED, RGB, YELLOW};
 use specs::prelude::*;
 
@@ -32,7 +32,9 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let log = ecs.fetch::<GameLog>();
     let mut y = 44;
     for s in log.entries.iter().rev() {
-        if y < 49 { ctx.print(2, y, s); }
+        if y < 49 {
+            ctx.print(2, y, s);
+        }
         y += 1;
     }
 }

@@ -1,17 +1,19 @@
-use crate::{CombatStats, Name, SufferDamage, WantsToMelee, GameLog};
+use crate::{CombatStats, GameLog, Name, SufferDamage, WantsToMelee};
 use specs::prelude::*;
 
 pub struct MeleeCombatSystem {}
 
+type MeleeCombatData<'a> = (
+    Entities<'a>,
+    WriteExpect<'a, GameLog>,
+    WriteStorage<'a, WantsToMelee>,
+    ReadStorage<'a, Name>,
+    ReadStorage<'a, CombatStats>,
+    WriteStorage<'a, SufferDamage>,
+);
+
 impl<'a> System<'a> for MeleeCombatSystem {
-    type SystemData = (
-        Entities<'a>,
-        WriteExpect<'a, GameLog>,
-        WriteStorage<'a, WantsToMelee>,
-        ReadStorage<'a, Name>,
-        ReadStorage<'a, CombatStats>,
-        WriteStorage<'a, SufferDamage>,
-    );
+    type SystemData = MeleeCombatData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
         let (entities, mut log, mut wants_melee, names, combat_stats, mut inflict_damage) = data;
@@ -26,11 +28,15 @@ impl<'a> System<'a> for MeleeCombatSystem {
 
                     let damage = i32::max(0, stats.power - target_stats.defense);
                     if damage == 0 {
-                        log.entries.push(format!("{} is unable to hurt {}",
-                            &name.name, &target_name.name));
+                        log.entries.push(format!(
+                            "{} is unable to hurt {}",
+                            &name.name, &target_name.name
+                        ));
                     } else {
-                        log.entries.push(format!("{} hits {}, for {} hp",
-                            &name.name, &target_name.name, damage));
+                        log.entries.push(format!(
+                            "{} hits {}, for {} hp",
+                            &name.name, &target_name.name, damage
+                        ));
                         SufferDamage::new_damage(&mut inflict_damage, wants_melee.target, damage);
                     }
                 }
