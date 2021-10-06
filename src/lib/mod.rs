@@ -32,3 +32,6 @@ pub use damage_system::*;
 
 pub mod gui;
 pub use gui::*;
+
+pub mod gamelog;
+pub use gamelog::*;
