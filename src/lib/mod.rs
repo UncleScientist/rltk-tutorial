@@ -35,3 +35,6 @@ pub use gui::*;
 
 pub mod gamelog;
 pub use gamelog::*;
+
+pub mod spawner;
+pub use spawner::*;
