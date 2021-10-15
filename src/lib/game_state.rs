@@ -76,6 +76,9 @@ impl State {
         let mut damage_system = DamageSystem {};
         damage_system.run_now(&self.ecs);
 
+        let mut pickup = ItemCollectionSystem{};
+        pickup.run_now(&self.ecs);
+
         self.ecs.maintain();
     }
 }

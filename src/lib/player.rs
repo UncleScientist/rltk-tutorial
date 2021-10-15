@@ -59,6 +59,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Numpad7 | Y => try_move_player(-1, -1, &mut gs.ecs),
             Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
             Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
+            G => get_item(&mut gs.ecs),
             _ => {
                 return RunState::AwaitingInput;
             }
@@ -66,5 +67,32 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
         RunState::PlayerTurn
     } else {
         RunState::AwaitingInput
+    }
+}
+
+fn get_item(ecs: &mut World) {
+    let player_pos = ecs.fetch::<Point>();
+    let player_entity = ecs.fetch::<Entity>();
+    let entities = ecs.entities();
+    let items = ecs.read_storage::<Item>();
+    let positions = ecs.read_storage::<Position>();
+    let mut gamelog = ecs.fetch_mut::<GameLog>();
+
+    let mut target_item : Option<Entity> = None;
+    for (item_entity, _, position) in (&entities, &items, &positions).join() {
+        if position.x == player_pos.x && position.y == player_pos.y {
+            target_item = Some(item_entity);
+            break;
+        }
+    }
+
+    match target_item {
+        None => gamelog.entries.push("There is nothing here to pick up".to_string()),
+        Some(item) => {
+            let mut pickup = ecs.write_storage::<WantsToPickupItem>();
+            pickup.insert(*player_entity, WantsToPickupItem {
+                collected_by: *player_entity, item })
+                .expect("Unable to insert want to pickup");
+        }
     }
 }

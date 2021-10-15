@@ -38,3 +38,6 @@ pub use gamelog::*;
 
 pub mod spawner;
 pub use spawner::*;
+
+pub mod inventory_system;
+pub use inventory_system::*;

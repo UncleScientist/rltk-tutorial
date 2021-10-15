@@ -3,6 +3,17 @@ use specs::prelude::*;
 use specs_derive::Component;
 
 #[derive(Component)]
+pub struct InBackpack {
+    pub owner: Entity,
+}
+
+#[derive(Component)]
+pub struct WantsToPickupItem {
+    pub collected_by : Entity,
+    pub item : Entity,
+}
+
+#[derive(Component)]
 pub struct Item {}
 
 #[derive(Component)]
