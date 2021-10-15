@@ -3,6 +3,14 @@ use specs::prelude::*;
 use specs_derive::Component;
 
 #[derive(Component)]
+pub struct Item {}
+
+#[derive(Component)]
+pub struct Potion {
+    pub heal_amount: i32,
+}
+
+#[derive(Component)]
 pub struct WantsToMelee {
     pub target: Entity,
 }
