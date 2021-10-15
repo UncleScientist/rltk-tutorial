@@ -9,8 +9,8 @@ pub struct InBackpack {
 
 #[derive(Component)]
 pub struct WantsToPickupItem {
-    pub collected_by : Entity,
-    pub item : Entity,
+    pub collected_by: Entity,
+    pub item: Entity,
 }
 
 #[derive(Component)]

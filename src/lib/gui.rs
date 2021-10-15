@@ -1,5 +1,5 @@
-use crate::{CombatStats, GameLog, Map, Name, Player, Position, MAPWIDTH};
-use rltk::{Point, Rltk, BLACK, RED, RGB, YELLOW};
+use crate::{CombatStats, GameLog, InBackpack, Map, Name, Player, Position, State, MAPWIDTH};
+use rltk::{Point, Rltk, VirtualKeyCode, BLACK, RED, RGB, YELLOW};
 use specs::prelude::*;
 
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
@@ -133,5 +133,84 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
                 &"<-".to_string(),
             );
         }
+    }
+}
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum ItemMenuResult {
+    Cancel,
+    NoResponse,
+    Selected,
+}
+
+pub fn show_inventory(gs: &mut State, ctx: &mut Rltk) -> ItemMenuResult {
+    let player_entity = gs.ecs.fetch::<Entity>();
+    let names = gs.ecs.read_storage::<Name>();
+    let backpack = gs.ecs.read_storage::<InBackpack>();
+
+    let inventory = (&backpack, &names)
+        .join()
+        .filter(|item| item.0.owner == *player_entity);
+    let count = inventory.count();
+
+    // TODO: remove hardcoded 25
+    let mut y = (25 - (count / 2)) as i32;
+    ctx.draw_box(
+        15,
+        y - 2,
+        31,
+        (count + 3) as i32,
+        RGB::named(rltk::WHITE),
+        RGB::named(rltk::BLACK),
+    );
+    ctx.print_color(
+        18,
+        y - 2,
+        RGB::named(rltk::YELLOW),
+        RGB::named(rltk::BLACK),
+        "Inventory",
+    );
+    ctx.print_color(
+        18,
+        y + count as i32 + 1,
+        RGB::named(rltk::YELLOW),
+        RGB::named(rltk::BLACK),
+        "ESCAPE to Cancel",
+    );
+
+    let inventory = (&backpack, &names)
+        .join()
+        .filter(|item| item.0.owner == *player_entity);
+    for (j, (_, name)) in inventory.enumerate() {
+        ctx.set(
+            17,
+            y,
+            RGB::named(rltk::WHITE),
+            RGB::named(rltk::BLACK),
+            rltk::to_cp437('('),
+        );
+        ctx.set(
+            18,
+            y,
+            RGB::named(rltk::WHITE),
+            RGB::named(rltk::BLACK),
+            97 + j as rltk::FontCharType,
+        );
+        ctx.set(
+            19,
+            y,
+            RGB::named(rltk::WHITE),
+            RGB::named(rltk::BLACK),
+            rltk::to_cp437(')'),
+        );
+
+        ctx.print(21, y, &name.name.to_string());
+        y += 1;
+    }
+
+    match ctx.key {
+        None => ItemMenuResult::NoResponse,
+        Some(VirtualKeyCode::Escape) => ItemMenuResult::Cancel,
+        _ => ItemMenuResult::NoResponse,
     }
 }
