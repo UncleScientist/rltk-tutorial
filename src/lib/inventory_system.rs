@@ -1,7 +1,8 @@
 use specs::prelude::*;
 
 use crate::{
-    CombatStats, GameLog, InBackpack, Name, Position, Potion, WantsToDrinkPotion, WantsToPickupItem,
+    CombatStats, GameLog, InBackpack, Name, Position, Potion, WantsToDrinkPotion, WantsToDropItem,
+    WantsToPickupItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -85,5 +86,57 @@ impl<'a> System<'a> for PotionUseSystem {
         }
 
         wants_drink.clear();
+    }
+}
+
+pub struct ItemDropSystem;
+
+type ItemDropData<'a> = (
+    ReadExpect<'a, Entity>,
+    WriteExpect<'a, GameLog>,
+    Entities<'a>,
+    WriteStorage<'a, WantsToDropItem>,
+    ReadStorage<'a, Name>,
+    WriteStorage<'a, Position>,
+    WriteStorage<'a, InBackpack>,
+);
+
+impl<'a> System<'a> for ItemDropSystem {
+    type SystemData = ItemDropData<'a>;
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (
+            player_entity,
+            mut gamelog,
+            entities,
+            mut wants_drop,
+            names,
+            mut positions,
+            mut backpack,
+        ) = data;
+
+        for (entity, to_drop) in (&entities, &wants_drop).join() {
+            let dropper_pos = {
+                let dropped_pos = positions.get(entity).unwrap();
+                Position {
+                    x: dropped_pos.x,
+                    y: dropped_pos.y,
+                }
+            };
+
+            positions
+                .insert(to_drop.item, dropper_pos)
+                .expect("Unable to insert position");
+            backpack.remove(to_drop.item);
+
+            if entity == *player_entity {
+                gamelog.entries.push(format!(
+                    "You drop the {}.",
+                    names.get(to_drop.item).unwrap().name
+                ));
+            }
+        }
+
+        wants_drop.clear();
     }
 }

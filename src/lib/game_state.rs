@@ -8,6 +8,7 @@ pub enum RunState {
     PlayerTurn,
     MonsterTurn,
     ShowInventory,
+    ShowDropItem,
 }
 
 pub struct State {
@@ -51,6 +52,24 @@ impl GameState for State {
                                 WantsToDrinkPotion {
                                     potion: item_entity,
                                 },
+                            )
+                            .expect("Unable to insert intent");
+                        newrunstate = RunState::PlayerTurn;
+                    }
+                }
+            }
+            RunState::ShowDropItem => {
+                let result = gui::drop_item_menu(self, ctx);
+                match result.0 {
+                    gui::ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
+                    gui::ItemMenuResult::NoResponse => {}
+                    gui::ItemMenuResult::Selected => {
+                        let item_entity = result.1.unwrap();
+                        let mut intent = self.ecs.write_storage::<WantsToDropItem>();
+                        intent
+                            .insert(
+                                *self.ecs.fetch::<Entity>(),
+                                WantsToDropItem { item: item_entity },
                             )
                             .expect("Unable to insert intent");
                         newrunstate = RunState::PlayerTurn;
@@ -102,6 +121,9 @@ impl State {
 
         let mut potions = PotionUseSystem {};
         potions.run_now(&self.ecs);
+
+        let mut drop_items = ItemDropSystem {};
+        drop_items.run_now(&self.ecs);
 
         self.ecs.maintain();
     }
