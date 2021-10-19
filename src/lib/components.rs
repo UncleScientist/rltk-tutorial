@@ -39,8 +39,6 @@ pub struct SufferDamage {
 impl SufferDamage {
     pub fn new_damage(store: &mut WriteStorage<SufferDamage>, victim: Entity, amount: i32) {
         if let Some(suffering) = store.get_mut(victim) {
-            use rltk::console;
-            console::log(&format!("attacked for {}", amount));
             suffering.amount.push(amount);
         } else {
             let dmg = SufferDamage {
