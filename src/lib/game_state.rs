@@ -119,8 +119,8 @@ impl State {
         let mut pickup = ItemCollectionSystem {};
         pickup.run_now(&self.ecs);
 
-        let mut potions = PotionUseSystem {};
-        potions.run_now(&self.ecs);
+        let mut items = ItemUseSystem {};
+        items.run_now(&self.ecs);
 
         let mut drop_items = ItemDropSystem {};
         drop_items.run_now(&self.ecs);

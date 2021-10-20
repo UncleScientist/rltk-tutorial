@@ -45,9 +45,9 @@ impl<'a> System<'a> for ItemCollectionSystem {
     }
 }
 
-pub struct PotionUseSystem;
+pub struct ItemUseSystem;
 
-type PotionUseData<'a> = (
+type ItemUseData<'a> = (
     ReadExpect<'a, Entity>,
     WriteExpect<'a, GameLog>,
     Entities<'a>,
@@ -57,8 +57,8 @@ type PotionUseData<'a> = (
     WriteStorage<'a, CombatStats>,
 );
 
-impl<'a> System<'a> for PotionUseSystem {
-    type SystemData = PotionUseData<'a>;
+impl<'a> System<'a> for ItemUseSystem {
+    type SystemData = ItemUseData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
         let (player_entity, mut gamelog, entities, mut use_items, names, potions, mut combat_stats) =
