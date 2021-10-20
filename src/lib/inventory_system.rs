@@ -1,8 +1,8 @@
 use specs::prelude::*;
 
 use crate::{
-    CombatStats, GameLog, InBackpack, Name, Position, Potion, WantsToDrinkPotion, WantsToDropItem,
-    WantsToPickupItem,
+    CombatStats, GameLog, InBackpack, Name, Position, Potion, WantsToDropItem, WantsToPickupItem,
+    WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -51,7 +51,7 @@ type PotionUseData<'a> = (
     ReadExpect<'a, Entity>,
     WriteExpect<'a, GameLog>,
     Entities<'a>,
-    WriteStorage<'a, WantsToDrinkPotion>,
+    WriteStorage<'a, WantsToUseItem>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, Potion>,
     WriteStorage<'a, CombatStats>,
@@ -61,31 +61,24 @@ impl<'a> System<'a> for PotionUseSystem {
     type SystemData = PotionUseData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            player_entity,
-            mut gamelog,
-            entities,
-            mut wants_drink,
-            names,
-            potions,
-            mut combat_stats,
-        ) = data;
+        let (player_entity, mut gamelog, entities, mut use_items, names, potions, mut combat_stats) =
+            data;
 
-        for (entity, drink, stats) in (&entities, &wants_drink, &mut combat_stats).join() {
-            if let Some(potion) = potions.get(drink.potion) {
+        for (entity, useitem, stats) in (&entities, &use_items, &mut combat_stats).join() {
+            if let Some(potion) = potions.get(useitem.item) {
                 stats.hp = i32::min(stats.max_hp, stats.hp + potion.heal_amount);
                 if entity == *player_entity {
                     gamelog.entries.push(format!(
                         "You drink the {}, healing {} hp.",
-                        names.get(drink.potion).unwrap().name,
+                        names.get(useitem.item).unwrap().name,
                         potion.heal_amount
                     ));
                 }
-                entities.delete(drink.potion).expect("Delete failed");
+                entities.delete(useitem.item).expect("Delete failed");
             }
         }
 
-        wants_drink.clear();
+        use_items.clear();
     }
 }
 
