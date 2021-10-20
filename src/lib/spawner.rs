@@ -2,8 +2,8 @@ use rltk::{to_cp437, FontCharType, RandomNumberGenerator, RGB};
 use specs::prelude::*;
 
 use crate::{
-    BlocksTile, CombatStats, Item, Monster, Name, Player, Position, Potion, Rect, Renderable,
-    Viewshed, MAPWIDTH,
+    BlocksTile, CombatStats, Consumable, Item, Monster, Name, Player, Position, ProvidesHealing,
+    Rect, Renderable, Viewshed, MAPWIDTH,
 };
 
 const MAX_MONSTERS: i32 = 4;
@@ -155,6 +155,7 @@ fn health_potion(ecs: &mut World, x: i32, y: i32) {
             name: "Health Potion".to_string(),
         })
         .with(Item {})
-        .with(Potion { heal_amount: 8 })
+        .with(Consumable {})
+        .with(ProvidesHealing { heal_amount: 8 })
         .build();
 }

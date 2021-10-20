@@ -1,8 +1,8 @@
 use specs::prelude::*;
 
 use crate::{
-    CombatStats, GameLog, InBackpack, Name, Position, Potion, WantsToDropItem, WantsToPickupItem,
-    WantsToUseItem,
+    CombatStats, Consumable, GameLog, InBackpack, Name, Position, ProvidesHealing, WantsToDropItem,
+    WantsToPickupItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -53,28 +53,39 @@ type ItemUseData<'a> = (
     Entities<'a>,
     WriteStorage<'a, WantsToUseItem>,
     ReadStorage<'a, Name>,
-    ReadStorage<'a, Potion>,
+    ReadStorage<'a, ProvidesHealing>,
     WriteStorage<'a, CombatStats>,
+    ReadStorage<'a, Consumable>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
     type SystemData = ItemUseData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (player_entity, mut gamelog, entities, mut use_items, names, potions, mut combat_stats) =
-            data;
+        let (
+            player_entity,
+            mut gamelog,
+            entities,
+            mut use_items,
+            names,
+            healing,
+            mut combat_stats,
+            consumables,
+        ) = data;
 
         for (entity, useitem, stats) in (&entities, &use_items, &mut combat_stats).join() {
-            if let Some(potion) = potions.get(useitem.item) {
-                stats.hp = i32::min(stats.max_hp, stats.hp + potion.heal_amount);
+            if let Some(healer) = healing.get(useitem.item) {
+                stats.hp = i32::min(stats.max_hp, stats.hp + healer.heal_amount);
                 if entity == *player_entity {
                     gamelog.entries.push(format!(
                         "You drink the {}, healing {} hp.",
                         names.get(useitem.item).unwrap().name,
-                        potion.heal_amount
+                        healer.heal_amount
                     ));
                 }
-                entities.delete(useitem.item).expect("Delete failed");
+                if consumables.get(useitem.item).is_some() {
+                    entities.delete(useitem.item).expect("Delete failed");
+                }
             }
         }
 
