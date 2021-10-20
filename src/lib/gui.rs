@@ -1,5 +1,9 @@
-use crate::{CombatStats, GameLog, InBackpack, Map, Name, Player, Position, State, MAPWIDTH, Viewshed};
-use rltk::{Point, Rltk, VirtualKeyCode, BLACK, GREY, MAGENTA, RED, RGB, WHITE, YELLOW, BLUE, CYAN};
+use crate::{
+    CombatStats, GameLog, InBackpack, Map, Name, Player, Position, State, Viewshed, MAPWIDTH,
+};
+use rltk::{
+    Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, RED, RGB, WHITE, YELLOW,
+};
 use specs::prelude::*;
 
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
@@ -224,13 +228,22 @@ pub fn drop_item_menu(gs: &mut State, ctx: &mut Rltk) -> (ItemMenuResult, Option
     }
 }
 
-pub fn ranged_target(gs: &mut State, ctx: &mut Rltk, range: i32) -> (ItemMenuResult, Option<Point>) {
+pub fn ranged_target(
+    gs: &mut State,
+    ctx: &mut Rltk,
+    range: i32,
+) -> (ItemMenuResult, Option<Point>) {
     let player_entity = gs.ecs.fetch::<Entity>();
     let player_pos = gs.ecs.fetch::<Point>();
     let viewsheds = gs.ecs.read_storage::<Viewshed>();
 
-    ctx.print_color(5, 0, RGB::named(YELLOW), RGB::named(rltk::BLACK),
-            "Select Target:");
+    ctx.print_color(
+        5,
+        0,
+        RGB::named(YELLOW),
+        RGB::named(rltk::BLACK),
+        "Select Target:",
+    );
 
     let mut available_cells = Vec::new();
     if let Some(visible) = viewsheds.get(*player_entity) {
@@ -257,8 +270,10 @@ pub fn ranged_target(gs: &mut State, ctx: &mut Rltk, range: i32) -> (ItemMenuRes
     if valid_target {
         ctx.set_bg(mouse_pos.0, mouse_pos.1, RGB::named(CYAN));
         if ctx.left_click {
-            return (ItemMenuResult::Selected,
-                    Some(Point::new(mouse_pos.0, mouse_pos.1)));
+            return (
+                ItemMenuResult::Selected,
+                Some(Point::new(mouse_pos.0, mouse_pos.1)),
+            );
         }
     } else {
         ctx.set_bg(mouse_pos.0, mouse_pos.1, RGB::named(RED));

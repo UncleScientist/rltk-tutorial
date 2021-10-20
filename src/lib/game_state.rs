@@ -62,18 +62,21 @@ impl GameState for State {
                     gui::ItemMenuResult::Selected => {
                         let item_entity = result.1.unwrap();
                         let is_ranged = self.ecs.read_storage::<Ranged>();
-                        
+
                         if let Some(ranged_item) = is_ranged.get(item_entity) {
                             newrunstate = RunState::ShowTargeting {
                                 range: ranged_item.range,
-                                item: item_entity
+                                item: item_entity,
                             };
                         } else {
                             let mut intent = self.ecs.write_storage::<WantsToUseItem>();
                             intent
                                 .insert(
                                     *self.ecs.fetch::<Entity>(),
-                                    WantsToUseItem { item: item_entity, target: None },
+                                    WantsToUseItem {
+                                        item: item_entity,
+                                        target: None,
+                                    },
                                 )
                                 .expect("Unable to insert intent");
                             newrunstate = RunState::PlayerTurn;
@@ -81,15 +84,21 @@ impl GameState for State {
                     }
                 }
             }
-            RunState::ShowTargeting{range, item} => {
+            RunState::ShowTargeting { range, item } => {
                 let result = gui::ranged_target(self, ctx, range);
                 match result.0 {
                     gui::ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
-                    gui::ItemMenuResult::NoResponse => {},
+                    gui::ItemMenuResult::NoResponse => {}
                     gui::ItemMenuResult::Selected => {
                         let mut intent = self.ecs.write_storage::<WantsToUseItem>();
-                        intent.insert(*self.ecs.fetch::<Entity>(),
-                                      WantsToUseItem{item, target: result.1 })
+                        intent
+                            .insert(
+                                *self.ecs.fetch::<Entity>(),
+                                WantsToUseItem {
+                                    item,
+                                    target: result.1,
+                                },
+                            )
                             .expect("Unable to insert intent");
                         newrunstate = RunState::PlayerTurn;
                     }
@@ -121,7 +130,6 @@ impl GameState for State {
         }
 
         damage_system::delete_the_dead(&mut self.ecs);
-
     }
 }
 
