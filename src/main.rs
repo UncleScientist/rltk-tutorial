@@ -37,6 +37,7 @@ fn main() -> rltk::BError {
     gs.ecs.insert(player_entity);
 
     gs.ecs.insert(RandomNumberGenerator::new());
+    spawn_goodies(&mut gs.ecs, &map.rooms[0]);
     for room in map.rooms.iter().skip(1) {
         spawn_room(&mut gs.ecs, room);
     }

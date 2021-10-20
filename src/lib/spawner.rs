@@ -62,6 +62,33 @@ pub fn spawn_room(ecs: &mut World, room: &Rect) {
     }
 }
 
+pub fn spawn_goodies(ecs: &mut World, room: &Rect) {
+    let mut item_spawn_points: Vec<usize> = Vec::new();
+    let mwusize = MAPWIDTH as usize; // TODO: clean up map i32 vs usize
+
+    {
+        let mut rng = ecs.write_resource::<RandomNumberGenerator>();
+        for _ in 0..5 {
+            loop {
+                let x = (room.x1 + rng.roll_dice(1, i32::abs(room.x2 - room.x1))) as usize;
+                let y = (room.y1 + rng.roll_dice(1, i32::abs(room.y2 - room.y1))) as usize;
+                // TODO: get map from ecs & call xy_idx()?
+                let idx = (y * mwusize) + x;
+                if !item_spawn_points.contains(&idx) {
+                    item_spawn_points.push(idx);
+                    break;
+                }
+            }
+        }
+    }
+
+    for idx in item_spawn_points.iter() {
+        let x = *idx % mwusize;
+        let y = *idx / mwusize;
+        random_item(ecs, x as i32, y as i32);
+    }
+}
+
 /// Spawns the player and returns his/her entity object
 pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
     ecs.create_entity()
