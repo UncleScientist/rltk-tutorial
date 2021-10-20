@@ -83,9 +83,10 @@ impl<'a> System<'a> for ItemUseSystem {
                         healer.heal_amount
                     ));
                 }
-                if consumables.get(useitem.item).is_some() {
-                    entities.delete(useitem.item).expect("Delete failed");
-                }
+            }
+
+            if consumables.get(useitem.item).is_some() {
+                entities.delete(useitem.item).expect("Delete failed");
             }
         }
 
