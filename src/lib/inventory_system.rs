@@ -2,7 +2,7 @@ use specs::prelude::*;
 
 use crate::{
     CombatStats, Consumable, GameLog, InBackpack, Name, Position, ProvidesHealing, WantsToDropItem,
-    WantsToPickupItem, WantsToUseItem,
+    WantsToPickupItem, WantsToUseItem, SufferDamage, InflictsDamage, Map,
 };
 
 pub struct ItemCollectionSystem {}
@@ -56,6 +56,9 @@ type ItemUseData<'a> = (
     ReadStorage<'a, ProvidesHealing>,
     WriteStorage<'a, CombatStats>,
     ReadStorage<'a, Consumable>,
+    ReadStorage<'a, InflictsDamage>,
+    WriteStorage<'a, SufferDamage>,
+    ReadExpect<'a, Map>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -71,6 +74,9 @@ impl<'a> System<'a> for ItemUseSystem {
             healing,
             mut combat_stats,
             consumables,
+            inflict_damage,
+            mut suffer_damage,
+            map,
         ) = data;
 
         for (entity, useitem, stats) in (&entities, &use_items, &mut combat_stats).join() {
@@ -82,6 +88,21 @@ impl<'a> System<'a> for ItemUseSystem {
                         names.get(useitem.item).unwrap().name,
                         healer.heal_amount
                     ));
+                }
+            }
+
+            if let Some(damage) = inflict_damage.get(useitem.item) {
+                let target_point = useitem.target.unwrap();
+                let idx = map.xy_idx(target_point.x, target_point.y);
+
+                for mob in map.tile_content[idx].iter() {
+                    SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage);
+                    if entity == *player_entity {
+                        let mob_name = names.get(*mob).unwrap();
+                        let item_name = names.get(useitem.item).unwrap();
+                        gamelog.entries.push(format!("You use {} on {}, inflicting {} hp.",
+                                        item_name.name, mob_name.name, damage.damage));
+                    }
                 }
             }
 

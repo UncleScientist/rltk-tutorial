@@ -33,6 +33,7 @@ pub struct WantsToPickupItem {
 #[derive(Component)]
 pub struct WantsToUseItem {
     pub item: Entity,
+    pub target: Option<rltk::Point>,
 }
 
 #[derive(Component)]
