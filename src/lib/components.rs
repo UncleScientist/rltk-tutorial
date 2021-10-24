@@ -3,6 +3,11 @@ use specs::prelude::*;
 use specs_derive::Component;
 
 #[derive(Component)]
+pub struct AreaOfEffect {
+    pub radius: i32,
+}
+
+#[derive(Component)]
 pub struct Ranged {
     pub range: i32,
 }
