@@ -3,6 +3,11 @@ use specs::prelude::*;
 use specs_derive::Component;
 
 #[derive(Component)]
+pub struct Confusion {
+    pub turns: i32,
+}
+
+#[derive(Component)]
 pub struct AreaOfEffect {
     pub radius: i32,
 }

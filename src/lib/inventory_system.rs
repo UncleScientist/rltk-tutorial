@@ -1,8 +1,9 @@
 use specs::prelude::*;
 
 use crate::{
-    AreaOfEffect, CombatStats, Consumable, GameLog, InBackpack, InflictsDamage, Map, Name,
-    Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToUseItem,
+    AreaOfEffect, CombatStats, Confusion, Consumable, GameLog, InBackpack, InflictsDamage, Map,
+    Name, Position, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem,
+    WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -59,6 +60,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, InflictsDamage>,
     ReadStorage<'a, AreaOfEffect>,
     WriteStorage<'a, SufferDamage>,
+    WriteStorage<'a, Confusion>,
     ReadExpect<'a, Map>,
 );
 
@@ -78,6 +80,7 @@ impl<'a> System<'a> for ItemUseSystem {
             inflict_damage,
             aoe,
             mut suffer_damage,
+            mut confused,
             map,
         ) = data;
 
@@ -132,6 +135,26 @@ impl<'a> System<'a> for ItemUseSystem {
                         ));
                     }
                 }
+            }
+
+            let mut add_confusion = Vec::new();
+            if let Some(confusion) = confused.get(useitem.item) {
+                for mob in targets.iter() {
+                    add_confusion.push((*mob, confusion.turns));
+                    if entity == *player_entity {
+                        let mob_name = names.get(*mob).unwrap();
+                        let item_name = names.get(useitem.item).unwrap();
+                        gamelog.entries.push(format!(
+                            "You use {} on {}, confusing them",
+                            item_name.name, mob_name.name
+                        ));
+                    }
+                }
+            }
+            for mob in add_confusion.iter() {
+                confused
+                    .insert(mob.0, Confusion { turns: mob.1 })
+                    .expect("Unable to insert status");
             }
 
             if consumables.get(useitem.item).is_some() {
