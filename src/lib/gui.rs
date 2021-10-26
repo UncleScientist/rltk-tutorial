@@ -1,10 +1,24 @@
 use crate::{
-    CombatStats, GameLog, InBackpack, Map, Name, Player, Position, State, Viewshed, MAPWIDTH,
+    CombatStats, GameLog, InBackpack, Map, Name, Player, Position, RunState, State, Viewshed,
+    MAPWIDTH,
 };
 use rltk::{
     Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, RED, RGB, WHITE, YELLOW,
 };
 use specs::prelude::*;
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum MainMenuResult {
+    NoSelection { selected: MainMenuSelection },
+    Selected { selected: MainMenuSelection },
+}
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum MainMenuSelection {
+    NewGame,
+    LoadGame,
+    Quit,
+}
 
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     ctx.draw_box(0, 43, 79, 6, RGB::named(WHITE), RGB::named(BLACK));
@@ -283,4 +297,84 @@ pub fn ranged_target(
     }
 
     (ItemMenuResult::NoResponse, None)
+}
+
+pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {
+    use MainMenuResult::*;
+    use MainMenuSelection::*;
+
+    let runstate = gs.ecs.fetch::<RunState>();
+
+    ctx.print_color_centered(
+        15,
+        RGB::named(YELLOW),
+        RGB::named(BLACK),
+        "Rusty Roguelike Tutorial",
+    );
+
+    if let RunState::MainMenu {
+        menu_selection: selection,
+    } = *runstate
+    {
+        if selection == NewGame {
+            ctx.print_color_centered(24, RGB::named(MAGENTA), RGB::named(BLACK), "Begin New Game");
+        } else {
+            ctx.print_color_centered(24, RGB::named(WHITE), RGB::named(BLACK), "Begin New Game");
+        }
+
+        if selection == LoadGame {
+            ctx.print_color_centered(25, RGB::named(MAGENTA), RGB::named(BLACK), "Load Game");
+        } else {
+            ctx.print_color_centered(25, RGB::named(WHITE), RGB::named(BLACK), "Load Game");
+        }
+
+        if selection == Quit {
+            ctx.print_color_centered(26, RGB::named(MAGENTA), RGB::named(BLACK), "Quit");
+        } else {
+            ctx.print_color_centered(26, RGB::named(WHITE), RGB::named(BLACK), "Quit");
+        }
+
+        if let Some(key) = ctx.key {
+            use VirtualKeyCode::*;
+
+            match key {
+                Escape => {
+                    return NoSelection { selected: Quit };
+                }
+
+                Up => {
+                    return match selection {
+                        NewGame => NoSelection { selected: Quit },
+                        LoadGame => NoSelection { selected: NewGame },
+                        Quit => NoSelection { selected: LoadGame },
+                    };
+                }
+
+                Down => {
+                    return match selection {
+                        NewGame => NoSelection { selected: LoadGame },
+                        LoadGame => NoSelection { selected: Quit },
+                        Quit => NoSelection { selected: NewGame },
+                    };
+                }
+
+                Return => {
+                    return Selected {
+                        selected: selection,
+                    };
+                }
+
+                _ => {
+                    return NoSelection {
+                        selected: selection,
+                    }
+                }
+            }
+        } else {
+            return NoSelection {
+                selected: selection,
+            };
+        }
+    }
+    NoSelection { selected: NewGame }
 }

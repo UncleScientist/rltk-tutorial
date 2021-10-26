@@ -59,6 +59,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Numpad7 | Y => try_move_player(-1, -1, &mut gs.ecs),
             Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
             Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
+            Escape => return RunState::SaveGame,
             D => return RunState::ShowDropItem,
             G => get_item(&mut gs.ecs),
             I => return RunState::ShowInventory,

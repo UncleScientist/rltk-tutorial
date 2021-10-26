@@ -9,7 +9,14 @@ pub enum RunState {
     MonsterTurn,
     ShowInventory,
     ShowDropItem,
-    ShowTargeting { range: i32, item: Entity },
+    ShowTargeting {
+        range: i32,
+        item: Entity,
+    },
+    MainMenu {
+        menu_selection: gui::MainMenuSelection,
+    },
+    SaveGame,
 }
 
 pub struct State {
@@ -18,27 +25,55 @@ pub struct State {
 
 impl GameState for State {
     fn tick(&mut self, ctx: &mut Rltk) {
-        ctx.cls();
         let mut newrunstate = *self.ecs.fetch::<RunState>();
 
-        draw_map(&self.ecs, ctx);
-        gui::draw_ui(&self.ecs, ctx);
+        ctx.cls();
 
-        {
-            let positions = self.ecs.read_storage::<Position>();
-            let renderables = self.ecs.read_storage::<Renderable>();
-            let map = self.ecs.fetch::<Map>();
+        match newrunstate {
+            RunState::MainMenu { .. } => {
+                let result = gui::main_menu(self, ctx);
+                match result {
+                    gui::MainMenuResult::NoSelection { selected } => {
+                        newrunstate = RunState::MainMenu {
+                            menu_selection: selected,
+                        }
+                    }
+                    gui::MainMenuResult::Selected { selected } => match selected {
+                        gui::MainMenuSelection::NewGame => newrunstate = RunState::PreRun,
+                        gui::MainMenuSelection::LoadGame => newrunstate = RunState::PreRun,
+                        gui::MainMenuSelection::Quit => {
+                            ::std::process::exit(0);
+                        }
+                    },
+                }
+            }
+            _ => {
+                draw_map(&self.ecs, ctx);
 
-            let mut data = (&positions, &renderables).join().collect::<Vec<_>>();
-            data.sort_by(|&a, &b| b.1.render_order.cmp(&a.1.render_order));
-            for (pos, render) in data.iter() {
-                if map.is_visible(pos.x, pos.y) {
-                    ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph);
+                {
+                    let positions = self.ecs.read_storage::<Position>();
+                    let renderables = self.ecs.read_storage::<Renderable>();
+                    let map = self.ecs.fetch::<Map>();
+
+                    let mut data = (&positions, &renderables).join().collect::<Vec<_>>();
+                    data.sort_by(|&a, &b| b.1.render_order.cmp(&a.1.render_order));
+                    for (pos, render) in data.iter() {
+                        if map.is_visible(pos.x, pos.y) {
+                            ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph);
+                        }
+                    }
+                    gui::draw_ui(&self.ecs, ctx);
                 }
             }
         }
 
         match newrunstate {
+            RunState::SaveGame => {
+                newrunstate = RunState::MainMenu {
+                    menu_selection: gui::MainMenuSelection::LoadGame,
+                };
+            }
+            RunState::MainMenu { .. } => {}
             RunState::PreRun => {
                 self.run_systems();
                 newrunstate = RunState::AwaitingInput;
