@@ -1,11 +1,12 @@
 use crate::*;
 use rltk::{Algorithm2D, BaseMap, Point, RandomNumberGenerator, Rltk, RGB};
+use serde::{Deserialize, Serialize};
 use std::cmp::{max, min};
 
 // ------------------------------------------------------------
 // Map Section
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum TileType {
     Wall,
     Floor,
@@ -15,6 +16,7 @@ pub const MAPWIDTH: i32 = 80;
 pub const MAPHEIGHT: i32 = 43;
 pub const MAPCOUNT: usize = (MAPWIDTH * MAPHEIGHT) as usize;
 
+#[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Map {
     pub tiles: Vec<TileType>,
     pub rooms: Vec<Rect>,
@@ -23,6 +25,9 @@ pub struct Map {
     pub revealed_tiles: Vec<bool>,
     pub visible_tiles: Vec<bool>,
     pub blocked: Vec<bool>,
+
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
     pub tile_content: Vec<Vec<Entity>>,
 }
 
