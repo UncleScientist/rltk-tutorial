@@ -303,6 +303,7 @@ pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {
     use MainMenuResult::*;
     use MainMenuSelection::*;
 
+    let save_exists = super::saveload_system::does_save_exist();
     let runstate = gs.ecs.fetch::<RunState>();
 
     ctx.print_color_centered(
@@ -322,10 +323,12 @@ pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {
             ctx.print_color_centered(24, RGB::named(WHITE), RGB::named(BLACK), "Begin New Game");
         }
 
-        if selection == LoadGame {
-            ctx.print_color_centered(25, RGB::named(MAGENTA), RGB::named(BLACK), "Load Game");
-        } else {
-            ctx.print_color_centered(25, RGB::named(WHITE), RGB::named(BLACK), "Load Game");
+        if save_exists {
+            if selection == LoadGame {
+                ctx.print_color_centered(25, RGB::named(MAGENTA), RGB::named(BLACK), "Load Game");
+            } else {
+                ctx.print_color_centered(25, RGB::named(WHITE), RGB::named(BLACK), "Load Game");
+            }
         }
 
         if selection == Quit {
@@ -346,13 +349,17 @@ pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {
                     return match selection {
                         NewGame => NoSelection { selected: Quit },
                         LoadGame => NoSelection { selected: NewGame },
-                        Quit => NoSelection { selected: LoadGame },
+                        Quit => NoSelection {
+                            selected: if save_exists { LoadGame } else { NewGame },
+                        },
                     };
                 }
 
                 Down => {
                     return match selection {
-                        NewGame => NoSelection { selected: LoadGame },
+                        NewGame => NoSelection {
+                            selected: if save_exists { LoadGame } else { Quit },
+                        },
                         LoadGame => NoSelection { selected: Quit },
                         Quit => NoSelection { selected: NewGame },
                     };

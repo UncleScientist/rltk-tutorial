@@ -50,7 +50,9 @@ fn main() -> rltk::BError {
     }
 
     gs.ecs.insert(map);
-    gs.ecs.insert(RunState::PreRun);
+    gs.ecs.insert(RunState::MainMenu {
+        menu_selection: gui::MainMenuSelection::NewGame,
+    });
     gs.ecs.insert(gamelog::GameLog {
         entries: vec!["Welcome to Rusty Roguelike".to_string()],
     });
