@@ -1,11 +1,16 @@
 use crate::*;
 use specs::error::NoError;
-use specs::saveload::{
-    DeserializeComponents, MarkedBuilder, SerializeComponents, SimpleMarker, SimpleMarkerAllocator,
-};
-use std::fs::{read_to_string, File};
+use specs::saveload::{DeserializeComponents, SimpleMarker, SimpleMarkerAllocator};
+use std::fs::read_to_string;
 use std::path::Path;
 
+#[cfg(not(target_arch = "wasm32"))]
+use std::fs::File;
+
+#[cfg(not(target_arch = "wasm32"))]
+use specs::saveload::{MarkedBuilder, SerializeComponents};
+
+#[cfg(not(target_arch = "wasm32"))]
 macro_rules! serialize_individually {
     ($ecs:expr, $ser:expr, $data:expr, $( $type:ty ), *) => {
         $(
@@ -33,6 +38,10 @@ macro_rules! deserialize_individually {
     };
 }
 
+#[cfg(target_arch = "wasm32")]
+pub fn save_game(_ecs: &mut World) {}
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn save_game(ecs: &mut World) {
     // Create helper
     let mapcopy = ecs.get_mut::<super::map::Map>().unwrap().clone();
