@@ -10,6 +10,7 @@ use std::cmp::{max, min};
 pub enum TileType {
     Wall,
     Floor,
+    DownStairs,
 }
 
 pub const MAPWIDTH: i32 = 80;
@@ -144,6 +145,10 @@ impl Map {
             }
         }
 
+        let stairs_position = map.rooms[map.rooms.len() - 1].center();
+        let stairs_idx = map.xy_idx(stairs_position.0, stairs_position.1);
+        map.tiles[stairs_idx] = TileType::DownStairs;
+
         map
     }
 }
@@ -206,8 +211,10 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let grey = RGB::from_f32(0.5, 0.5, 0.5);
     let black = RGB::from_f32(0., 0., 0.);
     let green = RGB::from_f32(0., 1., 0.);
+    let cyan = RGB::from_f32(0., 1., 1.);
     let floor = rltk::to_cp437('.');
     let wall = rltk::to_cp437('#');
+    let down_stairs = rltk::to_cp437('>');
 
     let map = ecs.fetch::<Map>();
 
@@ -219,6 +226,7 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
             let (glyph, mut fg) = match tile {
                 TileType::Floor => (floor, grey),
                 TileType::Wall => (wall, green),
+                TileType::DownStairs => (down_stairs, cyan),
             };
             if !map.visible_tiles[idx] {
                 fg = fg.to_greyscale();
