@@ -1,5 +1,8 @@
 use specs::prelude::*;
 
+pub mod random_table;
+pub use random_table::*;
+
 pub mod components;
 pub use components::*;
 
