@@ -8,6 +8,23 @@ use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
 
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
+pub enum EquipmentSlot {
+    Melee,
+    Shield,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct Equipped {
+    pub owner: Entity,
+    pub slot: EquipmentSlot,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct Equippable {
+    pub slot: EquipmentSlot,
+}
+
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct SerializationHelper {
     pub map: Map,
