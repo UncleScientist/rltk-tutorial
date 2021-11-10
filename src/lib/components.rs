@@ -15,6 +15,11 @@ pub enum EquipmentSlot {
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
+pub struct WantsToRemoveItem {
+    pub item: Entity,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
 pub struct MeleePowerBonus {
     pub power: i32,
 }
@@ -28,6 +33,12 @@ pub struct DefenseBonus {
 pub struct Equipped {
     pub owner: Entity,
     pub slot: EquipmentSlot,
+}
+
+impl Owned for Equipped {
+    fn owned_by(&self) -> Entity {
+        self.owner
+    }
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
@@ -70,6 +81,16 @@ pub struct WantsToDropItem {
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct InBackpack {
     pub owner: Entity,
+}
+
+pub trait Owned {
+    fn owned_by(&self) -> Entity;
+}
+
+impl Owned for InBackpack {
+    fn owned_by(&self) -> Entity {
+        self.owner
+    }
 }
 
 #[derive(Component, ConvertSaveload, Clone)]

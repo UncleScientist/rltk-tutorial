@@ -3,7 +3,7 @@ use specs::prelude::*;
 use crate::{
     AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, InBackpack,
     InflictsDamage, Map, Name, Position, ProvidesHealing, SufferDamage, WantsToDropItem,
-    WantsToPickupItem, WantsToUseItem,
+    WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -261,5 +261,48 @@ impl<'a> System<'a> for ItemDropSystem {
         }
 
         wants_drop.clear();
+    }
+}
+
+pub struct ItemRemoveSystem;
+
+type ItemRemoveData<'a> = (
+    ReadExpect<'a, Entity>,
+    WriteExpect<'a, GameLog>,
+    Entities<'a>,
+    WriteStorage<'a, WantsToRemoveItem>,
+    WriteStorage<'a, Equipped>,
+    WriteStorage<'a, InBackpack>,
+    ReadStorage<'a, Name>,
+);
+
+impl<'a> System<'a> for ItemRemoveSystem {
+    type SystemData = ItemRemoveData<'a>;
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (
+            player_entity,
+            mut gamelog,
+            entities,
+            mut wants_remove,
+            mut equipped,
+            mut backpack,
+            names,
+        ) = data;
+
+        for (entity, to_remove) in (&entities, &wants_remove).join() {
+            equipped.remove(to_remove.item);
+            backpack
+                .insert(to_remove.item, InBackpack { owner: entity })
+                .expect("Unable to insert into backpack");
+            if entity == *player_entity {
+                gamelog.entries.push(format!(
+                    "You remove the {}.",
+                    names.get(to_remove.item).unwrap().name
+                ));
+            }
+        }
+
+        wants_remove.clear();
     }
 }
