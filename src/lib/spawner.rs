@@ -5,9 +5,9 @@ use specs::saveload::{MarkedBuilder, SimpleMarker};
 use std::collections::{hash_map::Entry, HashMap};
 
 use crate::{
-    AreaOfEffect, BlocksTile, CombatStats, Confusion, Consumable, EquipmentSlot, Equippable,
-    InflictsDamage, Item, Monster, Name, Player, Position, ProvidesHealing, RandomTable, Ranged,
-    Rect, Renderable, SerializeMe, Viewshed, MAPWIDTH,
+    AreaOfEffect, BlocksTile, CombatStats, Confusion, Consumable, DefenseBonus, EquipmentSlot,
+    Equippable, InflictsDamage, Item, MeleePowerBonus, Monster, Name, Player, Position,
+    ProvidesHealing, RandomTable, Ranged, Rect, Renderable, SerializeMe, Viewshed, MAPWIDTH,
 };
 
 /// Fills a room with stuff!
@@ -182,6 +182,7 @@ fn dagger(ecs: &mut World, x: i32, y: i32) {
         .with(Equippable {
             slot: EquipmentSlot::Melee,
         })
+        .with(MeleePowerBonus { power: 2 })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }
@@ -202,6 +203,7 @@ fn shield(ecs: &mut World, x: i32, y: i32) {
         .with(Equippable {
             slot: EquipmentSlot::Shield,
         })
+        .with(DefenseBonus { power: 2 })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }
