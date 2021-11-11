@@ -2,6 +2,7 @@ use crate::*;
 use rltk::{Algorithm2D, BaseMap, Point, RandomNumberGenerator, Rltk, RGB};
 use serde::{Deserialize, Serialize};
 use std::cmp::{max, min};
+use std::collections::HashSet;
 
 // ------------------------------------------------------------
 // Map Section
@@ -27,6 +28,7 @@ pub struct Map {
     pub visible_tiles: Vec<bool>,
     pub blocked: Vec<bool>,
     pub depth: i32,
+    pub bloodstains: HashSet<usize>,
 
     #[serde(skip_serializing)]
     #[serde(skip_deserializing)]
@@ -105,6 +107,7 @@ impl Map {
             blocked: vec![false; MAPCOUNT],
             tile_content: vec![Vec::new(); MAPCOUNT],
             depth: new_depth,
+            bloodstains: HashSet::new(),
         };
 
         const MAX_ROOMS: i32 = 30;
@@ -210,6 +213,7 @@ impl BaseMap for Map {
 pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let grey = RGB::from_f32(0.5, 0.5, 0.5);
     let black = RGB::from_f32(0., 0., 0.);
+    let blood = RGB::from_f32(0.75, 0., 0.);
     let green = RGB::from_f32(0., 1., 0.);
     let cyan = RGB::from_f32(0., 1., 1.);
     let floor = rltk::to_cp437('.');
@@ -227,10 +231,15 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
                 TileType::Wall => (wall_glyph(&*map, x, y), green),
                 TileType::DownStairs => (down_stairs, cyan),
             };
+            let bg = if map.bloodstains.contains(&idx) && map.visible_tiles[idx] {
+                blood
+            } else {
+                black
+            };
             if !map.visible_tiles[idx] {
                 fg = fg.to_greyscale();
             }
-            ctx.set(x, y, fg, black, glyph);
+            ctx.set(x, y, fg, bg, glyph);
         }
 
         x += 1;
