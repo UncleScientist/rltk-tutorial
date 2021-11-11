@@ -1,14 +1,17 @@
 use crate::*;
-use specs::error::NoError;
-use specs::saveload::{DeserializeComponents, SimpleMarker, SimpleMarkerAllocator};
-use std::fs::read_to_string;
 use std::path::Path;
 
 #[cfg(not(target_arch = "wasm32"))]
-use std::fs::File;
+use std::fs::{read_to_string, File};
 
 #[cfg(not(target_arch = "wasm32"))]
-use specs::saveload::{MarkedBuilder, SerializeComponents};
+use specs::{
+    error::NoError,
+    saveload::{
+        DeserializeComponents, MarkedBuilder, SerializeComponents, SimpleMarker,
+        SimpleMarkerAllocator,
+    },
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 macro_rules! serialize_individually {
@@ -24,6 +27,7 @@ macro_rules! serialize_individually {
     };
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 macro_rules! deserialize_individually {
     ($ecs:expr, $de:expr, $data:expr, $( $type:ty ), *) => {
         $(
@@ -39,7 +43,7 @@ macro_rules! deserialize_individually {
 }
 
 #[cfg(target_arch = "wasm32")]
-pub fn save_game(_ecs: &mut World) {}
+pub fn save_game(_ecs: &World) {}
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn save_game(ecs: &mut World) {
@@ -98,6 +102,10 @@ pub fn save_game(ecs: &mut World) {
     ecs.delete_entity(savehelper).expect("Crash on cleanup");
 }
 
+#[cfg(target_arch = "wasm32")]
+pub fn load_game(_ecs: &World) {}
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn load_game(ecs: &mut World) {
     {
         // Delete everything
