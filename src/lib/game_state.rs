@@ -356,9 +356,10 @@ impl State {
                 .entries
                 .push("Welcome to Rusty Roguelike... again!".to_string());
         } else {
+            gamelog.entries.clear();
             gamelog
                 .entries
-                .push("You descned to the next level, and take a moment to heal".to_string());
+                .push("You descend to the next level, and take a moment to heal".to_string());
         }
         let mut player_health_store = self.ecs.write_storage::<CombatStats>();
         if let Some(player_health) = player_health_store.get_mut(player_entity) {
