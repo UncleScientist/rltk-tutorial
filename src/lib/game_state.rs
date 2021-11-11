@@ -352,11 +352,11 @@ impl State {
 
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
         if everything {
+            gamelog.entries.clear();
             gamelog
                 .entries
                 .push("Welcome to Rusty Roguelike... again!".to_string());
         } else {
-            gamelog.entries.clear();
             gamelog
                 .entries
                 .push("You descend to the next level, and take a moment to heal".to_string());
