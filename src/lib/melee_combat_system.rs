@@ -1,5 +1,6 @@
 use crate::{
-    CombatStats, DefenseBonus, Equipped, GameLog, MeleePowerBonus, Name, SufferDamage, WantsToMelee,
+    CombatStats, DefenseBonus, Equipped, GameLog, MeleePowerBonus, Name, ParticleBuilder, Position,
+    SufferDamage, WantsToMelee,
 };
 use specs::prelude::*;
 
@@ -15,6 +16,8 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, MeleePowerBonus>,
     ReadStorage<'a, DefenseBonus>,
     ReadStorage<'a, Equipped>,
+    WriteExpect<'a, ParticleBuilder>,
+    ReadStorage<'a, Position>,
 );
 
 impl<'a> System<'a> for MeleeCombatSystem {
@@ -31,6 +34,8 @@ impl<'a> System<'a> for MeleeCombatSystem {
             melee_power_bonuses,
             defense_bonuses,
             equipped,
+            mut particle_builder,
+            positions,
         ) = data;
 
         for (entity, wants_melee, name, stats) in
@@ -57,6 +62,17 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         if equipped_by.owner == wants_melee.target {
                             defensive_bonus += defense_bonus.power;
                         }
+                    }
+
+                    if let Some(pos) = positions.get(wants_melee.target) {
+                        particle_builder.request(
+                            pos.x,
+                            pos.y,
+                            rltk::RGB::named(rltk::ORANGE),
+                            rltk::RGB::named(rltk::BLACK),
+                            rltk::to_cp437('‼'),
+                            200.0,
+                        );
                     }
 
                     let damage = i32::max(

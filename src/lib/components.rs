@@ -15,6 +15,11 @@ pub enum EquipmentSlot {
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
+pub struct ParticleLifetime {
+    pub lifetime_ms: f32,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
 pub struct WantsToRemoveItem {
     pub item: Entity,
 }

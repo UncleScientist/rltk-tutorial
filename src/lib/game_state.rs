@@ -31,6 +31,7 @@ impl GameState for State {
         let mut newrunstate = *self.ecs.fetch::<RunState>();
 
         ctx.cls();
+        cull_dead_particles(&mut self.ecs, ctx);
 
         match newrunstate {
             RunState::MainMenu { .. } => {
@@ -243,6 +244,9 @@ impl State {
 
         let mut remove_items = ItemRemoveSystem {};
         remove_items.run_now(&self.ecs);
+
+        let mut particles = ParticleSpawnSystem {};
+        particles.run_now(&self.ecs);
 
         self.ecs.maintain();
     }

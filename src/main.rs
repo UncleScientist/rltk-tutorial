@@ -38,6 +38,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<MeleePowerBonus>();
     gs.ecs.register::<DefenseBonus>();
     gs.ecs.register::<WantsToRemoveItem>();
+    gs.ecs.register::<ParticleLifetime>();
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
@@ -61,6 +62,8 @@ fn main() -> rltk::BError {
     gs.ecs.insert(gamelog::GameLog {
         entries: vec!["Welcome to Rusty Roguelike".to_string()],
     });
+
+    gs.ecs.insert(particle_system::ParticleBuilder::new());
 
     rltk::main_loop(context, gs)
 }
