@@ -2,8 +2,8 @@ use specs::prelude::*;
 
 use crate::{
     AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, InBackpack,
-    InflictsDamage, Map, Name, Position, ProvidesHealing, SufferDamage, WantsToDropItem,
-    WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
+    InflictsDamage, Map, Name, ParticleBuilder, Position, ProvidesHealing, SufferDamage,
+    WantsToDropItem, WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -65,6 +65,8 @@ type ItemUseData<'a> = (
     ReadStorage<'a, Equippable>,
     WriteStorage<'a, Equipped>,
     WriteStorage<'a, InBackpack>,
+    WriteExpect<'a, ParticleBuilder>,
+    ReadStorage<'a, Position>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -88,6 +90,8 @@ impl<'a> System<'a> for ItemUseSystem {
             equippable,
             mut equipped,
             mut backpack,
+            mut particle_builder,
+            positions,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
@@ -103,6 +107,14 @@ impl<'a> System<'a> for ItemUseSystem {
                         for mob in map.tile_content[idx].iter() {
                             targets.push(*mob);
                         }
+                        particle_builder.request(
+                            tile_xy.x,
+                            tile_xy.y,
+                            rltk::RGB::named(rltk::ORANGE),
+                            rltk::RGB::named(rltk::BLACK),
+                            rltk::to_cp437('░'),
+                            200.0,
+                        );
                     }
                 } else {
                     let idx = map.xy_idx(target.x, target.y);
@@ -165,6 +177,16 @@ impl<'a> System<'a> for ItemUseSystem {
                                 healer.heal_amount
                             ));
                         }
+                        if let Some(pos) = positions.get(*target) {
+                            particle_builder.request(
+                                pos.x,
+                                pos.y,
+                                rltk::RGB::named(rltk::GREEN),
+                                rltk::RGB::named(rltk::BLACK),
+                                rltk::to_cp437('♥'),
+                                200.0,
+                            );
+                        }
                     }
                 }
             }
@@ -187,6 +209,16 @@ impl<'a> System<'a> for ItemUseSystem {
                             item_name.name, mob_name.name
                         ));
                     }
+                    if let Some(pos) = positions.get(*mob) {
+                        particle_builder.request(
+                            pos.x,
+                            pos.y,
+                            rltk::RGB::named(rltk::RED),
+                            rltk::RGB::named(rltk::BLACK),
+                            rltk::to_cp437('‼'),
+                            200.0,
+                        );
+                    }
                 }
             }
 
@@ -201,6 +233,16 @@ impl<'a> System<'a> for ItemUseSystem {
                             "You use {} on {}, confusing them",
                             item_name.name, mob_name.name
                         ));
+                    }
+                    if let Some(pos) = positions.get(*mob) {
+                        particle_builder.request(
+                            pos.x,
+                            pos.y,
+                            rltk::RGB::named(rltk::MAGENTA),
+                            rltk::RGB::named(rltk::BLACK),
+                            rltk::to_cp437('?'),
+                            200.0,
+                        );
                     }
                 }
             }
