@@ -172,19 +172,20 @@ impl<'a> System<'a> for ItemUseSystem {
             if let Some(damage) = inflict_damage.get(useitem.item) {
                 for mob in targets.iter() {
                     let item_name = names.get(useitem.item).unwrap();
+                    let mob_name = names.get(*mob).unwrap();
                     if combat_stats.get(*mob).is_some() {
                         SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage);
                         if entity == *player_entity {
-                            let mob_name = names.get(*mob).unwrap();
                             gamelog.entries.push(format!(
                                 "You use {} on {}, inflicting {} hp.",
                                 item_name.name, mob_name.name, damage.damage
                             ));
                         }
                     } else {
-                        gamelog
-                            .entries
-                            .push(format!("You use {} but it fizzles", item_name.name));
+                        gamelog.entries.push(format!(
+                            "You use {} but it fizzles against {}",
+                            item_name.name, mob_name.name
+                        ));
                     }
                 }
             }
