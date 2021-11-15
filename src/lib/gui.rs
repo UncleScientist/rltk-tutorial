@@ -1,9 +1,10 @@
 use crate::{
     CombatStats, Equipped, GameLog, InBackpack, Map, Name, Owned, Player, Position, RunState,
-    State, Viewshed, MAPWIDTH,
+    State, Viewshed, MAPWIDTH, HungerClock, HungerState,
 };
 use rltk::{
     Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, RED, RGB, WHITE, YELLOW,
+    GREEN, ORANGE,
 };
 use specs::prelude::*;
 
@@ -21,23 +22,31 @@ pub enum MainMenuSelection {
 }
 
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
-    ctx.draw_box(0, 43, 79, 6, RGB::named(WHITE), RGB::named(BLACK));
+    let white = RGB::named(WHITE);
+    let black = RGB::named(BLACK);
+    let red = RGB::named(RED);
+    let green = RGB::named(GREEN);
+    let orange = RGB::named(ORANGE);
+    let yellow = RGB::named(YELLOW);
+
+
+    ctx.draw_box(0, 43, 79, 6, white, black);
 
     let combat_stats = ecs.read_storage::<CombatStats>();
     let players = ecs.read_storage::<Player>();
+    let hunger = ecs.read_storage::<HungerClock>();
 
-    for (_player, stats) in (&players, &combat_stats).join() {
+    for (_player, stats, hc) in (&players, &combat_stats, &hunger).join() {
         let health = format!(" HP: {} / {} ", stats.hp, stats.max_hp);
-        ctx.print_color(12, 43, RGB::named(YELLOW), RGB::named(BLACK), &health);
-        ctx.draw_bar_horizontal(
-            28,
-            43,
-            51,
-            stats.hp,
-            stats.max_hp,
-            RGB::named(RED),
-            RGB::named(BLACK),
-        );
+        ctx.print_color(12, 43, yellow, black, &health);
+        ctx.draw_bar_horizontal(28, 43, 51, stats.hp, stats.max_hp, red, black,);
+
+        match hc.state {
+            HungerState::WellFed => ctx.print_color(71, 42, green, black, "Well Fed"),
+            HungerState::Normal => {},
+            HungerState::Hungry =>  ctx.print_color(71, 42, orange, black, "Hungry"),
+            HungerState::Starving =>  ctx.print_color(71, 42, red, black, "Starving"),
+        }
     }
 
     let log = ecs.fetch::<GameLog>();
