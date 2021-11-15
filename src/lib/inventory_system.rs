@@ -1,9 +1,10 @@
 use specs::prelude::*;
 
 use crate::{
-    AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, InBackpack,
-    InflictsDamage, Map, Name, ParticleBuilder, Position, ProvidesHealing, SufferDamage,
-    WantsToDropItem, WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
+    AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock,
+    HungerState, InBackpack, InflictsDamage, Map, Name, ParticleBuilder, Position, ProvidesFood,
+    ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
+    WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -67,6 +68,8 @@ type ItemUseData<'a> = (
     WriteStorage<'a, InBackpack>,
     WriteExpect<'a, ParticleBuilder>,
     ReadStorage<'a, Position>,
+    ReadStorage<'a, ProvidesFood>,
+    WriteStorage<'a, HungerClock>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -92,6 +95,8 @@ impl<'a> System<'a> for ItemUseSystem {
             mut backpack,
             mut particle_builder,
             positions,
+            provides_food,
+            mut hunger_clocks,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
@@ -188,6 +193,18 @@ impl<'a> System<'a> for ItemUseSystem {
                             );
                         }
                     }
+                }
+            }
+
+            if provides_food.get(useitem.item).is_some() {
+                let target = targets[0];
+                if let Some(hc) = hunger_clocks.get_mut(target) {
+                    hc.state = HungerState::WellFed;
+                    hc.duration = 20;
+                    gamelog.entries.push(format!(
+                        "You eat the {}.",
+                        names.get(useitem.item).unwrap().name
+                    ));
                 }
             }
 

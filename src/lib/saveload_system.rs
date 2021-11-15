@@ -96,6 +96,7 @@ pub fn save_game(ecs: &mut World) {
             WantsToRemoveItem,
             ParticleLifetime,
             HungerClock,
+            ProvidesFood,
             SerializationHelper
         );
     }
@@ -163,6 +164,7 @@ pub fn load_game(ecs: &mut World) {
             WantsToRemoveItem,
             ParticleLifetime,
             HungerClock,
+            ProvidesFood,
             SerializationHelper
         );
     }
