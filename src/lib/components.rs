@@ -9,6 +9,20 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
+pub enum HungerState {
+    WellFed,
+    Normal,
+    Hungry,
+    Starving,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct HungerClock {
+    pub state: HungerState,
+    pub duration: i32,
+}
+
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum EquipmentSlot {
     Melee,
     Shield,

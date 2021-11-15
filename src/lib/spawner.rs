@@ -6,8 +6,9 @@ use std::collections::{hash_map::Entry, HashMap};
 
 use crate::{
     AreaOfEffect, BlocksTile, CombatStats, Confusion, Consumable, DefenseBonus, EquipmentSlot,
-    Equippable, InflictsDamage, Item, MeleePowerBonus, Monster, Name, Player, Position,
-    ProvidesHealing, RandomTable, Ranged, Rect, Renderable, SerializeMe, Viewshed, MAPWIDTH,
+    Equippable, HungerClock, HungerState, InflictsDamage, Item, MeleePowerBonus, Monster, Name,
+    Player, Position, ProvidesHealing, RandomTable, Ranged, Rect, Renderable, SerializeMe,
+    Viewshed, MAPWIDTH,
 };
 
 /// Fills a room with stuff!
@@ -110,6 +111,10 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             hp: 30,
             defense: 2,
             power: 5,
+        })
+        .with(HungerClock {
+            state: HungerState::WellFed,
+            duration: 20,
         })
         .marked::<SimpleMarker<SerializeMe>>()
         .build()

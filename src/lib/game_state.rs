@@ -245,6 +245,9 @@ impl State {
         let mut remove_items = ItemRemoveSystem {};
         remove_items.run_now(&self.ecs);
 
+        let mut hunger = hunger_system::HungerSystem {};
+        hunger.run_now(&self.ecs);
+
         let mut particles = ParticleSpawnSystem {};
         particles.run_now(&self.ecs);
 

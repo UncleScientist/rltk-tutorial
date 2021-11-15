@@ -39,6 +39,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<DefenseBonus>();
     gs.ecs.register::<WantsToRemoveItem>();
     gs.ecs.register::<ParticleLifetime>();
+    gs.ecs.register::<HungerClock>();
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
