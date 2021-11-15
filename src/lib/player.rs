@@ -114,6 +114,12 @@ fn skip_turn(ecs: &mut World) -> RunState {
         }
     }
 
+    let hunger_clocks = ecs.read_storage::<HungerClock>();
+    if let Some(hc) = hunger_clocks.get(*player_entity) {
+        can_heal =
+            can_heal && (hc.state != HungerState::Hungry && hc.state != HungerState::Starving);
+    }
+
     if can_heal {
         let mut health_components = ecs.write_storage::<CombatStats>();
         let player_hp = health_components.get_mut(*player_entity).unwrap();
