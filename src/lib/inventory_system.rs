@@ -2,9 +2,9 @@ use specs::prelude::*;
 
 use crate::{
     AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock,
-    HungerState, InBackpack, InflictsDamage, Map, Name, ParticleBuilder, Position, ProvidesFood,
-    ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem, WantsToRemoveItem,
-    WantsToUseItem,
+    HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder, Position,
+    ProvidesFood, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem,
+    WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -62,7 +62,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, AreaOfEffect>,
     WriteStorage<'a, SufferDamage>,
     WriteStorage<'a, Confusion>,
-    ReadExpect<'a, Map>,
+    WriteExpect<'a, Map>,
     ReadStorage<'a, Equippable>,
     WriteStorage<'a, Equipped>,
     WriteStorage<'a, InBackpack>,
@@ -70,6 +70,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, Position>,
     ReadStorage<'a, ProvidesFood>,
     WriteStorage<'a, HungerClock>,
+    ReadStorage<'a, MagicMapper>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -89,7 +90,7 @@ impl<'a> System<'a> for ItemUseSystem {
             aoe,
             mut suffer_damage,
             mut confused,
-            map,
+            mut map,
             equippable,
             mut equipped,
             mut backpack,
@@ -97,6 +98,7 @@ impl<'a> System<'a> for ItemUseSystem {
             positions,
             provides_food,
             mut hunger_clocks,
+            magic_mapper,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
@@ -194,6 +196,15 @@ impl<'a> System<'a> for ItemUseSystem {
                         }
                     }
                 }
+            }
+
+            if magic_mapper.get(useitem.item).is_some() {
+                for r in map.revealed_tiles.iter_mut() {
+                    *r = true;
+                }
+                gamelog
+                    .entries
+                    .push("The map is revealed to you!".to_string());
             }
 
             if provides_food.get(useitem.item).is_some() {

@@ -9,6 +9,9 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct MagicMapper;
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct ProvidesFood;
 
 #[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
