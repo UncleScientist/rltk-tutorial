@@ -3,7 +3,7 @@ use specs::prelude::*;
 use crate::{
     AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock,
     HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder, Position,
-    ProvidesFood, ProvidesHealing, SufferDamage, WantsToDropItem, WantsToPickupItem,
+    ProvidesFood, ProvidesHealing, RunState, SufferDamage, WantsToDropItem, WantsToPickupItem,
     WantsToRemoveItem, WantsToUseItem,
 };
 
@@ -62,7 +62,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, AreaOfEffect>,
     WriteStorage<'a, SufferDamage>,
     WriteStorage<'a, Confusion>,
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     ReadStorage<'a, Equippable>,
     WriteStorage<'a, Equipped>,
     WriteStorage<'a, InBackpack>,
@@ -71,6 +71,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, ProvidesFood>,
     WriteStorage<'a, HungerClock>,
     ReadStorage<'a, MagicMapper>,
+    WriteExpect<'a, RunState>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -90,7 +91,7 @@ impl<'a> System<'a> for ItemUseSystem {
             aoe,
             mut suffer_damage,
             mut confused,
-            mut map,
+            map,
             equippable,
             mut equipped,
             mut backpack,
@@ -99,6 +100,7 @@ impl<'a> System<'a> for ItemUseSystem {
             provides_food,
             mut hunger_clocks,
             magic_mapper,
+            mut runstate,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
@@ -199,12 +201,10 @@ impl<'a> System<'a> for ItemUseSystem {
             }
 
             if magic_mapper.get(useitem.item).is_some() {
-                for r in map.revealed_tiles.iter_mut() {
-                    *r = true;
-                }
                 gamelog
                     .entries
                     .push("The map is revealed to you!".to_string());
+                *runstate = RunState::MagicMapReveal { row: 0 };
             }
 
             if provides_food.get(useitem.item).is_some() {
