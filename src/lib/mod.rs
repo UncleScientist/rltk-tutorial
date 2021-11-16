@@ -53,3 +53,6 @@ pub use particle_system::*;
 
 pub mod hunger_system;
 pub use hunger_system::*;
+
+pub mod trigger_system;
+pub use trigger_system::*;

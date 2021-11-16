@@ -9,6 +9,15 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct EntityMoved;
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct EntryTrigger;
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Hidden;
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct MagicMapper;
 
 #[derive(Component, Serialize, Deserialize, Clone)]

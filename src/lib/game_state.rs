@@ -65,11 +65,14 @@ impl GameState for State {
                 {
                     let positions = self.ecs.read_storage::<Position>();
                     let renderables = self.ecs.read_storage::<Renderable>();
+                    let hidden = self.ecs.read_storage::<Hidden>();
                     let map = self.ecs.fetch::<Map>();
 
-                    let mut data = (&positions, &renderables).join().collect::<Vec<_>>();
+                    let mut data = (&positions, &renderables, !&hidden)
+                        .join()
+                        .collect::<Vec<_>>();
                     data.sort_by(|&a, &b| b.1.render_order.cmp(&a.1.render_order));
-                    for (pos, render) in data.iter() {
+                    for (pos, render, _) in data.iter() {
                         if map.is_visible(pos.x, pos.y) {
                             ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph);
                         }
@@ -243,6 +246,9 @@ impl State {
 
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
+
+        let mut triggers = TriggerSystem {};
+        triggers.run_now(&self.ecs);
 
         let mut mapindex = MapIndexingSystem {};
         mapindex.run_now(&self.ecs);

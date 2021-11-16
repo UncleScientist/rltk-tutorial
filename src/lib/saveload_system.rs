@@ -98,6 +98,9 @@ pub fn save_game(ecs: &mut World) {
             HungerClock,
             ProvidesFood,
             MagicMapper,
+            Hidden,
+            EntryTrigger,
+            EntityMoved,
             SerializationHelper
         );
     }
@@ -167,6 +170,9 @@ pub fn load_game(ecs: &mut World) {
             HungerClock,
             ProvidesFood,
             MagicMapper,
+            Hidden,
+            EntryTrigger,
+            EntityMoved,
             SerializationHelper
         );
     }
