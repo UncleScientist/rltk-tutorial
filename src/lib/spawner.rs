@@ -4,12 +4,7 @@ use specs::saveload::{MarkedBuilder, SimpleMarker};
 
 use std::collections::{hash_map::Entry, HashMap};
 
-use crate::{
-    AreaOfEffect, BlocksTile, CombatStats, Confusion, Consumable, DefenseBonus, EntryTrigger,
-    EquipmentSlot, Equippable, Hidden, HungerClock, HungerState, InflictsDamage, Item, MagicMapper,
-    MeleePowerBonus, Monster, Name, Player, Position, ProvidesFood, ProvidesHealing, RandomTable,
-    Ranged, Rect, Renderable, SerializeMe, Viewshed, MAPWIDTH,
-};
+use crate::*;
 
 /// Fills a room with stuff!
 pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
@@ -396,6 +391,7 @@ fn bear_trap(ecs: &mut World, x: i32, y: i32) {
         .with(Hidden {})
         .with(EntryTrigger {})
         .with(InflictsDamage { damage: 6 })
+        .with(SingleActivation {})
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }

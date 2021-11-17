@@ -1,6 +1,6 @@
 use super::{
     gamelog::GameLog, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Map, Name,
-    ParticleBuilder, Position, SufferDamage,
+    ParticleBuilder, Position, SingleActivation, SufferDamage,
 };
 use specs::prelude::*;
 
@@ -18,6 +18,7 @@ type TriggerData<'a> = (
     WriteExpect<'a, ParticleBuilder>,
     Entities<'a>,
     WriteExpect<'a, GameLog>,
+    ReadStorage<'a, SingleActivation>,
 );
 
 impl<'a> System<'a> for TriggerSystem {
@@ -36,8 +37,10 @@ impl<'a> System<'a> for TriggerSystem {
             mut particle_builder,
             entities,
             mut log,
+            single_activation,
         ) = data;
 
+        let mut remove_entities: Vec<Entity> = Vec::new();
         for (entity, mut _entity_moved, pos) in (&entities, &mut entity_moved, &position).join() {
             let idx = map.xy_idx(pos.x, pos.y);
 
@@ -46,6 +49,9 @@ impl<'a> System<'a> for TriggerSystem {
                     if let Some(name) = names.get(*entity_id) {
                         log.entries.push(format!("{} triggers!", &name.name));
                     }
+
+                    hidden.remove(*entity_id);
+
                     if let Some(damage) = inflicts_damage.get(*entity_id) {
                         particle_builder.request(
                             pos.x,
@@ -57,9 +63,16 @@ impl<'a> System<'a> for TriggerSystem {
                         );
                         SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage);
                     }
-                    hidden.remove(*entity_id);
+
+                    if single_activation.get(*entity_id).is_some() {
+                        remove_entities.push(*entity_id);
+                    }
                 }
             }
+        }
+
+        for trap in remove_entities.iter() {
+            entities.delete(*trap).expect("Unable to delete trap");
         }
 
         entity_moved.clear();
