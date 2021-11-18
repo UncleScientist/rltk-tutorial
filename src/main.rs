@@ -2,7 +2,10 @@ use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
-use tutorial::*;
+use rt::tutorial::*;
+use rt::map_builders::*;
+
+// pub mod lib;
 
 fn main() -> rltk::BError {
     use rltk::RltkBuilder;
@@ -49,7 +52,7 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
-    let map = Map::new_map_rooms_and_corridors(1);
+    let map = build_random_map(1);
 
     let (player_x, player_y) = map.rooms[0].center();
     gs.ecs.insert(Point::new(player_x, player_y));

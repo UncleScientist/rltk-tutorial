@@ -1,6 +1,8 @@
 use crate::*;
 use rltk::{GameState, Point, Rltk};
 
+use crate::map_builders::*;
+
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState {
     AwaitingInput,
@@ -350,7 +352,7 @@ impl State {
             } else {
                 worldmap_resource.depth + 1
             };
-            *worldmap_resource = Map::new_map_rooms_and_corridors(new_depth);
+            *worldmap_resource = build_random_map(new_depth);
             (worldmap_resource.clone(), new_depth)
         };
 
