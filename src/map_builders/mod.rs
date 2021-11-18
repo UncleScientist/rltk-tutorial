@@ -12,6 +12,6 @@ pub trait MapBuilder {
     fn spawn_entities(&mut self, map: &mut Map, ecs: &mut World);
 }
 
-pub fn random_builder() -> Box<dyn MapBuilder> {
-    Box::new(SimpleMapBuilder {})
+pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
+    Box::new(SimpleMapBuilder::new(new_depth))
 }

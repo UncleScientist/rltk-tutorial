@@ -21,6 +21,10 @@ impl MapBuilder for SimpleMapBuilder {
 }
 
 impl SimpleMapBuilder {
+    pub fn new(_new_depth: i32) -> SimpleMapBuilder {
+        SimpleMapBuilder {}
+    }
+
     fn rooms_and_corridors(map: &mut Map) -> Position {
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;

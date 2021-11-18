@@ -52,7 +52,7 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
-    let mut builder = random_builder();
+    let mut builder = random_builder(1);
     let (mut map, player_loc) = builder.build_map(1);
 
     gs.ecs.insert(Point::new(player_loc.x, player_loc.y));
