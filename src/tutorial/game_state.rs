@@ -345,7 +345,7 @@ impl State {
         }
 
         // Build a new map and place the player
-        let (mut builder, mut worldmap, player_start) = {
+        let (mut builder, player_start) = {
             let mut worldmap_resource = self.ecs.write_resource::<Map>();
             let new_depth = if everything {
                 1
@@ -353,13 +353,14 @@ impl State {
                 worldmap_resource.depth + 1
             };
             let mut builder = random_builder(new_depth);
-            let (newmap, player_start) = builder.build_map(new_depth);
-            *worldmap_resource = newmap;
-            (builder, worldmap_resource.clone(), player_start)
+            builder.build_map();
+            *worldmap_resource = builder.get_map();
+            let player_start = builder.get_starting_position();
+            (builder, player_start)
         };
 
         // Spawn bad guys and items
-        builder.spawn_entities(&mut worldmap, &mut self.ecs);
+        builder.spawn_entities(&mut self.ecs);
 
         // Place the player and update resources
         let (player_x, player_y) = (player_start.x, player_start.y);
