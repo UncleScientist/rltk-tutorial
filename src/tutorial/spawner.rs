@@ -376,7 +376,6 @@ fn confusion_scroll(ecs: &mut World, x: i32, y: i32) {
 }
 
 fn bear_trap(ecs: &mut World, x: i32, y: i32) {
-    rltk::console::log(format!("trap at {} {}", x, y));
     ecs.create_entity()
         .with(Position { x, y })
         .with(Renderable {
