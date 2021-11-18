@@ -52,7 +52,8 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
-    let (map, player_loc) = build_random_map(1);
+    let mut builder = random_builder();
+    let (mut map, player_loc) = builder.build_map(1);
 
     gs.ecs.insert(Point::new(player_loc.x, player_loc.y));
     let player_entity = player(&mut gs.ecs, player_loc.x, player_loc.y);
@@ -60,9 +61,7 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(RandomNumberGenerator::new());
     spawn_goodies(&mut gs.ecs, &map.rooms[0]);
-    for room in map.rooms.iter().skip(1) {
-        spawn_room(&mut gs.ecs, room, 1);
-    }
+    builder.spawn_entities(&mut map, &mut gs.ecs);
 
     gs.ecs.insert(map);
     gs.ecs.insert(RunState::MainMenu {
