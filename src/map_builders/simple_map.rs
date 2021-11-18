@@ -12,6 +12,12 @@ impl MapBuilder for SimpleMapBuilder {
         let playerpos = SimpleMapBuilder::rooms_and_corridors(&mut map);
         (map, playerpos)
     }
+
+    fn spawn(map: &mut Map, ecs: &mut World) {
+        for room in map.rooms.iter().skip(1) {
+            spawner::spawn_room(ecs, room, map.depth);
+        }
+    }
 }
 
 impl SimpleMapBuilder {
