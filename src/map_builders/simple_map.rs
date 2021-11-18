@@ -1,5 +1,5 @@
 use super::MapBuilder;
-use super::{Map, Rect, TileType, MAPHEIGHT, MAPWIDTH};
+use super::{Map, Position, Rect, TileType, MAPHEIGHT, MAPWIDTH};
 use rltk::RandomNumberGenerator;
 
 use crate::map_builders::*;
@@ -7,15 +7,15 @@ use crate::map_builders::*;
 pub struct SimpleMapBuilder {}
 
 impl MapBuilder for SimpleMapBuilder {
-    fn build(new_depth: i32) -> Map {
+    fn build(new_depth: i32) -> (Map, Position) {
         let mut map = Map::new(new_depth);
-        SimpleMapBuilder::rooms_and_corridors(&mut map);
-        map
+        let playerpos = SimpleMapBuilder::rooms_and_corridors(&mut map);
+        (map, playerpos)
     }
 }
 
 impl SimpleMapBuilder {
-    fn rooms_and_corridors(map: &mut Map) {
+    fn rooms_and_corridors(map: &mut Map) -> Position {
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;
         const MAX_SIZE: i32 = 10;
@@ -57,5 +57,11 @@ impl SimpleMapBuilder {
         let stairs_position = map.rooms[map.rooms.len() - 1].center();
         let stairs_idx = map.xy_idx(stairs_position.0, stairs_position.1);
         map.tiles[stairs_idx] = TileType::DownStairs;
+
+        let start_pos = map.rooms[0].center();
+        Position {
+            x: start_pos.0,
+            y: start_pos.1,
+        }
     }
 }
