@@ -20,7 +20,6 @@ pub const MAPCOUNT: usize = (MAPWIDTH * MAPHEIGHT) as usize;
 #[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Map {
     pub tiles: Vec<TileType>,
-    pub rooms: Vec<Rect>,
     pub width: i32,
     pub height: i32,
     pub revealed_tiles: Vec<bool>,
@@ -38,7 +37,6 @@ impl Map {
     pub fn new(new_depth: i32) -> Map {
         Map {
             tiles: vec![TileType::Wall; MAPCOUNT],
-            rooms: Vec::new(),
             width: MAPWIDTH,
             height: MAPHEIGHT,
             revealed_tiles: vec![false; MAPCOUNT],

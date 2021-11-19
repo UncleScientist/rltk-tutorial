@@ -55,33 +55,6 @@ pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
     }
 }
 
-pub fn spawn_goodies(ecs: &mut World, room: &Rect) {
-    let mut item_spawn_points: Vec<usize> = Vec::new();
-    let mwusize = MAPWIDTH as usize; // TODO: clean up map i32 vs usize
-
-    {
-        let mut rng = ecs.write_resource::<RandomNumberGenerator>();
-        for _ in 0..5 {
-            loop {
-                let x = (room.x1 + rng.roll_dice(1, i32::abs(room.x2 - room.x1))) as usize;
-                let y = (room.y1 + rng.roll_dice(1, i32::abs(room.y2 - room.y1))) as usize;
-                // TODO: get map from ecs & call xy_idx()?
-                let idx = (y * mwusize) + x;
-                if !item_spawn_points.contains(&idx) {
-                    item_spawn_points.push(idx);
-                    break;
-                }
-            }
-        }
-    }
-
-    for idx in item_spawn_points.iter() {
-        let x = *idx % mwusize;
-        let y = *idx / mwusize;
-        random_item(ecs, x as i32, y as i32);
-    }
-}
-
 /// Spawns the player and returns his/her entity object
 pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
     ecs.create_entity()
@@ -153,24 +126,6 @@ fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: FontCharType, na
         })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
-}
-
-fn random_item(ecs: &mut World, x: i32, y: i32) {
-    let roll = {
-        let mut rng = ecs.write_resource::<RandomNumberGenerator>();
-        rng.roll_dice(1, 8)
-    };
-
-    match roll {
-        1 => health_potion(ecs, x, y),
-        2 => fireball_scroll(ecs, x, y),
-        3 => confusion_scroll(ecs, x, y),
-        4 => dagger(ecs, x, y),
-        5 => shield(ecs, x, y),
-        6 => rations(ecs, x, y),
-        7 => magic_mapping_scroll(ecs, x, y),
-        _ => magic_missile_scroll(ecs, x, y),
-    };
 }
 
 fn rations(ecs: &mut World, x: i32, y: i32) {

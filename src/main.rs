@@ -62,7 +62,6 @@ fn main() -> rltk::BError {
 
     let map = builder.get_map();
     gs.ecs.insert(RandomNumberGenerator::new());
-    spawn_goodies(&mut gs.ecs, &map.rooms[0]);
     builder.spawn_entities(&mut gs.ecs);
 
     gs.ecs.insert(map);
