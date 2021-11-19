@@ -344,47 +344,23 @@ impl State {
                 .expect("Unable to delete entity");
         }
 
-        // Build a new map and place the player
-        let (mut builder, player_start) = {
-            let mut worldmap_resource = self.ecs.write_resource::<Map>();
-            let new_depth = if everything {
-                1
-            } else {
-                worldmap_resource.depth + 1
-            };
-            let mut builder = random_builder(new_depth);
-            builder.build_map();
-            *worldmap_resource = builder.get_map();
-            let player_start = builder.get_starting_position();
-            (builder, player_start)
+        let current_depth = if everything {
+            1
+        } else {
+            let worldmap_resource = self.ecs.fetch::<Map>();
+            worldmap_resource.depth
         };
-
-        // Spawn bad guys and items
-        builder.spawn_entities(&mut self.ecs);
+        self.generate_world_map(current_depth + 1);
 
         // Place the player and update resources
-        let (player_x, player_y) = (player_start.x, player_start.y);
         let player_entity = if everything {
-            let new_player = spawner::player(&mut self.ecs, player_x, player_y);
+            let new_player = spawner::player(&mut self.ecs, 0, 0);
             let mut player_entity_writer = self.ecs.write_resource::<Entity>();
             *player_entity_writer = new_player;
             *player_entity_writer
         } else {
             *self.ecs.fetch::<Entity>()
         };
-        let mut player_position = self.ecs.write_resource::<Point>();
-        *player_position = Point::new(player_x, player_y);
-        let mut position_components = self.ecs.write_storage::<Position>();
-        if let Some(player_pos_comp) = position_components.get_mut(player_entity) {
-            player_pos_comp.x = player_x;
-            player_pos_comp.y = player_y;
-        }
-
-        // Mark the player's visibility as dirty
-        let mut viewshed_components = self.ecs.write_storage::<Viewshed>();
-        if let Some(vs) = viewshed_components.get_mut(player_entity) {
-            vs.dirty = true;
-        }
 
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
         if everything {
@@ -393,13 +369,43 @@ impl State {
                 .entries
                 .push("Welcome to Rusty Roguelike... again!".to_string());
         } else {
+            let mut player_health_store = self.ecs.write_storage::<CombatStats>();
+            if let Some(player_health) = player_health_store.get_mut(player_entity) {
+                player_health.hp = i32::max(player_health.hp, player_health.max_hp / 2);
+            }
             gamelog
                 .entries
                 .push("You descend to the next level, and take a moment to heal".to_string());
         }
-        let mut player_health_store = self.ecs.write_storage::<CombatStats>();
-        if let Some(player_health) = player_health_store.get_mut(player_entity) {
-            player_health.hp = i32::max(player_health.hp, player_health.max_hp / 2);
+    }
+
+    pub fn generate_world_map(&mut self, new_depth: i32) {
+        let (mut builder, player_start) = {
+            let mut worldmap_resource = self.ecs.write_resource::<Map>();
+            let mut builder = random_builder(new_depth);
+            builder.build_map();
+            *worldmap_resource = builder.get_map();
+            let player_start = builder.get_starting_position();
+            (builder, player_start)
+        };
+
+        builder.spawn_entities(&mut self.ecs);
+
+        // Place the player and update resources
+        let (player_x, player_y) = (player_start.x, player_start.y);
+        let mut player_position = self.ecs.write_resource::<Point>();
+        *player_position = Point::new(player_x, player_y);
+        let mut position_components = self.ecs.write_storage::<Position>();
+        let player_entity = self.ecs.fetch::<Entity>();
+        if let Some(player_pos_comp) = position_components.get_mut(*player_entity) {
+            player_pos_comp.x = player_x;
+            player_pos_comp.y = player_y;
+        }
+
+        // Mark the player's visibility as dirty
+        let mut viewshed_components = self.ecs.write_storage::<Viewshed>();
+        if let Some(vs) = viewshed_components.get_mut(*player_entity) {
+            vs.dirty = true;
         }
     }
 }

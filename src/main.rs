@@ -2,10 +2,7 @@ use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
-use rt::map_builders::*;
 use rt::tutorial::*;
-
-// pub mod lib;
 
 fn main() -> rltk::BError {
     use rltk::RltkBuilder;
@@ -52,27 +49,24 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 
-    let mut builder = random_builder(1);
-    builder.build_map();
+    gs.ecs.insert(Map::new(1));
+    gs.ecs.insert(Point::new(0, 0));
+    gs.ecs.insert(RandomNumberGenerator::new());
 
-    let player_loc = builder.get_starting_position();
-    gs.ecs.insert(Point::new(player_loc.x, player_loc.y));
-    let player_entity = player(&mut gs.ecs, player_loc.x, player_loc.y);
+    let player_entity = player(&mut gs.ecs, 0, 0);
     gs.ecs.insert(player_entity);
 
-    let map = builder.get_map();
-    gs.ecs.insert(RandomNumberGenerator::new());
-    builder.spawn_entities(&mut gs.ecs);
-
-    gs.ecs.insert(map);
     gs.ecs.insert(RunState::MainMenu {
         menu_selection: gui::MainMenuSelection::NewGame,
     });
+
     gs.ecs.insert(gamelog::GameLog {
         entries: vec!["Welcome to Rusty Roguelike".to_string()],
     });
 
     gs.ecs.insert(particle_system::ParticleBuilder::new());
+
+    gs.generate_world_map(1);
 
     rltk::main_loop(context, gs)
 }
