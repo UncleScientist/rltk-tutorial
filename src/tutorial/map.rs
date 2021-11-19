@@ -132,7 +132,7 @@ impl BaseMap for Map {
     }
 }
 
-pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
+pub fn draw_map(map: &Map, ctx: &mut Rltk) {
     let grey = RGB::from_f32(0.5, 0.5, 0.5);
     let black = RGB::from_f32(0., 0., 0.);
     let blood = RGB::from_f32(0.75, 0., 0.);
@@ -140,8 +140,6 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
     let cyan = RGB::from_f32(0., 1., 1.);
     let floor = rltk::to_cp437('.');
     let down_stairs = rltk::to_cp437('>');
-
-    let map = ecs.fetch::<Map>();
 
     let mut y = 0;
     let mut x = 0;

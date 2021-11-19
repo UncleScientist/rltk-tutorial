@@ -25,10 +25,15 @@ pub enum RunState {
     MagicMapReveal {
         row: i32,
     },
+    MapGeneration,
 }
 
 pub struct State {
     pub ecs: World,
+    pub mapgen_next_state: Option<RunState>,
+    pub mapgen_history: Vec<Map>,
+    pub mapgen_index: usize,
+    pub mapgen_timer: f32,
 }
 
 impl GameState for State {
@@ -61,8 +66,23 @@ impl GameState for State {
                 }
             }
             RunState::GameOver => {}
+            RunState::MapGeneration => {
+                if !SHOW_MAPGEN_VISUALIZER {
+                    newrunstate = self.mapgen_next_state.unwrap();
+                }
+                draw_map(&self.mapgen_history[self.mapgen_index], ctx);
+
+                self.mapgen_timer += ctx.frame_time_ms;
+                if self.mapgen_timer > 300.0 {
+                    self.mapgen_timer = 0.0;
+                    self.mapgen_index += 1;
+                    if self.mapgen_index >= self.mapgen_history.len() {
+                        newrunstate = self.mapgen_next_state.unwrap();
+                    }
+                }
+            }
             _ => {
-                draw_map(&self.ecs, ctx);
+                draw_map(&self.ecs.fetch::<Map>(), ctx);
 
                 {
                     let positions = self.ecs.read_storage::<Position>();
@@ -230,6 +250,7 @@ impl GameState for State {
                     newrunstate = RunState::MagicMapReveal { row: row + 1 }
                 }
             }
+            RunState::MapGeneration => {}
         }
 
         {
@@ -380,10 +401,15 @@ impl State {
     }
 
     pub fn generate_world_map(&mut self, new_depth: i32) {
+        self.mapgen_index = 0;
+        self.mapgen_timer = 0.0;
+        self.mapgen_history.clear();
+
         let (mut builder, player_start) = {
             let mut worldmap_resource = self.ecs.write_resource::<Map>();
             let mut builder = random_builder(new_depth);
             builder.build_map();
+            self.mapgen_history = builder.get_snapshot_history();
             *worldmap_resource = builder.get_map();
             let player_start = builder.get_starting_position();
             (builder, player_start)
