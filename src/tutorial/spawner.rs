@@ -2,56 +2,81 @@ use rltk::{to_cp437, FontCharType, RandomNumberGenerator, RGB};
 use specs::prelude::*;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::HashMap;
 
 use crate::*;
 
 /// Fills a room with stuff!
 pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
-    let spawn_table = room_table(map_depth);
-    let mut spawn_points: HashMap<usize, String> = HashMap::new();
-    let mwusize = MAPWIDTH as usize; // TODO: clean up map i32 vs usize
-
+    let mut possible_targets: Vec<usize> = Vec::new();
     {
-        let mut rng = ecs.write_resource::<RandomNumberGenerator>();
-        let num_spawns = rng.roll_dice(1, 7) + (map_depth - 1) - 3;
-
-        for _ in 0..num_spawns {
-            let mut tries = 0;
-
-            while tries < 20 {
-                let x = (room.x1 + rng.roll_dice(1, i32::abs(room.x2 - room.x1))) as usize;
-                let y = (room.y1 + rng.roll_dice(1, i32::abs(room.y2 - room.y1))) as usize;
-                let idx = y * mwusize + x;
-                if let Entry::Vacant(e) = spawn_points.entry(idx) {
-                    e.insert(spawn_table.roll(&mut rng));
-                    break;
+        let map = ecs.fetch::<Map>();
+        for y in room.y1 + 1..room.y2 {
+            for x in room.x1 + 1..room.x2 {
+                let idx = map.xy_idx(x, y);
+                if map.tiles[idx] == TileType::Floor {
+                    possible_targets.push(idx);
                 }
-                tries += 1;
             }
         }
     }
 
-    for spawn in spawn_points.iter() {
-        let x = (*spawn.0 % mwusize) as i32;
-        let y = (*spawn.0 / mwusize) as i32;
+    spawn_region(ecs, &possible_targets, map_depth);
+}
 
-        match spawn.1.as_ref() {
-            "Goblin" => goblin(ecs, x, y),
-            "Orc" => orc(ecs, x, y),
-            "Health Potion" => health_potion(ecs, x, y),
-            "Fireball Scroll" => fireball_scroll(ecs, x, y),
-            "Confusion Scroll" => confusion_scroll(ecs, x, y),
-            "Magic Missile Scroll" => magic_missile_scroll(ecs, x, y),
-            "Dagger" => dagger(ecs, x, y),
-            "Shield" => shield(ecs, x, y),
-            "Longsword" => longsword(ecs, x, y),
-            "Tower Shield" => tower_shield(ecs, x, y),
-            "Rations" => rations(ecs, x, y),
-            "Magic Mapping Scroll" => magic_mapping_scroll(ecs, x, y),
-            "Bear Trap" => bear_trap(ecs, x, y),
-            _ => {} // panic!("could not find {} in table", spawn.1),
+pub fn spawn_region(ecs: &mut World, area: &[usize], map_depth: i32) {
+    const MAX_MONSTERS: i32 = 30;
+
+    let spawn_table = room_table(map_depth);
+    let mut spawn_points: HashMap<usize, String> = HashMap::new();
+    let mut areas: Vec<usize> = Vec::from(area);
+
+    {
+        let mut rng = ecs.write_resource::<RandomNumberGenerator>();
+        let num_spawns = i32::min(
+            areas.len() as i32,
+            rng.roll_dice(1, MAX_MONSTERS + 3) + (map_depth - 1) - 3,
+        );
+        if num_spawns == 0 {
+            return;
         }
+
+        for _ in 0..num_spawns {
+            let array_index = if areas.len() == 1 {
+                0usize
+            } else {
+                (rng.roll_dice(1, areas.len() as i32) - 1) as usize
+            };
+            let map_idx = areas[array_index];
+            spawn_points.insert(map_idx, spawn_table.roll(&mut rng));
+            areas.remove(array_index);
+        }
+    }
+
+    for spawn in spawn_points.iter() {
+        spawn_entity(ecs, &spawn);
+    }
+}
+
+fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
+    let x = (*spawn.0 % MAPWIDTH as usize) as i32;
+    let y = (*spawn.0 / MAPWIDTH as usize) as i32;
+
+    match spawn.1.as_ref() {
+        "Goblin" => goblin(ecs, x, y),
+        "Orc" => orc(ecs, x, y),
+        "Health Potion" => health_potion(ecs, x, y),
+        "Fireball Scroll" => fireball_scroll(ecs, x, y),
+        "Confusion Scroll" => confusion_scroll(ecs, x, y),
+        "Magic Missile Scroll" => magic_missile_scroll(ecs, x, y),
+        "Dagger" => dagger(ecs, x, y),
+        "Shield" => shield(ecs, x, y),
+        "Longsword" => longsword(ecs, x, y),
+        "Tower Shield" => tower_shield(ecs, x, y),
+        "Rations" => rations(ecs, x, y),
+        "Magic Mapping Scroll" => magic_mapping_scroll(ecs, x, y),
+        "Bear Trap" => bear_trap(ecs, x, y),
+        _ => {} // panic!("could not find {} in table", spawn.1),
     }
 }
 
