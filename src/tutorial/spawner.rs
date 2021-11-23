@@ -25,7 +25,7 @@ pub fn spawn_room(ecs: &mut World, room: &Rect, map_depth: i32) {
 }
 
 pub fn spawn_region(ecs: &mut World, area: &[usize], map_depth: i32) {
-    const MAX_MONSTERS: i32 = 30;
+    const MAX_SPAWNS: i32 = 3;
 
     let spawn_table = room_table(map_depth);
     let mut spawn_points: HashMap<usize, String> = HashMap::new();
@@ -35,7 +35,7 @@ pub fn spawn_region(ecs: &mut World, area: &[usize], map_depth: i32) {
         let mut rng = ecs.write_resource::<RandomNumberGenerator>();
         let num_spawns = i32::min(
             areas.len() as i32,
-            rng.roll_dice(1, MAX_MONSTERS + 3) + (map_depth - 1) - 3,
+            rng.roll_dice(1, MAX_SPAWNS + 3) + (map_depth - 1) - 3,
         );
         if num_spawns == 0 {
             return;
