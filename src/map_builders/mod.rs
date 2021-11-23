@@ -17,7 +17,7 @@ mod cellular_automata;
 use cellular_automata::CellularAutomataBuilder;
 
 mod drunkard;
-use drunkard::DrunkardsWalkBuilder;
+use drunkard::{DrunkSpawnMode, DrunkardSettings, DrunkardsWalkBuilder};
 
 pub trait MapBuilder {
     fn build_map(&mut self);
@@ -35,7 +35,12 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
         1 => Box::new(BspDungeonBuilder::new(new_depth)),
         2 => Box::new(BspInteriorBuilder::new(new_depth)),
         3 => Box::new(CellularAutomataBuilder::new(new_depth)),
-        4 => Box::new(DrunkardsWalkBuilder::new(new_depth)),
+        4 => Box::new(DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+            },
+        )),
         _ => Box::new(SimpleMapBuilder::new(new_depth)),
     }
 }
