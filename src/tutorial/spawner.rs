@@ -40,7 +40,6 @@ pub fn spawn_region(ecs: &mut World, area: &[usize], map_depth: i32) {
         if num_spawns == 0 {
             return;
         }
-        rltk::console::log(format!("Spawning {} item(s)", num_spawns));
 
         for _ in 0..num_spawns {
             let array_index = if areas.len() == 1 {
