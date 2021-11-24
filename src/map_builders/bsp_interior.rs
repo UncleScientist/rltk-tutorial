@@ -69,7 +69,6 @@ impl BspInteriorBuilder {
         self.add_subrects(first_room, &mut rng);
 
         let rooms = self.rects.clone();
-        rltk::console::log(format!("created {} rooms", rooms.len()));
         for r in rooms.iter() {
             let room = *r;
             self.rooms.push(room);

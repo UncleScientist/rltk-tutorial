@@ -12,6 +12,8 @@ pub enum DrunkSpawnMode {
 
 pub struct DrunkardSettings {
     pub spawn_mode: DrunkSpawnMode,
+    pub drunken_lifetime: i32,
+    pub floor_percent: f32,
 }
 
 pub struct DrunkardsWalkBuilder {
@@ -58,7 +60,7 @@ impl MapBuilder for DrunkardsWalkBuilder {
 }
 
 impl DrunkardsWalkBuilder {
-    pub fn new(new_depth: i32, settings: DrunkardSettings) -> DrunkardsWalkBuilder {
+    fn new(new_depth: i32, settings: DrunkardSettings) -> DrunkardsWalkBuilder {
         DrunkardsWalkBuilder {
             map: Map::new(new_depth),
             starting_position: Position { x: 0, y: 0 },
@@ -67,6 +69,39 @@ impl DrunkardsWalkBuilder {
             noise_areas: HashMap::new(),
             settings,
         }
+    }
+
+    pub fn open_area(new_depth: i32) -> DrunkardsWalkBuilder {
+        DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::StartingPoint,
+                drunken_lifetime: 400,
+                floor_percent: 0.5,
+            },
+        )
+    }
+
+    pub fn open_halls(new_depth: i32) -> DrunkardsWalkBuilder {
+        DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+                drunken_lifetime: 400,
+                floor_percent: 0.5,
+            },
+        )
+    }
+
+    pub fn winding_passages(new_depth: i32) -> DrunkardsWalkBuilder {
+        DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::StartingPoint,
+                drunken_lifetime: 100,
+                floor_percent: 0.4,
+            },
+        )
     }
 
     fn build(&mut self) {
@@ -83,7 +118,7 @@ impl DrunkardsWalkBuilder {
 
         self.map.tiles[start_idx] = TileType::Floor;
         let total_tiles = self.map.width * self.map.height;
-        let desired_floor_tiles = (total_tiles / 2) as usize;
+        let desired_floor_tiles = (self.settings.floor_percent * total_tiles as f32) as usize;
         let mut floor_tile_count = self
             .map
             .tiles
@@ -91,11 +126,10 @@ impl DrunkardsWalkBuilder {
             .filter(|a| **a == TileType::Floor)
             .count();
         let mut digger_count = 0;
-        let mut active_digger_count = 0;
 
         while floor_tile_count < desired_floor_tiles {
             let mut did_something = false;
-            let mut drunk_life = 400;
+            let mut drunk_life = self.settings.drunken_lifetime;
 
             let (mut drunk_x, mut drunk_y) = match self.settings.spawn_mode {
                 DrunkSpawnMode::StartingPoint => {
@@ -148,7 +182,6 @@ impl DrunkardsWalkBuilder {
 
             if did_something {
                 self.take_snapshot();
-                active_digger_count += 1;
             }
 
             digger_count += 1;
@@ -164,10 +197,6 @@ impl DrunkardsWalkBuilder {
                 .filter(|a| **a == TileType::Floor)
                 .count();
         }
-        rltk::console::log(format!(
-            "{} dwarves gave up their sobriety, of whom {} actually found a wall.",
-            digger_count, active_digger_count
-        ));
 
         let exit_tile = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
         self.take_snapshot();
