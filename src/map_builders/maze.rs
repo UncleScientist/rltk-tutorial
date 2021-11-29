@@ -60,24 +60,12 @@ impl MazeBuilder {
     fn build(&mut self) {
         let mut rng = rltk::RandomNumberGenerator::new();
 
-        self.starting_position = Position {
-            x: self.map.width / 2,
-            y: self.map.height / 2,
-        };
 
         let mut maze = Grid::new(self.map.width / 2 - 2, self.map.height / 2 - 2, &mut rng);
         maze.generate_maze(self);
 
-        let mut start_idx = self
-            .map
-            .xy_idx(self.starting_position.x, self.starting_position.y);
-        while self.map.tiles[start_idx] != TileType::Floor {
-            self.starting_position.x -= 1;
-            start_idx = self
-                .map
-                .xy_idx(self.starting_position.x, self.starting_position.y);
-        }
-
+        self.starting_position = Position { x: 2, y: 2 };
+        let start_idx = self.map.xy_idx(self.starting_position.x, self.starting_position.y);
         self.take_snapshot();
 
         let exit_tile = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
@@ -117,6 +105,21 @@ impl Cell {
         let x = self.column - next.column;
         let y = self.row - next.row;
 
+        if x == 1 {
+            self.walls[LEFT] = false;
+            next.walls[RIGHT] = false;
+        } else if x == -1 {
+            self.walls[RIGHT] = false;
+            next.walls[LEFT] = false;
+        } else if y == 1 {
+            self.walls[TOP] = false;
+            next.walls[BOTTOM] = false;
+        } else if y == -1 {
+            self.walls[BOTTOM] = false;
+            next.walls[TOP] = false;
+        }
+
+/*
         let (mine, yours) = match (x, y) {
             (1, _) => (LEFT, RIGHT),
             (-1, _) => (RIGHT, LEFT),
@@ -126,6 +129,7 @@ impl Cell {
         };
         self.walls[mine] = false;
         self.walls[yours] = false;
+*/
     }
 }
 
@@ -224,8 +228,8 @@ impl<'a> Grid<'a> {
             } else {
                 break;
             }
-            self.copy_to_map(&mut generator.map);
-            if snap_level % 3 == 0 {
+            if snap_level % 50 == 0 {
+                self.copy_to_map(&mut generator.map);
                 generator.take_snapshot();
             }
             snap_level += 1;
