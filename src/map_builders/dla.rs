@@ -65,12 +65,12 @@ impl MapBuilder for DLABuilder {
     }
 }
 
-impl DLABuilder {
-    pub fn walk_inwards(new_depth: i32) -> DLABuilder {
+impl Default for DLABuilder {
+    fn default() -> DLABuilder {
         DLABuilder {
-            map: Map::new(new_depth),
+            map: Map::new(1),
             starting_position: Position { x: 0, y: 0 },
-            depth: new_depth,
+            depth: 1,
             history: Vec::new(),
             noise_areas: HashMap::new(),
             algorithm: DLAAlgorithm::WalkInwards,
@@ -79,46 +79,67 @@ impl DLABuilder {
             floor_percent: 0.25,
         }
     }
+}
+
+impl DLABuilder {
+    pub fn walk_inwards(new_depth: i32) -> DLABuilder {
+        DLABuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            ..Default::default()
+        }
+    }
 
     pub fn walk_outwards(new_depth: i32) -> DLABuilder {
         DLABuilder {
             map: Map::new(new_depth),
-            starting_position: Position { x: 0, y: 0 },
             depth: new_depth,
-            history: Vec::new(),
-            noise_areas: HashMap::new(),
             algorithm: DLAAlgorithm::WalkOutwards,
             brush_size: 2,
-            symmetry: DLASymmetry::None,
-            floor_percent: 0.25,
+            ..Default::default()
         }
     }
 
     pub fn central_attractor(new_depth: i32) -> DLABuilder {
         DLABuilder {
             map: Map::new(new_depth),
-            starting_position: Position { x: 0, y: 0 },
             depth: new_depth,
-            history: Vec::new(),
-            noise_areas: HashMap::new(),
             algorithm: DLAAlgorithm::CentralAttractor,
             brush_size: 2,
-            symmetry: DLASymmetry::None,
-            floor_percent: 0.25,
+            ..Default::default()
         }
     }
 
     pub fn insectoid(new_depth: i32) -> DLABuilder {
         DLABuilder {
             map: Map::new(new_depth),
-            starting_position: Position { x: 0, y: 0 },
             depth: new_depth,
-            history: Vec::new(),
-            noise_areas: HashMap::new(),
             algorithm: DLAAlgorithm::CentralAttractor,
             brush_size: 2,
             symmetry: DLASymmetry::Horizontal,
-            floor_percent: 0.25,
+            ..Default::default()
+        }
+    }
+
+    pub fn crazy(new_depth: i32) -> DLABuilder {
+        DLABuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            algorithm: DLAAlgorithm::CentralAttractor,
+            brush_size: 1,
+            symmetry: DLASymmetry::Vertical,
+            ..Default::default()
+        }
+    }
+
+    pub fn rorschach(new_depth: i32) -> DLABuilder {
+        DLABuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            algorithm: DLAAlgorithm::CentralAttractor,
+            brush_size: 1,
+            symmetry: DLASymmetry::Both,
+            ..Default::default()
         }
     }
 

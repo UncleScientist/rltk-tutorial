@@ -50,6 +50,8 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
         9 => Box::new(DLABuilder::walk_outwards(new_depth)),
         10 => Box::new(DLABuilder::central_attractor(new_depth)),
         11 => Box::new(DLABuilder::insectoid(new_depth)),
+        12 => Box::new(DLABuilder::crazy(new_depth)),
+        13 => Box::new(DLABuilder::rorschach(new_depth)),
         _ => Box::new(SimpleMapBuilder::new(new_depth)),
     }
 }
