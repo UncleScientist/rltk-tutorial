@@ -60,12 +60,13 @@ impl MazeBuilder {
     fn build(&mut self) {
         let mut rng = rltk::RandomNumberGenerator::new();
 
-
         let mut maze = Grid::new(self.map.width / 2 - 2, self.map.height / 2 - 2, &mut rng);
         maze.generate_maze(self);
 
         self.starting_position = Position { x: 2, y: 2 };
-        let start_idx = self.map.xy_idx(self.starting_position.x, self.starting_position.y);
+        let start_idx = self
+            .map
+            .xy_idx(self.starting_position.x, self.starting_position.y);
         self.take_snapshot();
 
         let exit_tile = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
@@ -119,17 +120,17 @@ impl Cell {
             next.walls[TOP] = false;
         }
 
-/*
-        let (mine, yours) = match (x, y) {
-            (1, _) => (LEFT, RIGHT),
-            (-1, _) => (RIGHT, LEFT),
-            (_, 1) => (TOP, BOTTOM),
-            (_, -1) => (BOTTOM, TOP),
-            (_, _) => panic!("oops"),
-        };
-        self.walls[mine] = false;
-        self.walls[yours] = false;
-*/
+        /*
+                let (mine, yours) = match (x, y) {
+                    (1, _) => (LEFT, RIGHT),
+                    (-1, _) => (RIGHT, LEFT),
+                    (_, 1) => (TOP, BOTTOM),
+                    (_, -1) => (BOTTOM, TOP),
+                    (_, _) => panic!("oops"),
+                };
+                self.walls[mine] = false;
+                self.walls[yours] = false;
+        */
     }
 }
 
