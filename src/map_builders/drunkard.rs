@@ -14,6 +14,8 @@ pub struct DrunkardSettings {
     pub spawn_mode: DrunkSpawnMode,
     pub drunken_lifetime: i32,
     pub floor_percent: f32,
+    pub brush_size: i32,
+    pub symmetry: Symmetry,
 }
 
 pub struct DrunkardsWalkBuilder {
@@ -71,6 +73,32 @@ impl DrunkardsWalkBuilder {
         }
     }
 
+    pub fn fearful_symmetry(new_depth: i32) -> DrunkardsWalkBuilder {
+        DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+                drunken_lifetime: 100,
+                floor_percent: 0.4,
+                brush_size: 1,
+                symmetry: Symmetry::Both,
+            },
+        )
+    }
+
+    pub fn fat_passages(new_depth: i32) -> DrunkardsWalkBuilder {
+        DrunkardsWalkBuilder::new(
+            new_depth,
+            DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+                drunken_lifetime: 100,
+                floor_percent: 0.3,
+                brush_size: 2,
+                symmetry: Symmetry::None,
+            },
+        )
+    }
+
     pub fn open_area(new_depth: i32) -> DrunkardsWalkBuilder {
         DrunkardsWalkBuilder::new(
             new_depth,
@@ -78,6 +106,8 @@ impl DrunkardsWalkBuilder {
                 spawn_mode: DrunkSpawnMode::StartingPoint,
                 drunken_lifetime: 400,
                 floor_percent: 0.5,
+                brush_size: 1,
+                symmetry: Symmetry::None,
             },
         )
     }
@@ -89,6 +119,8 @@ impl DrunkardsWalkBuilder {
                 spawn_mode: DrunkSpawnMode::Random,
                 drunken_lifetime: 400,
                 floor_percent: 0.5,
+                brush_size: 1,
+                symmetry: Symmetry::None,
             },
         )
     }
@@ -100,6 +132,8 @@ impl DrunkardsWalkBuilder {
                 spawn_mode: DrunkSpawnMode::StartingPoint,
                 drunken_lifetime: 100,
                 floor_percent: 0.4,
+                brush_size: 1,
+                symmetry: Symmetry::None,
             },
         )
     }
@@ -152,6 +186,13 @@ impl DrunkardsWalkBuilder {
                 if self.map.tiles[drunk_idx] == TileType::Wall {
                     did_something = true;
                 }
+                paint(
+                    &mut self.map,
+                    self.settings.symmetry,
+                    self.settings.brush_size,
+                    drunk_x,
+                    drunk_y,
+                );
                 self.map.tiles[drunk_idx] = TileType::DownStairs;
 
                 match rng.roll_dice(1, 4) {
