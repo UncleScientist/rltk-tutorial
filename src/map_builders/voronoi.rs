@@ -4,12 +4,21 @@ use super::{Map, Position, TileType};
 use crate::map_builders::*;
 use crate::*;
 
+#[derive(PartialEq, Copy, Clone)]
+pub enum DistanceAlgorithm {
+    Pythagoras,
+    Manhattan,
+    Chebyshev,
+}
+
 pub struct VoronoiBuilder {
     map: Map,
     starting_position: Position,
     depth: i32,
     history: Vec<Map>,
     noise_areas: HashMap<i32, Vec<usize>>,
+    n_seeds: usize,
+    distance_algorithm: DistanceAlgorithm,
 }
 
 impl MapBuilder for VoronoiBuilder {
@@ -46,23 +55,52 @@ impl MapBuilder for VoronoiBuilder {
     }
 }
 
-impl VoronoiBuilder {
-    pub fn new(new_depth: i32) -> VoronoiBuilder {
+impl Default for VoronoiBuilder {
+    fn default() -> VoronoiBuilder {
         VoronoiBuilder {
-            map: Map::new(new_depth),
+            map: Map::new(1),
             starting_position: Position { x: 0, y: 0 },
-            depth: new_depth,
+            depth: 1,
             history: Vec::new(),
             noise_areas: HashMap::new(),
+            n_seeds: 64,
+            distance_algorithm: DistanceAlgorithm::Pythagoras,
+        }
+    }
+}
+
+impl VoronoiBuilder {
+    pub fn pythagoras(new_depth: i32) -> VoronoiBuilder {
+        VoronoiBuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            ..Default::default()
+        }
+    }
+
+    pub fn manhattan(new_depth: i32) -> VoronoiBuilder {
+        VoronoiBuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            distance_algorithm: DistanceAlgorithm::Manhattan,
+            ..Default::default()
+        }
+    }
+
+    pub fn chebyshev(new_depth: i32) -> VoronoiBuilder {
+        VoronoiBuilder {
+            map: Map::new(new_depth),
+            depth: new_depth,
+            distance_algorithm: DistanceAlgorithm::Chebyshev,
+            ..Default::default()
         }
     }
 
     fn build(&mut self) {
         let mut rng = rltk::RandomNumberGenerator::new();
-        let n_seeds = 64;
         let mut voronoi_seeds: Vec<(usize, rltk::Point)> = Vec::new();
 
-        while voronoi_seeds.len() < n_seeds {
+        while voronoi_seeds.len() < self.n_seeds {
             let vx = rng.roll_dice(1, self.map.width - 1);
             let vy = rng.roll_dice(1, self.map.height - 1);
             let vidx = self.map.xy_idx(vx, vy);
@@ -72,7 +110,7 @@ impl VoronoiBuilder {
             }
         }
 
-        let mut voronoi_distance = vec![(0, 0.0f32); n_seeds];
+        let mut voronoi_distance = vec![(0, 0.0f32); self.n_seeds];
         let mut voronoi_membership: Vec<i32> =
             vec![0; self.map.width as usize * self.map.height as usize];
         for (i, vid) in voronoi_membership.iter_mut().enumerate() {
@@ -80,8 +118,16 @@ impl VoronoiBuilder {
             let y = i as i32 / self.map.width;
 
             for (seed, pos) in voronoi_seeds.iter().enumerate() {
-                let distance =
-                    rltk::DistanceAlg::PythagorasSquared.distance2d(rltk::Point::new(x, y), pos.1);
+                let distance = match self.distance_algorithm {
+                    DistanceAlgorithm::Pythagoras => rltk::DistanceAlg::PythagorasSquared
+                        .distance2d(rltk::Point::new(x, y), pos.1),
+                    DistanceAlgorithm::Manhattan => {
+                        rltk::DistanceAlg::Manhattan.distance2d(rltk::Point::new(x, y), pos.1)
+                    }
+                    DistanceAlgorithm::Chebyshev => {
+                        rltk::DistanceAlg::Chebyshev.distance2d(rltk::Point::new(x, y), pos.1)
+                    }
+                };
                 voronoi_distance[seed] = (seed, distance);
             }
 
