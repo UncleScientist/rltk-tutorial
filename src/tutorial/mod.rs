@@ -54,3 +54,6 @@ pub use hunger_system::*;
 
 pub mod trigger_system;
 pub use trigger_system::*;
+
+pub mod rex_assets;
+pub use rex_assets::*;
