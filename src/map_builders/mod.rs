@@ -25,6 +25,9 @@ use maze::MazeBuilder;
 mod dla;
 use dla::*;
 
+mod voronoi;
+use voronoi::*;
+
 pub trait MapBuilder {
     fn build_map(&mut self);
     fn spawn_entities(&mut self, ecs: &mut World);
@@ -36,10 +39,10 @@ pub trait MapBuilder {
 
 pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
     let mut rng = rltk::RandomNumberGenerator::new();
-    let builder = rng.roll_dice(1, 16);
-    // let builder = new_depth % 16;
+    let builder = rng.roll_dice(1, 17);
+    // let builder = new_depth % 17;
     match builder {
-        1 => Box::new(DrunkardsWalkBuilder::fearful_symmetry(new_depth)),
+        1 => Box::new(VoronoiBuilder::new(new_depth)),
         2 => Box::new(MazeBuilder::new(new_depth)),
         3 => Box::new(BspInteriorBuilder::new(new_depth)),
         4 => Box::new(CellularAutomataBuilder::new(new_depth)),
@@ -54,6 +57,7 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
         13 => Box::new(DLABuilder::rorschach(new_depth)),
         14 => Box::new(BspDungeonBuilder::new(new_depth)),
         15 => Box::new(DrunkardsWalkBuilder::fat_passages(new_depth)),
+        16 => Box::new(DrunkardsWalkBuilder::fearful_symmetry(new_depth)),
         _ => Box::new(SimpleMapBuilder::new(new_depth)),
     }
 }
