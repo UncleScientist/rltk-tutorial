@@ -6,7 +6,7 @@ use std::collections::HashSet;
 // ------------------------------------------------------------
 // Map Section
 
-#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
+#[derive(Eq, Hash, PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum TileType {
     Wall,
     Floor,

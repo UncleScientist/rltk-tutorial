@@ -1,6 +1,5 @@
-use rltk::rex::XpFile;
 use super::{Map, TileType};
-
+use rltk::rex::XpFile;
 
 /// Loads a RexPaint file, and converts it into our map format
 pub fn load_rex_map(new_depth: i32, xp_file: &XpFile) -> Map {

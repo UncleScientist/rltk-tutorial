@@ -1,6 +1,6 @@
 use crate::{
     CombatStats, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack, Map, Name, Owned,
-    Player, Position, RunState, State, Viewshed, MAPWIDTH, RexAssets,
+    Player, Position, RexAssets, RunState, State, Viewshed, MAPWIDTH,
 };
 use rltk::{
     Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED, RGB, WHITE,
@@ -294,10 +294,32 @@ pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {
     let assets = gs.ecs.fetch::<RexAssets>();
     ctx.render_xp_sprite(&assets.menu, 0, 0);
 
-    ctx.draw_box_double(24, 18, 31, 10, RGB::named(rltk::WHEAT), RGB::named(rltk::BLACK));
-    ctx.print_color_centered( 20, RGB::named(YELLOW), RGB::named(BLACK), "Rusty Roguelike Tutorial",);
-    ctx.print_color_centered( 21, RGB::named(CYAN), RGB::named(BLACK), "by Herbert Wolverson",);
-    ctx.print_color_centered( 22, RGB::named(GREY), RGB::named(BLACK), "Use Up/Down Arrows and Enter",);
+    ctx.draw_box_double(
+        24,
+        18,
+        31,
+        10,
+        RGB::named(rltk::WHEAT),
+        RGB::named(rltk::BLACK),
+    );
+    ctx.print_color_centered(
+        20,
+        RGB::named(YELLOW),
+        RGB::named(BLACK),
+        "Rusty Roguelike Tutorial",
+    );
+    ctx.print_color_centered(
+        21,
+        RGB::named(CYAN),
+        RGB::named(BLACK),
+        "by Herbert Wolverson",
+    );
+    ctx.print_color_centered(
+        22,
+        RGB::named(GREY),
+        RGB::named(BLACK),
+        "Use Up/Down Arrows and Enter",
+    );
 
     let mut y = 24;
     if let RunState::MainMenu {
