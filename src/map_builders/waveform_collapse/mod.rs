@@ -11,6 +11,9 @@ use constraints::*;
 mod common;
 use common::*;
 
+mod solver;
+use solver::*;
+
 use crate::*;
 
 pub struct WaveformCollapseBuilder {
@@ -80,6 +83,19 @@ impl WaveformCollapseBuilder {
         let patterns = build_patterns(&self.map, CHUNK_SIZE, true, true);
         let constraints = patterns_to_constraints(patterns, CHUNK_SIZE);
         self.render_tile_gallery(&constraints, CHUNK_SIZE);
+
+        self.map = Map::new(self.depth);
+        loop {
+            let mut solver = Solver::new(constraints.clone(), CHUNK_SIZE, &self.map);
+            while !solver.iteration(&mut self.map, &mut rng) {
+                self.take_snapshot();
+            }
+
+            self.take_snapshot();
+            if solver.possible {
+                break;
+            }
+        }
 
         self.starting_position = Position {
             x: self.map.width / 2,
