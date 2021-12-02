@@ -8,6 +8,9 @@ use image_loader::*;
 mod constraints;
 use constraints::*;
 
+mod common;
+use common::*;
+
 use crate::*;
 
 pub struct WaveformCollapseBuilder {
@@ -75,7 +78,8 @@ impl WaveformCollapseBuilder {
         self.take_snapshot();
 
         let patterns = build_patterns(&self.map, CHUNK_SIZE, true, true);
-        self.render_tile_gallery(&patterns, CHUNK_SIZE);
+        let constraints = patterns_to_constraints(patterns, CHUNK_SIZE);
+        self.render_tile_gallery(&constraints, CHUNK_SIZE);
 
         self.starting_position = Position {
             x: self.map.width / 2,
@@ -97,14 +101,14 @@ impl WaveformCollapseBuilder {
         self.noise_areas = generate_voronoi_spawn_regions(&self.map, &mut rng);
     }
 
-    fn render_tile_gallery(&mut self, patterns: &[Vec<TileType>], chunk_size: i32) {
+    fn render_tile_gallery(&mut self, constraints: &[MapChunk], chunk_size: i32) {
         self.map = Map::new(0);
         let mut counter = 0;
         let mut x = 1;
         let mut y = 1;
 
-        while counter < patterns.len() {
-            render_pattern_to_map(&mut self.map, &patterns[counter], chunk_size, x, y);
+        while counter < constraints.len() {
+            render_pattern_to_map(&mut self.map, &constraints[counter], chunk_size, x, y);
 
             x += chunk_size + 1;
             if x + chunk_size > self.map.width {
