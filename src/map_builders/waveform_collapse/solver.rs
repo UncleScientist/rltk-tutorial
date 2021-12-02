@@ -54,7 +54,7 @@ impl Solver {
     }
 
     pub fn iteration(&mut self, map: &mut Map, rng: &mut rltk::RandomNumberGenerator) -> bool {
-        // TODO
+        todo!();
         false
     }
 }
