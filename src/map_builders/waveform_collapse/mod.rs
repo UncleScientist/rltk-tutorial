@@ -72,13 +72,23 @@ impl WaveformCollapseBuilder {
     fn build(&mut self) {
         let mut rng = rltk::RandomNumberGenerator::new();
 
-        const CHUNK_SIZE: i32 = 7;
-
+        const CHUNK_SIZE: i32 = 5;
         self.map = load_rex_map(
             self.depth,
-            &rltk::rex::XpFile::from_resource("../../resources/wfc-demo1.xp").unwrap(),
+            &rltk::rex::XpFile::from_resource("../../resources/wfc-demo2.xp").unwrap(),
         );
         self.take_snapshot();
+
+        /*
+         * Example of how to make a waveform map using our other map types
+        const CHUNK_SIZE: i32 = 8;
+        let mut ca = super::CellularAutomataBuilder::new(0);
+        ca.build_map();
+        self.map = ca.get_map();
+        for t in self.map.tiles.iter_mut() {
+            if *t == TileType::DownStairs { *t = TileType::Floor; }
+        }
+        */
 
         let patterns = build_patterns(&self.map, CHUNK_SIZE, true, true);
         let constraints = patterns_to_constraints(patterns, CHUNK_SIZE);

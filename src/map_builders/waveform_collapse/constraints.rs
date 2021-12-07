@@ -67,13 +67,8 @@ pub fn build_patterns(
 
     // Dedupe
     if dedupe {
-        rltk::console::log(format!("pre de-dup, there are {} patterns", patterns.len()));
         let set: HashSet<Vec<TileType>> = patterns.drain(..).collect();
         patterns.extend(set.into_iter());
-        rltk::console::log(format!(
-            "post de-dup, there are {} patterns",
-            patterns.len()
-        ));
     }
 
     patterns
