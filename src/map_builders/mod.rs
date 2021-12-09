@@ -19,6 +19,9 @@ use cellular_automata::CellularAutomataBuilder;
 mod drunkard;
 use drunkard::DrunkardsWalkBuilder;
 
+mod prefab_builders;
+use prefab_builders::PrefabBuilder;
+
 mod maze;
 use maze::MazeBuilder;
 
@@ -41,11 +44,12 @@ pub trait MapBuilder {
 }
 
 pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
+    /*
     let mut rng = rltk::RandomNumberGenerator::new();
     let builder = rng.roll_dice(1, 19);
     // let builder = 1;
     let mut result: Box<dyn MapBuilder> = match builder {
-        1 => Box::new(WaveformCollapseBuilder::test_map(new_depth)),
+        //1 => Box::new(WaveformCollapseBuilder::test_map(new_depth)),
         2 => Box::new(MazeBuilder::new(new_depth)),
         3 => Box::new(BspInteriorBuilder::new(new_depth)),
         4 => Box::new(CellularAutomataBuilder::new(new_depth)),
@@ -72,4 +76,6 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
     }
 
     result
+        */
+    Box::new(PrefabBuilder::new(new_depth))
 }
