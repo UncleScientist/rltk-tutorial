@@ -45,7 +45,7 @@ pub trait MapBuilder {
 
 pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
     let mut rng = rltk::RandomNumberGenerator::new();
-    let builder = rng.roll_dice(1, 19);
+    let builder = 1; //rng.roll_dice(1, 19);
     // let builder = 1;
     let mut result: Box<dyn MapBuilder> = match builder {
         1 => Box::new(PrefabBuilder::new(new_depth)),
