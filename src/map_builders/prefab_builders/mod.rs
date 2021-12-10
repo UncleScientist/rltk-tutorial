@@ -240,12 +240,6 @@ impl PrefabBuilder {
                 if tx < self.map.width as usize && ty < self.map.height as usize {
                     let idx = self.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
                     self.char_to_map(string_vec[i], idx);
-                    rltk::console::log(format!(
-                        "{} {} -> {}",
-                        tx as i32 + chunk_x,
-                        ty as i32 + chunk_y,
-                        string_vec[i]
-                    ));
                 }
                 i += 1;
             }
