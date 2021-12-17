@@ -21,11 +21,16 @@ pub struct DLABuilder {
     brush_size: i32,
     symmetry: Symmetry,
     floor_percent: f32,
+    spawn_list: Vec<(usize, String)>,
 }
 
 impl MapBuilder for DLABuilder {
     fn get_map(&self) -> Map {
         self.map.clone()
+    }
+
+    fn get_spawn_list(&self) -> &Vec<(usize, String)> {
+        &self.spawn_list
     }
 
     fn get_starting_position(&self) -> Position {
@@ -38,12 +43,6 @@ impl MapBuilder for DLABuilder {
 
     fn build_map(&mut self) {
         self.build();
-    }
-
-    fn spawn_entities(&mut self, ecs: &mut World) {
-        for area in self.noise_areas.iter() {
-            spawner::spawn_region(ecs, area.1, self.depth);
-        }
     }
 
     fn take_snapshot(&mut self) {
@@ -69,6 +68,7 @@ impl Default for DLABuilder {
             brush_size: 1,
             symmetry: Symmetry::None,
             floor_percent: 0.25,
+            spawn_list: Vec::new(),
         }
     }
 }
@@ -293,5 +293,14 @@ impl DLABuilder {
         self.take_snapshot();
 
         self.noise_areas = generate_voronoi_spawn_regions(&self.map, &mut rng);
+        for area in self.noise_areas.iter() {
+            spawner::spawn_region(
+                &self.map,
+                &mut rng,
+                area.1,
+                self.depth,
+                &mut self.spawn_list,
+            );
+        }
     }
 }

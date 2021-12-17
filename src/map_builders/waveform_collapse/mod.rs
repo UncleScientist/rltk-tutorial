@@ -20,11 +20,16 @@ pub struct WaveformCollapseBuilder {
     history: Vec<Map>,
     noise_areas: HashMap<i32, Vec<usize>>,
     derive_from: Option<Box<dyn MapBuilder>>,
+    spawn_list: Vec<(usize, String)>,
 }
 
 impl MapBuilder for WaveformCollapseBuilder {
     fn get_map(&self) -> Map {
         self.map.clone()
+    }
+
+    fn get_spawn_list(&self) -> &Vec<(usize, String)> {
+        &self.spawn_list
     }
 
     fn get_starting_position(&self) -> Position {
@@ -37,12 +42,6 @@ impl MapBuilder for WaveformCollapseBuilder {
 
     fn build_map(&mut self) {
         self.build();
-    }
-
-    fn spawn_entities(&mut self, ecs: &mut World) {
-        for area in self.noise_areas.iter() {
-            spawner::spawn_region(ecs, area.1, self.depth);
-        }
     }
 
     fn take_snapshot(&mut self) {
@@ -68,6 +67,7 @@ impl WaveformCollapseBuilder {
             history: Vec::new(),
             noise_areas: HashMap::new(),
             derive_from,
+            spawn_list: Vec::new(),
         }
     }
 
@@ -125,6 +125,15 @@ impl WaveformCollapseBuilder {
         self.take_snapshot();
 
         self.noise_areas = generate_voronoi_spawn_regions(&self.map, &mut rng);
+        for area in self.noise_areas.iter() {
+            spawner::spawn_region(
+                &self.map,
+                &mut rng,
+                area.1,
+                self.depth,
+                &mut self.spawn_list,
+            );
+        }
     }
 
     fn render_tile_gallery(&mut self, constraints: &[MapChunk], chunk_size: i32) {

@@ -5,15 +5,20 @@ use crate::*;
 pub struct BspDungeonBuilder {
     map: Map,
     starting_position: Position,
-    depth: i32,
+    //depth: i32,
     rooms: Vec<Rect>,
     history: Vec<Map>,
     rects: Vec<Rect>,
+    spawn_list: Vec<(usize, String)>,
 }
 
 impl MapBuilder for BspDungeonBuilder {
     fn get_map(&self) -> Map {
         self.map.clone()
+    }
+
+    fn get_spawn_list(&self) -> &Vec<(usize, String)> {
+        &self.spawn_list
     }
 
     fn get_starting_position(&self) -> Position {
@@ -26,12 +31,6 @@ impl MapBuilder for BspDungeonBuilder {
 
     fn build_map(&mut self) {
         self.build();
-    }
-
-    fn spawn_entities(&mut self, ecs: &mut World) {
-        for room in self.rooms.iter().skip(1) {
-            spawner::spawn_room(ecs, room, self.depth);
-        }
     }
 
     fn take_snapshot(&mut self) {
@@ -50,10 +49,11 @@ impl BspDungeonBuilder {
         BspDungeonBuilder {
             map: Map::new(new_depth),
             starting_position: Position { x: 0, y: 0 },
-            depth: new_depth,
+            //depth: new_depth,
             rooms: Vec::new(),
             history: Vec::new(),
             rects: Vec::new(),
+            spawn_list: Vec::new(),
         }
     }
 

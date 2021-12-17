@@ -6,12 +6,14 @@ mod prefab_sections;
 
 #[derive(PartialEq, Clone)]
 pub enum PrefabMode {
+    /*
     RexLevel {
         template: &'static str,
     },
     Constant {
         level: prefab_levels::PrefabLevel,
     },
+    */
     Sectional {
         section: prefab_sections::PrefabSection,
     },
@@ -26,11 +28,16 @@ pub struct PrefabBuilder {
     mode: PrefabMode,
     spawns: Vec<(usize, String)>,
     previous_builder: Option<Box<dyn MapBuilder>>,
+    spawn_list: Vec<(usize, String)>,
 }
 
 impl MapBuilder for PrefabBuilder {
     fn get_map(&self) -> Map {
         self.map.clone()
+    }
+
+    fn get_spawn_list(&self) -> &Vec<(usize, String)> {
+        &self.spawn_list
     }
 
     fn get_starting_position(&self) -> Position {
@@ -46,7 +53,7 @@ impl MapBuilder for PrefabBuilder {
     }
 
     fn spawn_entities(&mut self, ecs: &mut World) {
-        for entity in self.spawns.iter() {
+        for entity in self.get_spawn_list().iter() {
             spawner::spawn_entity(ecs, &(&entity.0, &entity.1));
         }
     }
@@ -80,13 +87,14 @@ impl PrefabBuilder {
             },
             spawns: Vec::new(),
             previous_builder,
+            spawn_list: Vec::new(),
         }
     }
 
     fn build(&mut self) {
         match self.mode {
-            PrefabMode::RexLevel { template } => self.load_rex_map(template),
-            PrefabMode::Constant { level } => self.load_ascii_map(&level),
+            /*PrefabMode::RexLevel { template } => self.load_rex_map(template),
+            PrefabMode::Constant { level } => self.load_ascii_map(&level),*/
             PrefabMode::Sectional { section } => self.apply_sectional(&section),
         }
         self.take_snapshot();
@@ -118,6 +126,7 @@ impl PrefabBuilder {
         }
     }
 
+    /*
     fn load_rex_map(&mut self, path: &str) {
         let xp_file = rltk::rex::XpFile::from_resource(path).unwrap();
 
@@ -133,7 +142,7 @@ impl PrefabBuilder {
             }
         }
     }
-
+    */
     fn read_ascii_to_vec(template: &str, width: usize) -> Vec<char> {
         let mut string_vec: Vec<char> = Vec::new();
         let mut hpos = 0;
@@ -155,6 +164,7 @@ impl PrefabBuilder {
         string_vec
     }
 
+    /*
     fn load_ascii_map(&mut self, level: &prefab_levels::PrefabLevel) {
         let string_vec = PrefabBuilder::read_ascii_to_vec(level.template, level.width);
 
@@ -169,6 +179,7 @@ impl PrefabBuilder {
             }
         }
     }
+    */
 
     fn char_to_map(&mut self, ch: char, idx: usize) {
         match (ch as u8) as char {
@@ -210,29 +221,47 @@ impl PrefabBuilder {
     }
 
     fn apply_sectional(&mut self, section: &prefab_sections::PrefabSection) {
-        // Build the map
-        let prev_builder = self.previous_builder.as_mut().unwrap();
-        prev_builder.build_map();
-        self.starting_position = prev_builder.get_starting_position();
-        self.map = prev_builder.get_map(); // .clone();
-        self.take_snapshot();
-
         use prefab_sections::*;
 
         let string_vec = PrefabBuilder::read_ascii_to_vec(section.template, section.width);
 
         // Place the new section
         let chunk_x = match section.placement.0 {
-            HorizontalPlacement::Left => 0,
-            HorizontalPlacement::Center => (self.map.width / 2) - (section.width as i32 / 2),
+            //HorizontalPlacement::Left => 0,
+            //HorizontalPlacement::Center => (self.map.width / 2) - (section.width as i32 / 2),
             HorizontalPlacement::Right => (self.map.width - 1) - section.width as i32,
         };
 
         let chunk_y = match section.placement.1 {
             VerticalPlacement::Top => 0,
-            VerticalPlacement::Center => (self.map.height / 2) - (section.height as i32 / 2),
-            VerticalPlacement::Bottom => (self.map.height - 1) - section.height as i32,
+            //VerticalPlacement::Center => (self.map.height / 2) - (section.height as i32 / 2),
+            //VerticalPlacement::Bottom => (self.map.height - 1) - section.height as i32,
         };
+
+        // Build the map
+        let prev_builder = self.previous_builder.as_mut().unwrap();
+        prev_builder.build_map();
+        self.starting_position = prev_builder.get_starting_position();
+        self.map = prev_builder.get_map();
+        for e in prev_builder.get_spawn_list().iter() {
+            let idx = e.0;
+            let x = idx as i32 % self.map.width;
+            let y = idx as i32 / self.map.width;
+            if x < chunk_x
+                || x > (chunk_x + section.width as i32)
+                || y < chunk_y
+                || y > (chunk_y + section.height as i32)
+            {
+                rltk::console::log(format!(
+                    "apply_sectional: spawning at {},{} - {}",
+                    idx as i32 % self.map.width,
+                    idx as i32 / self.map.width,
+                    e.1
+                ));
+                self.spawn_list.push((idx, e.1.to_string()));
+            }
+        }
+        self.take_snapshot();
 
         let mut i = 0;
         for ty in 0..section.height {
