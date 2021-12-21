@@ -56,7 +56,8 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
     let mut result: Box<dyn MapBuilder> = match builder {
         1 => Box::new(PrefabBuilder::new(
             new_depth,
-            Some(Box::new(CellularAutomataBuilder::new(new_depth))),
+            Some(Box::new(SimpleMapBuilder::new(new_depth))),
+            // Some(Box::new(CellularAutomataBuilder::new(new_depth))),
         )),
         2 => Box::new(MazeBuilder::new(new_depth)),
         3 => Box::new(BspInteriorBuilder::new(new_depth)),
@@ -79,9 +80,11 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
         _ => Box::new(SimpleMapBuilder::new(new_depth)),
     };
 
+    /*
     if rng.roll_dice(1, 3) == 1 {
         result = Box::new(WaveformCollapseBuilder::derived_map(new_depth, result));
     }
+    */
 
     result
 }

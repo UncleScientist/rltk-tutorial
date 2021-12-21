@@ -65,12 +65,6 @@ pub fn spawn_region(
 
     // Actually spawn the monsters
     for spawn in spawn_points.iter() {
-        rltk::console::log(format!(
-            "spawn at {},{} - {}",
-            *spawn.0 as i32 % map.width,
-            *spawn.0 as i32 / map.width,
-            spawn.1
-        ));
         spawn_list.push((*spawn.0, spawn.1.to_string()));
     }
 }
