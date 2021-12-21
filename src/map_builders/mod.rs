@@ -51,13 +51,12 @@ pub trait MapBuilder {
 
 pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
     let mut rng = rltk::RandomNumberGenerator::new();
-    let builder = 1; //rng.roll_dice(1, 19);
-                     // let builder = 1;
+    let builder = rng.roll_dice(1, 19);
+    // let builder = 1;
     let mut result: Box<dyn MapBuilder> = match builder {
-        1 => Box::new(PrefabBuilder::new(
+        1 => Box::new(PrefabBuilder::constant(
             new_depth,
-            Some(Box::new(SimpleMapBuilder::new(new_depth))),
-            // Some(Box::new(CellularAutomataBuilder::new(new_depth))),
+            prefab_builders::prefab_levels::WFC_POPULATED,
         )),
         2 => Box::new(MazeBuilder::new(new_depth)),
         3 => Box::new(BspInteriorBuilder::new(new_depth)),
@@ -77,14 +76,24 @@ pub fn random_builder(new_depth: i32) -> Box<dyn MapBuilder> {
         17 => Box::new(VoronoiBuilder::manhattan(new_depth)),
         18 => Box::new(VoronoiBuilder::chebyshev(new_depth)),
         19 => Box::new(VoronoiBuilder::pythagoras(new_depth)),
+        20 => Box::new(PrefabBuilder::rex_level(
+            new_depth,
+            "../../resources/SmallDungeon_80x50.xp",
+        )),
         _ => Box::new(SimpleMapBuilder::new(new_depth)),
     };
 
-    /*
     if rng.roll_dice(1, 3) == 1 {
         result = Box::new(WaveformCollapseBuilder::derived_map(new_depth, result));
     }
-    */
 
-    result
+    if rng.roll_dice(1, 20) == 1 {
+        result = Box::new(PrefabBuilder::sectional(
+            new_depth,
+            prefab_builders::prefab_sections::UNDERGROUND_FORT,
+            result,
+        ));
+    }
+
+    Box::new(PrefabBuilder::vaults(new_depth, result))
 }

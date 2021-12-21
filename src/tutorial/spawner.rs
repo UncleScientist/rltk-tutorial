@@ -26,11 +26,10 @@ pub fn spawn_room(
         }
     }
 
-    spawn_region(map, rng, &possible_targets, map_depth, spawn_list);
+    spawn_region(rng, &possible_targets, map_depth, spawn_list);
 }
 
 pub fn spawn_region(
-    map: &Map,
     rng: &mut RandomNumberGenerator,
     area: &[usize],
     map_depth: i32,

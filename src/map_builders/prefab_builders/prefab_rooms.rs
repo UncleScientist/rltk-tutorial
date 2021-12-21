@@ -1,4 +1,3 @@
-
 #[derive(Copy, Clone)]
 pub struct PrefabRoom {
     pub template: &'static str,
@@ -16,11 +15,10 @@ pub const TOTALLY_NOT_A_TRAP: PrefabRoom = PrefabRoom {
     last_depth: 100,
 };
 
-const TOTALLY_NOT_A_TRAP_MAP : &str = "
+const TOTALLY_NOT_A_TRAP_MAP: &str = "
      
  ^^^ 
  ^!^ 
  ^^^ 
      
 ";
-
