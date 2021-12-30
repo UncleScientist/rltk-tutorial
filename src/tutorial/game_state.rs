@@ -405,14 +405,18 @@ impl State {
         self.mapgen_timer = 0.0;
         self.mapgen_history.clear();
 
-        let (mut builder, player_start) = {
+        let mut rng = self.ecs.write_resource::<rltk::RandomNumberGenerator>();
+        let mut builder = random_builder(new_depth, &mut rng);
+
+        builder.build_map(&mut rng);
+        std::mem::drop(rng);
+
+        self.mapgen_history = builder.build_data.history.clone();
+
+        let player_start = {
             let mut worldmap_resource = self.ecs.write_resource::<Map>();
-            let mut builder = random_builder(new_depth);
-            builder.build_map();
-            self.mapgen_history = builder.get_snapshot_history();
-            *worldmap_resource = builder.get_map();
-            let player_start = builder.get_starting_position();
-            (builder, player_start)
+            *worldmap_resource = builder.build_data.map.clone();
+            builder.build_data.starting_position.as_mut().unwrap().clone()
         };
 
         builder.spawn_entities(&mut self.ecs);
