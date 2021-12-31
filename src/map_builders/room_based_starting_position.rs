@@ -14,7 +14,7 @@ impl RoomBasedStartingPosition {
         Box::new(RoomBasedStartingPosition{})
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, _rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
         if let Some(rooms) = &build_data.rooms {
             let (x, y) = rooms[0].center();
             build_data.starting_position = Some(Position { x, y });
