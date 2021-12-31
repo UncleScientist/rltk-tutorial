@@ -77,5 +77,14 @@ fn main() -> rltk::BError {
 
     gs.generate_world_map(1);
 
+    let idx = {
+        let loc = gs.ecs.fetch::<Point>();
+        let map = gs.ecs.fetch::<Map>();
+        map.xy_idx(loc.x, loc.y)
+    };
+
+    let mms: String = "Magic Mapping Scroll".to_string();
+    spawner::spawn_entity(&mut gs.ecs, &(&idx, &mms));
+
     rltk::main_loop(context, gs)
 }
