@@ -240,7 +240,7 @@ impl PrefabBuilder {
             return;
         }
 
-        let master_vault_list = vec![TOTALLY_NOT_A_TRAP];
+        let master_vault_list = vec![TOTALLY_NOT_A_TRAP, SILLY_SMILE, CHECKERBOARD];
 
         let possible_vaults: Vec<&PrefabRoom> = master_vault_list
             .iter()
