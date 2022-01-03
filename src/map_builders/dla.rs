@@ -1,4 +1,4 @@
-use super::{BuilderMap, InitialMapBuilder, Position, Symmetry, TileType};
+use super::{BuilderMap, MetaMapBuilder, InitialMapBuilder, Position, Symmetry, TileType};
 use crate::map_builders::*;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -13,6 +13,12 @@ pub struct DLABuilder {
     brush_size: i32,
     symmetry: Symmetry,
     floor_percent: f32,
+}
+
+impl MetaMapBuilder for DLABuilder {
+    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
+    }
 }
 
 impl InitialMapBuilder for DLABuilder {
@@ -33,6 +39,14 @@ impl Default for DLABuilder {
 }
 
 impl DLABuilder {
+    pub fn heavy_erosion() -> Box<DLABuilder> {
+        Box::new(DLABuilder {
+            brush_size: 2,
+            floor_percent: 0.35,
+            ..Default::default()
+        })
+    }
+
     pub fn walk_inwards() -> Box<DLABuilder> {
         Box::new(DLABuilder {
             ..Default::default()

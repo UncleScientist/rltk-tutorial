@@ -146,7 +146,7 @@ pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> 
     let mut builder = BuilderChain::new(new_depth);
 
     builder.start_with(SimpleMapBuilder::new());
-    builder.with(DrunkardsWalkBuilder::winding_passages());
+    builder.with(DLABuilder::heavy_erosion());
     builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
     builder.with(CullUnreachable::new());
     builder.with(VoronoiSpawning::new());
