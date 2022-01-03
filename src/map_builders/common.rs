@@ -1,6 +1,5 @@
 use super::{Map, Rect, TileType};
 use std::cmp::{max, min};
-use std::collections::HashMap;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Symmetry {

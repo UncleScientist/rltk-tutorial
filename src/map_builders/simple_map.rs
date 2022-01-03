@@ -1,4 +1,4 @@
-use super::{Map, Position, Rect, TileType, MAPHEIGHT, MAPWIDTH, InitialMapBuilder, BuilderMap};
+use super::{Rect, MAPHEIGHT, MAPWIDTH, InitialMapBuilder, BuilderMap};
 use rltk::RandomNumberGenerator;
 
 use crate::map_builders::*;
@@ -6,7 +6,7 @@ use crate::map_builders::*;
 pub struct SimpleMapBuilder {}
 
 impl InitialMapBuilder for SimpleMapBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         self.rooms_and_corridors(rng, build_data);
     }
 }
@@ -16,7 +16,7 @@ impl SimpleMapBuilder {
         Box::new(SimpleMapBuilder {})
     }
 
-    fn rooms_and_corridors(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn rooms_and_corridors(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;
         const MAX_SIZE: i32 = 10;

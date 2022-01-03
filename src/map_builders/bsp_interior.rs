@@ -1,8 +1,6 @@
 use rltk::RandomNumberGenerator;
 
-use super::{InitialMapBuilder, BuilderMap, Position, Rect, TileType};
-use crate::map_builders::*;
-use crate::*;
+use super::{InitialMapBuilder, BuilderMap, Rect, TileType};
 
 const MIN_ROOM_SIZE: i32 = 4;
 

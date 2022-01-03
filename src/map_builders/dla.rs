@@ -1,8 +1,5 @@
 use super::{InitialMapBuilder, BuilderMap, Position, TileType, Symmetry};
 use crate::map_builders::*;
-use std::collections::HashMap;
-
-use crate::*;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DLAAlgorithm {

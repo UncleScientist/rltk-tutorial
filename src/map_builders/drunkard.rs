@@ -1,8 +1,6 @@
 use super::{InitialMapBuilder, BuilderMap, Position, TileType, Symmetry};
 use crate::map_builders::*;
 
-use crate::*;
-
 #[derive(PartialEq, Copy, Clone)]
 pub enum DrunkSpawnMode {
     StartingPoint,

@@ -1,6 +1,5 @@
 use super::{InitialMapBuilder, BuilderMap, Map, Rect, TileType};
 use crate::map_builders::*;
-use crate::*;
 
 pub struct BspDungeonBuilder {
     rects: Vec<Rect>,

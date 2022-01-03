@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-
 use super::{InitialMapBuilder, BuilderMap, TileType};
-use crate::map_builders::*;
-use crate::*;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DistanceAlgorithm {

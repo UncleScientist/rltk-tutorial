@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use super::{MetaMapBuilder, BuilderMap, TileType};
 use crate::map_builders::*;
-use crate::*;
 
 use rltk::RandomNumberGenerator;
 
@@ -10,7 +9,7 @@ pub struct VoronoiSpawning {}
 
 
 impl MetaMapBuilder for VoronoiSpawning {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         self.build(rng, build_data);
     }
 }
@@ -20,7 +19,7 @@ impl VoronoiSpawning {
         Box::new(VoronoiSpawning {})
     }
 
-    pub fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    pub fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         let mut noise_areas: HashMap<i32, Vec<usize>> = HashMap::new();
         let mut noise = rltk::FastNoise::seeded(rng.roll_dice(1, 65536) as u64);
 

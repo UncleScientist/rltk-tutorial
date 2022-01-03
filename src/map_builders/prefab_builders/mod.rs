@@ -1,10 +1,6 @@
-use std::collections::HashSet;
-
 use rltk::RandomNumberGenerator;
 
 use super::{InitialMapBuilder, MetaMapBuilder, BuilderMap, TileType, Position};
-use crate::map_builders::*;
-use crate::*;
 
 pub mod prefab_levels;
 pub mod prefab_rooms;

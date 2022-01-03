@@ -1,13 +1,11 @@
 use super::{InitialMapBuilder, BuilderMap, TileType};
-use crate::map_builders::*;
-use crate::*;
 
 use rltk::RandomNumberGenerator;
 
 pub struct CellularAutomataBuilder {}
 
 impl InitialMapBuilder for CellularAutomataBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         self.build(rng, build_data);
     }
 }
@@ -17,7 +15,7 @@ impl CellularAutomataBuilder {
         Box::new(CellularAutomataBuilder {})
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         for y in 1..build_data.map.height - 1 {
             for x in 1..build_data.map.width - 1 {
                 let roll = rng.roll_dice(1, 100);

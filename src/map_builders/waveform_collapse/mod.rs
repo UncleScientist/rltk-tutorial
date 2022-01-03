@@ -1,5 +1,4 @@
 use super::{MetaMapBuilder, BuilderMap, Map, TileType};
-use crate::map_builders::*;
 
 mod constraints;
 use constraints::*;
@@ -9,8 +8,6 @@ use common::*;
 
 mod solver;
 use solver::*;
-
-use crate::*;
 
 pub struct WaveformCollapseBuilder {}
 

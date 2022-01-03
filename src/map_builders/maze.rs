@@ -1,7 +1,4 @@
 use super::{Map, InitialMapBuilder, BuilderMap, TileType};
-use crate::map_builders::*;
-
-use crate::*;
 
 pub struct MazeBuilder {}
 
