@@ -57,6 +57,9 @@ use voronoi_spawning::*;
 mod distant_exit;
 use distant_exit::*;
 
+mod room_exploder;
+use room_exploder::*;
+
 // --------------------------------------------------------------------------------
 pub struct BuilderMap {
     pub spawn_list: Vec<(usize, String)>,
@@ -145,8 +148,8 @@ pub trait MetaMapBuilder {
 pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
 
-    builder.start_with(SimpleMapBuilder::new());
-    builder.with(DLABuilder::heavy_erosion());
+    builder.start_with(BspDungeonBuilder::new());
+    builder.with(RoomExploder::new());
     builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
     builder.with(CullUnreachable::new());
     builder.with(VoronoiSpawning::new());

@@ -1,4 +1,4 @@
-use super::{BuilderMap, MetaMapBuilder, InitialMapBuilder, Position, Symmetry, TileType};
+use super::{BuilderMap, InitialMapBuilder, MetaMapBuilder, Position, Symmetry, TileType};
 use crate::map_builders::*;
 
 #[derive(PartialEq, Copy, Clone)]
