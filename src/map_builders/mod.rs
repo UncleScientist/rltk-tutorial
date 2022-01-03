@@ -144,6 +144,15 @@ pub trait MetaMapBuilder {
 
 pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
+
+    builder.start_with(VoronoiBuilder::pythagoras());
+    builder.with(CellularAutomataBuilder::new());
+    builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
+    builder.with(CullUnreachable::new());
+    builder.with(VoronoiSpawning::new());
+    builder.with(DistantExit::new());
+
+    /*
     let (random_starter, has_rooms) = random_initial_builder(rng);
 
     builder.start_with(random_starter);
@@ -172,6 +181,7 @@ pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> 
     }
 
     builder.with(PrefabBuilder::vaults());
+    */
 
     builder
 }

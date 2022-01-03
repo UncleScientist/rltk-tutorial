@@ -1,8 +1,14 @@
-use super::{BuilderMap, InitialMapBuilder, TileType};
+use super::{BuilderMap, InitialMapBuilder, MetaMapBuilder, TileType};
 
 use rltk::RandomNumberGenerator;
 
 pub struct CellularAutomataBuilder {}
+
+impl MetaMapBuilder for CellularAutomataBuilder {
+    fn build_map(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.apply_iteration(build_data);
+    }
+}
 
 impl InitialMapBuilder for CellularAutomataBuilder {
     fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
@@ -30,38 +36,42 @@ impl CellularAutomataBuilder {
         build_data.take_snapshot();
 
         for _ in 0..15 {
-            let mut newtiles = build_data.map.tiles.clone();
+            self.apply_iteration(build_data);
+        }
+    }
 
-            for y in 1..build_data.map.height - 1 {
-                for x in 1..build_data.map.width - 1 {
-                    let idx = build_data.map.xy_idx(x, y);
-                    let mut neighbors = 0;
+    fn apply_iteration(&mut self, build_data: &mut BuilderMap) {
+        let mut newtiles = build_data.map.tiles.clone();
 
-                    neighbors += (build_data.map.tiles[idx - 1] == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx + 1] == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx - build_data.map.width as usize]
-                        == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx + build_data.map.width as usize]
-                        == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize - 1)]
-                        == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize + 1)]
-                        == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx + (build_data.map.width as usize - 1)]
-                        == TileType::Wall) as usize;
-                    neighbors += (build_data.map.tiles[idx + (build_data.map.width as usize + 1)]
-                        == TileType::Wall) as usize;
+        for y in 1..build_data.map.height - 1 {
+            for x in 1..build_data.map.width - 1 {
+                let idx = build_data.map.xy_idx(x, y);
+                let mut neighbors = 0;
 
-                    if neighbors > 4 || neighbors == 0 {
-                        newtiles[idx] = TileType::Wall;
-                    } else {
-                        newtiles[idx] = TileType::Floor;
-                    }
+                neighbors += (build_data.map.tiles[idx - 1] == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx + 1] == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx - build_data.map.width as usize]
+                    == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx + build_data.map.width as usize]
+                    == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize - 1)]
+                    == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize + 1)]
+                    == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx + (build_data.map.width as usize - 1)]
+                    == TileType::Wall) as usize;
+                neighbors += (build_data.map.tiles[idx + (build_data.map.width as usize + 1)]
+                    == TileType::Wall) as usize;
+
+                if neighbors > 4 || neighbors == 0 {
+                    newtiles[idx] = TileType::Wall;
+                } else {
+                    newtiles[idx] = TileType::Floor;
                 }
             }
-
-            build_data.map.tiles = newtiles.clone();
-            build_data.take_snapshot();
         }
+
+        build_data.map.tiles = newtiles.clone();
+        build_data.take_snapshot();
     }
 }
