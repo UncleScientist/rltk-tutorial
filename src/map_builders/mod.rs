@@ -166,8 +166,10 @@ pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> 
     builder.with(RoomBasedStartingPosition::new());
     builder.with(RoomBasedStairs::new());
     */
+
     builder.start_with(VoronoiBuilder::pythagoras());
     builder.with(WaveformCollapseBuilder::new());
+    builder.with(PrefabBuilder::vaults());
     builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
     builder.with(CullUnreachable::new());
     builder.with(VoronoiSpawning::new());

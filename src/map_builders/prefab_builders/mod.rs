@@ -1,5 +1,8 @@
+use std::collections::HashSet;
+
 use rltk::RandomNumberGenerator;
 
+use super::{InitialMapBuilder, MetaMapBuilder, BuilderMap, TileType, Position};
 use crate::map_builders::*;
 use crate::*;
 
@@ -22,156 +25,58 @@ pub enum PrefabMode {
 }
 
 pub struct PrefabBuilder {
-    map: Map,
-    starting_position: Position,
-    #[allow(dead_code)]
-    depth: i32,
-    history: Vec<Map>,
     mode: PrefabMode,
-    previous_builder: Option<Box<dyn MapBuilder>>,
-    spawn_list: Vec<(usize, String)>,
 }
 
-impl MapBuilder for PrefabBuilder {
-    fn get_map(&self) -> Map {
-        self.map.clone()
-    }
-
-    fn get_spawn_list(&self) -> &Vec<(usize, String)> {
-        &self.spawn_list
-    }
-
-    fn get_starting_position(&self) -> Position {
-        self.starting_position.clone()
-    }
-
-    fn get_snapshot_history(&self) -> Vec<Map> {
-        self.history.clone()
-    }
-
-    fn build_map(&mut self) {
-        self.build();
-    }
-
-    fn spawn_entities(&mut self, ecs: &mut World) {
-        for entity in self.get_spawn_list().iter() {
-            spawner::spawn_entity(ecs, &(&entity.0, &entity.1));
-        }
-    }
-
-    fn take_snapshot(&mut self) {
-        if SHOW_MAPGEN_VISUALIZER {
-            let mut snapshot = self.map.clone();
-            for v in snapshot.revealed_tiles.iter_mut() {
-                *v = true;
-            }
-            self.history.push(snapshot);
-        }
+impl MetaMapBuilder for PrefabBuilder {
+    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
     }
 }
 
-impl Default for PrefabBuilder {
-    fn default() -> PrefabBuilder {
-        PrefabBuilder {
-            map: Map::new(1),
-            starting_position: Position { x: 0, y: 0 },
-            depth: 1,
-            history: Vec::new(),
-            mode: PrefabMode::RoomVaults,
-            previous_builder: None,
-            spawn_list: Vec::new(),
-        }
+impl InitialMapBuilder for PrefabBuilder {
+    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
     }
 }
 
 impl PrefabBuilder {
-    pub fn sectional(
-        new_depth: i32,
-        section: prefab_sections::PrefabSection,
-        previous_builder: Box<dyn MapBuilder>,
-    ) -> PrefabBuilder {
-        PrefabBuilder {
-            map: Map::new(new_depth),
-            depth: new_depth,
-            mode: PrefabMode::Sectional { section },
-            previous_builder: Some(previous_builder),
-            ..Default::default()
-        }
+    pub fn sectional(section: prefab_sections::PrefabSection) -> Box<PrefabBuilder> {
+        Box::new(PrefabBuilder { mode: PrefabMode::Sectional { section } })
     }
 
-    pub fn constant(new_depth: i32, level: prefab_levels::PrefabLevel) -> PrefabBuilder {
-        PrefabBuilder {
-            map: Map::new(new_depth),
-            depth: new_depth,
-            mode: PrefabMode::Constant { level },
-            ..Default::default()
-        }
+    pub fn constant(level: prefab_levels::PrefabLevel) -> Box<PrefabBuilder> {
+        Box::new(PrefabBuilder { mode: PrefabMode::Constant { level } })
     }
 
-    pub fn rex_level(new_depth: i32, template: &'static str) -> PrefabBuilder {
-        PrefabBuilder {
-            map: Map::new(new_depth),
-            depth: new_depth,
-            mode: PrefabMode::RexLevel { template },
-            ..Default::default()
-        }
+    pub fn rex_level(template: &'static str) -> Box<PrefabBuilder> {
+        Box::new(PrefabBuilder { mode: PrefabMode::RexLevel { template } })
     }
 
-    pub fn vaults(new_depth: i32, previous_builder: Box<dyn MapBuilder>) -> PrefabBuilder {
-        PrefabBuilder {
-            map: Map::new(new_depth),
-            depth: new_depth,
-            previous_builder: Some(previous_builder),
-            ..Default::default()
-        }
+    pub fn vaults() -> Box<PrefabBuilder> {
+        Box::new(PrefabBuilder { mode: PrefabMode::RoomVaults })
     }
 
-    fn build(&mut self) {
+    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         match self.mode {
-            PrefabMode::RexLevel { template } => self.load_rex_map(template),
-            PrefabMode::Constant { level } => self.load_ascii_map(&level),
-            PrefabMode::Sectional { section } => self.apply_sectional(&section),
-            PrefabMode::RoomVaults => self.apply_room_vaults(),
+            PrefabMode::RexLevel { template } => self.load_rex_map(template, build_data),
+            PrefabMode::Constant { level } => self.load_ascii_map(&level, build_data),
+            PrefabMode::Sectional { section } => self.apply_sectional(&section, rng, build_data),
+            PrefabMode::RoomVaults => self.apply_room_vaults(rng, build_data),
         }
-        self.take_snapshot();
-
-        if self.starting_position.x == 0 {
-            // Find a starting point; start in the middle and walk left until we
-            // find an open tile
-            self.starting_position = Position {
-                x: self.map.width / 2,
-                y: self.map.height / 2,
-            };
-            let mut start_idx = self
-                .map
-                .xy_idx(self.starting_position.x, self.starting_position.y);
-            while self.map.tiles[start_idx] != TileType::Floor {
-                self.starting_position.x -= 1;
-                start_idx = self
-                    .map
-                    .xy_idx(self.starting_position.x, self.starting_position.y);
-            }
-            self.take_snapshot();
-
-            let exit_tile =
-                remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
-            self.take_snapshot();
-
-            self.map.tiles[exit_tile] = TileType::DownStairs;
-            self.take_snapshot();
-        }
+        build_data.take_snapshot();
     }
 
-    fn load_rex_map(&mut self, path: &str) {
+    fn load_rex_map(&mut self, path: &str, build_data: &mut BuilderMap) {
         let xp_file = rltk::rex::XpFile::from_resource(path).unwrap();
 
         for layer in &xp_file.layers {
             for y in 0..layer.height {
                 for x in 0..layer.width {
                     let cell = layer.get(x, y).unwrap();
-                    if x < self.map.width as usize && y < self.map.height as usize {
-                        let idx = self.map.xy_idx(x as i32, y as i32);
-                        self.char_to_map(cell.ch as u8 as char, idx);
+                    if x < build_data.map.width as usize && y < build_data.map.height as usize {
+                        let idx = build_data.map.xy_idx(x as i32, y as i32);
+                        self.char_to_map(cell.ch as u8 as char, idx, build_data);
                     }
                 }
             }
@@ -199,53 +104,53 @@ impl PrefabBuilder {
         string_vec
     }
 
-    fn load_ascii_map(&mut self, level: &prefab_levels::PrefabLevel) {
+    fn load_ascii_map(&mut self, level: &prefab_levels::PrefabLevel, build_data: &mut BuilderMap) {
         let string_vec = PrefabBuilder::read_ascii_to_vec(level.template, level.width);
 
         let mut i = 0;
         for ty in 0..level.height {
             for tx in 0..level.width {
-                if tx < self.map.width as usize && ty < self.map.height as usize {
-                    let idx = self.map.xy_idx(tx as i32, ty as i32);
-                    self.char_to_map(string_vec[i], idx);
+                if tx < build_data.map.width as usize && ty < build_data.map.height as usize {
+                    let idx = build_data.map.xy_idx(tx as i32, ty as i32);
+                    self.char_to_map(string_vec[i], idx, build_data);
                 }
                 i += 1;
             }
         }
     }
 
-    fn char_to_map(&mut self, ch: char, idx: usize) {
+    fn char_to_map(&mut self, ch: char, idx: usize, build_data: &mut BuilderMap) {
         match (ch as u8) as char {
-            ' ' => self.map.tiles[idx] = TileType::Floor,
-            '#' => self.map.tiles[idx] = TileType::Wall,
+            ' ' => build_data.map.tiles[idx] = TileType::Floor,
+            '#' => build_data.map.tiles[idx] = TileType::Wall,
             '@' => {
-                let x = idx as i32 % self.map.width;
-                let y = idx as i32 / self.map.width;
-                self.map.tiles[idx] = TileType::Floor;
-                self.starting_position = Position {
+                let x = idx as i32 % build_data.map.width;
+                let y = idx as i32 / build_data.map.width;
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.starting_position = Some(Position {
                     x: x as i32,
                     y: y as i32,
-                }
+                });
             }
             'g' => {
-                self.map.tiles[idx] = TileType::Floor;
-                self.spawn_list.push((idx, "Goblin".to_string()));
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Goblin".to_string()));
             }
             'o' => {
-                self.map.tiles[idx] = TileType::Floor;
-                self.spawn_list.push((idx, "Orc".to_string()));
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Orc".to_string()));
             }
             '^' => {
-                self.map.tiles[idx] = TileType::Floor;
-                self.spawn_list.push((idx, "Bear Trap".to_string()));
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Bear Trap".to_string()));
             }
             '%' => {
-                self.map.tiles[idx] = TileType::Floor;
-                self.spawn_list.push((idx, "Rations".to_string()));
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Rations".to_string()));
             }
             '!' => {
-                self.map.tiles[idx] = TileType::Floor;
-                self.spawn_list.push((idx, "Health Potion".to_string()));
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Health Potion".to_string()));
             }
             _ => {
                 rltk::console::log(format!("Unknwon glyph {}", ch as u8 as char));
@@ -253,7 +158,8 @@ impl PrefabBuilder {
         }
     }
 
-    fn apply_sectional(&mut self, section: &prefab_sections::PrefabSection) {
+    fn apply_sectional(&mut self, section: &prefab_sections::PrefabSection, 
+            rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         use prefab_sections::*;
 
         let string_vec = PrefabBuilder::read_ascii_to_vec(section.template, section.width);
@@ -261,63 +167,56 @@ impl PrefabBuilder {
         // Place the new section
         let chunk_x = match section.placement.0 {
             //HorizontalPlacement::Left => 0,
-            //HorizontalPlacement::Center => (self.map.width / 2) - (section.width as i32 / 2),
-            HorizontalPlacement::Right => (self.map.width - 1) - section.width as i32,
+            //HorizontalPlacement::Center => (build_data.map.width / 2) - (section.width as i32 / 2),
+            HorizontalPlacement::Right => (build_data.map.width - 1) - section.width as i32,
         };
 
         let chunk_y = match section.placement.1 {
             VerticalPlacement::Top => 0,
-            //VerticalPlacement::Center => (self.map.height / 2) - (section.height as i32 / 2),
-            //VerticalPlacement::Bottom => (self.map.height - 1) - section.height as i32,
+            //VerticalPlacement::Center => (build_data.map.height / 2) - (section.height as i32 / 2),
+            //VerticalPlacement::Bottom => (build_data.map.height - 1) - section.height as i32,
         };
 
-        self.apply_previous_iteration(|x, y, _| {
+        self.apply_previous_iteration(|x, y| {
             x < chunk_x
                 || x > (chunk_x + section.width as i32)
                 || y < chunk_y
                 || y > (chunk_y + section.height as i32)
-        });
+        }, rng, build_data);
 
         let mut i = 0;
         for ty in 0..section.height {
             for tx in 0..section.width {
-                if tx < self.map.width as usize && ty < self.map.height as usize {
-                    let idx = self.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
-                    self.char_to_map(string_vec[i], idx);
+                if tx < build_data.map.width as usize && ty < build_data.map.height as usize {
+                    let idx = build_data.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
+                    self.char_to_map(string_vec[i], idx, build_data);
                 }
                 i += 1;
             }
         }
-        self.take_snapshot();
+        build_data.take_snapshot();
     }
 
-    fn apply_previous_iteration<F>(&mut self, mut filter: F)
+    fn apply_previous_iteration<F>(&mut self, mut filter: F, _rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap)
     where
-        F: FnMut(i32, i32, &(usize, String)) -> bool,
+        F: FnMut(i32, i32) -> bool,
     {
-        // Build the map
-        let prev_builder = self.previous_builder.as_mut().unwrap();
-        prev_builder.build_map();
-        self.starting_position = prev_builder.get_starting_position();
-        self.map = prev_builder.get_map();
-        for e in prev_builder.get_spawn_list().iter() {
-            let idx = e.0;
-            let x = idx as i32 % self.map.width;
-            let y = idx as i32 / self.map.width;
-            if filter(x, y, e) {
-                self.spawn_list.push((idx, e.1.to_string()));
-            }
-        }
-        self.take_snapshot();
+        let width = build_data.map.width;
+        build_data.spawn_list.retain(|(idx, _)| {
+            let x = *idx as i32 % width;
+            let y = *idx as i32 / width;
+            filter(x, y)
+        });
+        build_data.take_snapshot();
     }
 
-    fn apply_room_vaults(&mut self) {
+    fn apply_room_vaults(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         use prefab_rooms::*;
-        let mut rng = RandomNumberGenerator::new();
 
-        self.apply_previous_iteration(|_, _, _| true);
+        self.apply_previous_iteration(|_, _| true, rng, build_data);
 
-        let vault_roll = rng.roll_dice(1, 6) + self.depth;
+        let vault_roll = rng.roll_dice(1, 6) + build_data.map.depth;
         if vault_roll < 4 {
             return;
         }
@@ -326,7 +225,7 @@ impl PrefabBuilder {
 
         let possible_vaults: Vec<&PrefabRoom> = master_vault_list
             .iter()
-            .filter(|v| self.depth >= v.first_depth && self.depth <= v.last_depth)
+            .filter(|v| build_data.map.depth >= v.first_depth && build_data.map.depth <= v.last_depth)
             .collect();
 
         if possible_vaults.is_empty() {
@@ -341,20 +240,20 @@ impl PrefabBuilder {
         let vault = possible_vaults[vault_index];
 
         let mut vault_positions: Vec<Position> = Vec::new();
-        for idx in 0..self.map.tiles.len() {
-            let x = (idx % self.map.width as usize) as i32;
-            let y = (idx / self.map.width as usize) as i32;
+        for idx in 0..build_data.map.tiles.len() {
+            let x = (idx % build_data.map.width as usize) as i32;
+            let y = (idx / build_data.map.width as usize) as i32;
 
             if x > 1
-                && (x + vault.width as i32) < self.map.width - 2
+                && (x + vault.width as i32) < build_data.map.width - 2
                 && y > 1
-                && (y + vault.height as i32) < self.map.height - 2
+                && (y + vault.height as i32) < build_data.map.height - 2
             {
                 let mut possible = true;
                 'out: for ty in 0..vault.height as i32 {
                     for tx in 0..vault.width as i32 {
-                        let idx = self.map.xy_idx(tx + x, ty + y);
-                        if self.map.tiles[idx] != TileType::Floor {
+                        let idx = build_data.map.xy_idx(tx + x, ty + y);
+                        if build_data.map.tiles[idx] != TileType::Floor {
                             possible = false;
                             break 'out;
                         }
@@ -382,12 +281,12 @@ impl PrefabBuilder {
             let mut i = 0;
             for ty in 0..vault.height {
                 for tx in 0..vault.width {
-                    let idx = self.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
-                    self.char_to_map(string_vec[i], idx);
+                    let idx = build_data.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
+                    self.char_to_map(string_vec[i], idx, build_data);
                     i += 1;
                 }
             }
-            self.take_snapshot();
+            build_data.take_snapshot();
         }
     }
 }
