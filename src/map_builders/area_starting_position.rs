@@ -1,12 +1,20 @@
-use super::{MetaMapBuilder, BuilderMap, Position, TileType};
+use super::{BuilderMap, MetaMapBuilder, Position, TileType};
 
 use rltk::RandomNumberGenerator;
 
 #[allow(dead_code)]
-pub enum XStart { Left, Center, Right }
+pub enum XStart {
+    Left,
+    Center,
+    Right,
+}
 
 #[allow(dead_code)]
-pub enum YStart { Top, Center, Bottom }
+pub enum YStart {
+    Top,
+    Center,
+    Bottom,
+}
 
 pub struct AreaStartingPosition {
     x: XStart,
@@ -40,15 +48,16 @@ impl AreaStartingPosition {
         let mut available_floors: Vec<(usize, f32)> = Vec::new();
         for (idx, tiletype) in build_data.map.tiles.iter().enumerate() {
             if *tiletype == TileType::Floor {
-                available_floors.push(
-                    (
-                        idx,
-                        rltk::DistanceAlg::PythagorasSquared.distance2d(
-                            rltk::Point::new(idx as i32 % build_data.map.width, idx as i32 / build_data.map.width),
-                            rltk::Point::new(seed_x, seed_y)
-                        )
-                    )
-                );
+                available_floors.push((
+                    idx,
+                    rltk::DistanceAlg::PythagorasSquared.distance2d(
+                        rltk::Point::new(
+                            idx as i32 % build_data.map.width,
+                            idx as i32 / build_data.map.width,
+                        ),
+                        rltk::Point::new(seed_x, seed_y),
+                    ),
+                ));
             }
         }
 

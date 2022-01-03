@@ -1,4 +1,4 @@
-use super::{InitialMapBuilder, BuilderMap, Map, Rect, TileType};
+use super::{BuilderMap, InitialMapBuilder, Map, Rect, TileType};
 use crate::map_builders::*;
 
 pub struct BspDungeonBuilder {
@@ -20,8 +20,12 @@ impl BspDungeonBuilder {
         let mut rooms: Vec<Rect> = Vec::new();
 
         self.rects.clear();
-        self.rects
-            .push(Rect::new(2, 2, build_data.map.width - 5, build_data.map.height - 5));
+        self.rects.push(Rect::new(
+            2,
+            2,
+            build_data.map.width - 5,
+            build_data.map.height - 5,
+        ));
         let first_room = self.rects[0];
         self.add_subrects(first_room);
 

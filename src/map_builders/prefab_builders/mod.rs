@@ -1,6 +1,6 @@
 use rltk::RandomNumberGenerator;
 
-use super::{InitialMapBuilder, MetaMapBuilder, BuilderMap, TileType, Position};
+use super::{BuilderMap, InitialMapBuilder, MetaMapBuilder, Position, TileType};
 
 pub mod prefab_levels;
 pub mod prefab_rooms;
@@ -38,19 +38,27 @@ impl InitialMapBuilder for PrefabBuilder {
 
 impl PrefabBuilder {
     pub fn sectional(section: prefab_sections::PrefabSection) -> Box<PrefabBuilder> {
-        Box::new(PrefabBuilder { mode: PrefabMode::Sectional { section } })
+        Box::new(PrefabBuilder {
+            mode: PrefabMode::Sectional { section },
+        })
     }
 
     pub fn constant(level: prefab_levels::PrefabLevel) -> Box<PrefabBuilder> {
-        Box::new(PrefabBuilder { mode: PrefabMode::Constant { level } })
+        Box::new(PrefabBuilder {
+            mode: PrefabMode::Constant { level },
+        })
     }
 
     pub fn rex_level(template: &'static str) -> Box<PrefabBuilder> {
-        Box::new(PrefabBuilder { mode: PrefabMode::RexLevel { template } })
+        Box::new(PrefabBuilder {
+            mode: PrefabMode::RexLevel { template },
+        })
     }
 
     pub fn vaults() -> Box<PrefabBuilder> {
-        Box::new(PrefabBuilder { mode: PrefabMode::RoomVaults })
+        Box::new(PrefabBuilder {
+            mode: PrefabMode::RoomVaults,
+        })
     }
 
     fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
@@ -146,7 +154,9 @@ impl PrefabBuilder {
             }
             '!' => {
                 build_data.map.tiles[idx] = TileType::Floor;
-                build_data.spawn_list.push((idx, "Health Potion".to_string()));
+                build_data
+                    .spawn_list
+                    .push((idx, "Health Potion".to_string()));
             }
             _ => {
                 rltk::console::log(format!("Unknwon glyph {}", ch as u8 as char));
@@ -154,8 +164,12 @@ impl PrefabBuilder {
         }
     }
 
-    fn apply_sectional(&mut self, section: &prefab_sections::PrefabSection, 
-            rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn apply_sectional(
+        &mut self,
+        section: &prefab_sections::PrefabSection,
+        rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap,
+    ) {
         use prefab_sections::*;
 
         let string_vec = PrefabBuilder::read_ascii_to_vec(section.template, section.width);
@@ -173,18 +187,24 @@ impl PrefabBuilder {
             //VerticalPlacement::Bottom => (build_data.map.height - 1) - section.height as i32,
         };
 
-        self.apply_previous_iteration(|x, y| {
-            x < chunk_x
-                || x > (chunk_x + section.width as i32)
-                || y < chunk_y
-                || y > (chunk_y + section.height as i32)
-        }, rng, build_data);
+        self.apply_previous_iteration(
+            |x, y| {
+                x < chunk_x
+                    || x > (chunk_x + section.width as i32)
+                    || y < chunk_y
+                    || y > (chunk_y + section.height as i32)
+            },
+            rng,
+            build_data,
+        );
 
         let mut i = 0;
         for ty in 0..section.height {
             for tx in 0..section.width {
                 if tx < build_data.map.width as usize && ty < build_data.map.height as usize {
-                    let idx = build_data.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
+                    let idx = build_data
+                        .map
+                        .xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
                     self.char_to_map(string_vec[i], idx, build_data);
                 }
                 i += 1;
@@ -193,9 +213,12 @@ impl PrefabBuilder {
         build_data.take_snapshot();
     }
 
-    fn apply_previous_iteration<F>(&mut self, mut filter: F, _rng: &mut RandomNumberGenerator,
-        build_data: &mut BuilderMap)
-    where
+    fn apply_previous_iteration<F>(
+        &mut self,
+        mut filter: F,
+        _rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap,
+    ) where
         F: FnMut(i32, i32) -> bool,
     {
         let width = build_data.map.width;
@@ -221,7 +244,9 @@ impl PrefabBuilder {
 
         let possible_vaults: Vec<&PrefabRoom> = master_vault_list
             .iter()
-            .filter(|v| build_data.map.depth >= v.first_depth && build_data.map.depth <= v.last_depth)
+            .filter(|v| {
+                build_data.map.depth >= v.first_depth && build_data.map.depth <= v.last_depth
+            })
             .collect();
 
         if possible_vaults.is_empty() {
@@ -277,7 +302,9 @@ impl PrefabBuilder {
             let mut i = 0;
             for ty in 0..vault.height {
                 for tx in 0..vault.width {
-                    let idx = build_data.map.xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
+                    let idx = build_data
+                        .map
+                        .xy_idx(tx as i32 + chunk_x, ty as i32 + chunk_y);
                     self.char_to_map(string_vec[i], idx, build_data);
                     i += 1;
                 }

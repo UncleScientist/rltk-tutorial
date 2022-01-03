@@ -1,4 +1,4 @@
-use super::{Rect, MAPHEIGHT, MAPWIDTH, InitialMapBuilder, BuilderMap};
+use super::{BuilderMap, InitialMapBuilder, Rect, MAPHEIGHT, MAPWIDTH};
 use rltk::RandomNumberGenerator;
 
 use crate::map_builders::*;
@@ -16,11 +16,15 @@ impl SimpleMapBuilder {
         Box::new(SimpleMapBuilder {})
     }
 
-    fn rooms_and_corridors(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn rooms_and_corridors(
+        &mut self,
+        rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap,
+    ) {
         const MAX_ROOMS: i32 = 30;
         const MIN_SIZE: i32 = 6;
         const MAX_SIZE: i32 = 10;
-        
+
         let mut rooms: Vec<Rect> = Vec::new();
 
         for _ in 0..MAX_ROOMS {

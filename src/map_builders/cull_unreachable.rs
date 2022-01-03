@@ -1,4 +1,4 @@
-use super::{MetaMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, MetaMapBuilder, TileType};
 
 use rltk::RandomNumberGenerator;
 
@@ -22,8 +22,13 @@ impl CullUnreachable {
         build_data.map.populate_blocked();
 
         let map_starts: Vec<usize> = vec![start_idx];
-        let dijkstra_map = rltk::DijkstraMap::new(build_data.map.width as usize,
-            build_data.map.height as usize, &map_starts, &build_data.map, 1000.0);
+        let dijkstra_map = rltk::DijkstraMap::new(
+            build_data.map.width as usize,
+            build_data.map.height as usize,
+            &map_starts,
+            &build_data.map,
+            1000.0,
+        );
         for (i, tile) in build_data.map.tiles.iter_mut().enumerate() {
             if *tile == TileType::Floor {
                 let distance_to_start = dijkstra_map.map[i];

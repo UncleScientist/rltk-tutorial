@@ -416,7 +416,12 @@ impl State {
         let player_start = {
             let mut worldmap_resource = self.ecs.write_resource::<Map>();
             *worldmap_resource = builder.build_data.map.clone();
-            builder.build_data.starting_position.as_mut().unwrap().clone()
+            builder
+                .build_data
+                .starting_position
+                .as_mut()
+                .unwrap()
+                .clone()
         };
 
         builder.spawn_entities(&mut self.ecs);

@@ -1,4 +1,4 @@
-use super::{InitialMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, InitialMapBuilder, TileType};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DistanceAlgorithm {

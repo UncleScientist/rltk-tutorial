@@ -1,4 +1,4 @@
-use super::{InitialMapBuilder, BuilderMap, Position, TileType, Symmetry};
+use super::{BuilderMap, InitialMapBuilder, Position, Symmetry, TileType};
 use crate::map_builders::*;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -81,7 +81,6 @@ impl DLABuilder {
     }
 
     fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-
         // Carve a starting seed
         let starting_position = Position {
             x: build_data.map.width / 2,

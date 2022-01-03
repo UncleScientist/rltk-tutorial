@@ -1,4 +1,4 @@
-use super::{MetaMapBuilder, BuilderMap, Position};
+use super::{BuilderMap, MetaMapBuilder, Position};
 use rltk::RandomNumberGenerator;
 
 pub struct RoomBasedStartingPosition {}
@@ -11,7 +11,7 @@ impl MetaMapBuilder for RoomBasedStartingPosition {
 
 impl RoomBasedStartingPosition {
     pub fn new() -> Box<RoomBasedStartingPosition> {
-        Box::new(RoomBasedStartingPosition{})
+        Box::new(RoomBasedStartingPosition {})
     }
 
     fn build(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {

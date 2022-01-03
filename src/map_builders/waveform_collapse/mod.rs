@@ -1,4 +1,4 @@
-use super::{MetaMapBuilder, BuilderMap, Map, TileType};
+use super::{BuilderMap, Map, MetaMapBuilder, TileType};
 
 mod constraints;
 use constraints::*;
@@ -44,7 +44,12 @@ impl WaveformCollapseBuilder {
         build_data.spawn_list.clear();
     }
 
-    fn render_tile_gallery(&mut self, constraints: &[MapChunk], chunk_size: i32, build_data: &mut BuilderMap) {
+    fn render_tile_gallery(
+        &mut self,
+        constraints: &[MapChunk],
+        chunk_size: i32,
+        build_data: &mut BuilderMap,
+    ) {
         build_data.map = Map::new(0);
         let mut counter = 0;
         let mut x = 1;

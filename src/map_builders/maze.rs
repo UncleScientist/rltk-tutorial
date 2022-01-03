@@ -1,4 +1,4 @@
-use super::{Map, InitialMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, InitialMapBuilder, Map, TileType};
 
 pub struct MazeBuilder {}
 
@@ -14,8 +14,11 @@ impl MazeBuilder {
     }
 
     fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-
-        let mut maze = Grid::new(build_data.map.width / 2 - 2, build_data.map.height / 2 - 2, rng);
+        let mut maze = Grid::new(
+            build_data.map.width / 2 - 2,
+            build_data.map.height / 2 - 2,
+            rng,
+        );
         maze.generate_maze(build_data);
     }
 }

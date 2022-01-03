@@ -96,7 +96,7 @@ impl BuilderChain {
                 starting_position: None,
                 rooms: None,
                 history: Vec::new(),
-            }
+            },
         }
     }
 
@@ -166,29 +166,34 @@ pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> 
     }
 
     if rng.roll_dice(1, 20) == 1 {
-        builder.with(PrefabBuilder::sectional(prefab_builders::prefab_sections::UNDERGROUND_FORT));
+        builder.with(PrefabBuilder::sectional(
+            prefab_builders::prefab_sections::UNDERGROUND_FORT,
+        ));
     }
 
     builder.with(PrefabBuilder::vaults());
 
     builder
-
 }
 
-fn random_initial_builder(rng: &mut rltk::RandomNumberGenerator)
-                    -> (Box<dyn InitialMapBuilder>, bool) {
+fn random_initial_builder(
+    rng: &mut rltk::RandomNumberGenerator,
+) -> (Box<dyn InitialMapBuilder>, bool) {
     let builder = rng.roll_dice(1, 19);
 
     match builder {
-        1 =>  (PrefabBuilder::constant(prefab_builders::prefab_levels::WFC_POPULATED), false),
-        2 =>  (MazeBuilder::new(), false),
-        3 =>  (BspInteriorBuilder::new(), true),
-        4 =>  (CellularAutomataBuilder::new(), false),
-        5 =>  (DrunkardsWalkBuilder::open_area(), false),
-        6 =>  (DrunkardsWalkBuilder::open_halls(), false),
-        7 =>  (DrunkardsWalkBuilder::winding_passages(), false),
-        8 =>  (DLABuilder::walk_inwards(), false),
-        9 =>  (DLABuilder::walk_outwards(), false),
+        1 => (
+            PrefabBuilder::constant(prefab_builders::prefab_levels::WFC_POPULATED),
+            false,
+        ),
+        2 => (MazeBuilder::new(), false),
+        3 => (BspInteriorBuilder::new(), true),
+        4 => (CellularAutomataBuilder::new(), false),
+        5 => (DrunkardsWalkBuilder::open_area(), false),
+        6 => (DrunkardsWalkBuilder::open_halls(), false),
+        7 => (DrunkardsWalkBuilder::winding_passages(), false),
+        8 => (DLABuilder::walk_inwards(), false),
+        9 => (DLABuilder::walk_outwards(), false),
         10 => (DLABuilder::central_attractor(), false),
         11 => (DLABuilder::insectoid(), false),
         12 => (DLABuilder::crazy(), false),
@@ -199,7 +204,10 @@ fn random_initial_builder(rng: &mut rltk::RandomNumberGenerator)
         17 => (VoronoiBuilder::manhattan(), false),
         18 => (VoronoiBuilder::chebyshev(), false),
         19 => (VoronoiBuilder::pythagoras(), false),
-        20 => (PrefabBuilder::rex_level("../../resources/SmallDungeon_80x50.xp"), false),
-        _ =>  (SimpleMapBuilder::new(), true),
+        20 => (
+            PrefabBuilder::rex_level("../../resources/SmallDungeon_80x50.xp"),
+            false,
+        ),
+        _ => (SimpleMapBuilder::new(), true),
     }
 }

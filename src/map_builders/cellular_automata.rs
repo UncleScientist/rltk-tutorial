@@ -1,4 +1,4 @@
-use super::{InitialMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, InitialMapBuilder, TileType};
 
 use rltk::RandomNumberGenerator;
 
@@ -39,10 +39,10 @@ impl CellularAutomataBuilder {
 
                     neighbors += (build_data.map.tiles[idx - 1] == TileType::Wall) as usize;
                     neighbors += (build_data.map.tiles[idx + 1] == TileType::Wall) as usize;
-                    neighbors +=
-                        (build_data.map.tiles[idx - build_data.map.width as usize] == TileType::Wall) as usize;
-                    neighbors +=
-                        (build_data.map.tiles[idx + build_data.map.width as usize] == TileType::Wall) as usize;
+                    neighbors += (build_data.map.tiles[idx - build_data.map.width as usize]
+                        == TileType::Wall) as usize;
+                    neighbors += (build_data.map.tiles[idx + build_data.map.width as usize]
+                        == TileType::Wall) as usize;
                     neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize - 1)]
                         == TileType::Wall) as usize;
                     neighbors += (build_data.map.tiles[idx - (build_data.map.width as usize + 1)]

@@ -1,4 +1,4 @@
-use super::{InitialMapBuilder, BuilderMap, Position, TileType, Symmetry};
+use super::{BuilderMap, InitialMapBuilder, Position, Symmetry, TileType};
 use crate::map_builders::*;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -31,67 +31,56 @@ impl DrunkardsWalkBuilder {
     }
 
     pub fn fearful_symmetry() -> Box<DrunkardsWalkBuilder> {
-        DrunkardsWalkBuilder::new(
-            DrunkardSettings {
-                spawn_mode: DrunkSpawnMode::Random,
-                drunken_lifetime: 100,
-                floor_percent: 0.4,
-                brush_size: 1,
-                symmetry: Symmetry::Both,
-            },
-        )
+        DrunkardsWalkBuilder::new(DrunkardSettings {
+            spawn_mode: DrunkSpawnMode::Random,
+            drunken_lifetime: 100,
+            floor_percent: 0.4,
+            brush_size: 1,
+            symmetry: Symmetry::Both,
+        })
     }
 
     pub fn fat_passages() -> Box<DrunkardsWalkBuilder> {
-        DrunkardsWalkBuilder::new(
-            DrunkardSettings {
-                spawn_mode: DrunkSpawnMode::Random,
-                drunken_lifetime: 100,
-                floor_percent: 0.3,
-                brush_size: 2,
-                symmetry: Symmetry::None,
-            },
-        )
+        DrunkardsWalkBuilder::new(DrunkardSettings {
+            spawn_mode: DrunkSpawnMode::Random,
+            drunken_lifetime: 100,
+            floor_percent: 0.3,
+            brush_size: 2,
+            symmetry: Symmetry::None,
+        })
     }
 
     pub fn open_area() -> Box<DrunkardsWalkBuilder> {
-        DrunkardsWalkBuilder::new(
-            DrunkardSettings {
-                spawn_mode: DrunkSpawnMode::StartingPoint,
-                drunken_lifetime: 400,
-                floor_percent: 0.5,
-                brush_size: 1,
-                symmetry: Symmetry::None,
-            },
-        )
+        DrunkardsWalkBuilder::new(DrunkardSettings {
+            spawn_mode: DrunkSpawnMode::StartingPoint,
+            drunken_lifetime: 400,
+            floor_percent: 0.5,
+            brush_size: 1,
+            symmetry: Symmetry::None,
+        })
     }
 
     pub fn open_halls() -> Box<DrunkardsWalkBuilder> {
-        DrunkardsWalkBuilder::new(
-            DrunkardSettings {
-                spawn_mode: DrunkSpawnMode::Random,
-                drunken_lifetime: 400,
-                floor_percent: 0.5,
-                brush_size: 1,
-                symmetry: Symmetry::None,
-            },
-        )
+        DrunkardsWalkBuilder::new(DrunkardSettings {
+            spawn_mode: DrunkSpawnMode::Random,
+            drunken_lifetime: 400,
+            floor_percent: 0.5,
+            brush_size: 1,
+            symmetry: Symmetry::None,
+        })
     }
 
     pub fn winding_passages() -> Box<DrunkardsWalkBuilder> {
-        DrunkardsWalkBuilder::new(
-            DrunkardSettings {
-                spawn_mode: DrunkSpawnMode::StartingPoint,
-                drunken_lifetime: 100,
-                floor_percent: 0.4,
-                brush_size: 1,
-                symmetry: Symmetry::None,
-            },
-        )
+        DrunkardsWalkBuilder::new(DrunkardSettings {
+            spawn_mode: DrunkSpawnMode::StartingPoint,
+            drunken_lifetime: 100,
+            floor_percent: 0.4,
+            brush_size: 1,
+            symmetry: Symmetry::None,
+        })
     }
 
     fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-
         let starting_position = Position {
             x: build_data.map.width / 2,
             y: build_data.map.height / 2,
@@ -117,9 +106,7 @@ impl DrunkardsWalkBuilder {
             let mut did_something = false;
 
             let (mut drunk_x, mut drunk_y) = match self.settings.spawn_mode {
-                DrunkSpawnMode::StartingPoint => {
-                    (starting_position.x, starting_position.y)
-                }
+                DrunkSpawnMode::StartingPoint => (starting_position.x, starting_position.y),
                 DrunkSpawnMode::Random => {
                     if digger_count == 0 {
                         (starting_position.x, starting_position.y)

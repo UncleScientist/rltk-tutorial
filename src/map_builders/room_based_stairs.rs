@@ -1,4 +1,4 @@
-use super::{MetaMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, MetaMapBuilder, TileType};
 use rltk::RandomNumberGenerator;
 
 pub struct RoomBasedStairs {}
@@ -11,7 +11,7 @@ impl MetaMapBuilder for RoomBasedStairs {
 
 impl RoomBasedStairs {
     pub fn new() -> Box<RoomBasedStairs> {
-        Box::new(RoomBasedStairs{})
+        Box::new(RoomBasedStairs {})
     }
 
     fn build(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
@@ -23,5 +23,5 @@ impl RoomBasedStairs {
         } else {
             panic!("room based stairs only works after rooms have been created");
         }
-    } 
+    }
 }

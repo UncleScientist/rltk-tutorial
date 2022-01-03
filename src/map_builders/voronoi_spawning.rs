@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 
-use super::{MetaMapBuilder, BuilderMap, TileType};
+use super::{BuilderMap, MetaMapBuilder, TileType};
 use crate::map_builders::*;
 
 use rltk::RandomNumberGenerator;
 
 pub struct VoronoiSpawning {}
-
 
 impl MetaMapBuilder for VoronoiSpawning {
     fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
@@ -40,8 +39,12 @@ impl VoronoiSpawning {
         }
 
         for area in noise_areas.iter() {
-            spawner::spawn_region(rng, area.1, build_data.map.depth,
-                &mut build_data.spawn_list);
+            spawner::spawn_region(
+                rng,
+                area.1,
+                build_data.map.depth,
+                &mut build_data.spawn_list,
+            );
         }
     }
 }
