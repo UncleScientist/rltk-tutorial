@@ -1,4 +1,4 @@
-use super::{BuilderMap, InitialMapBuilder, Position, Symmetry, TileType};
+use super::{BuilderMap, MetaMapBuilder, InitialMapBuilder, Position, Symmetry, TileType};
 use crate::map_builders::*;
 
 #[derive(PartialEq, Copy, Clone)]
@@ -17,6 +17,12 @@ pub struct DrunkardSettings {
 
 pub struct DrunkardsWalkBuilder {
     settings: DrunkardSettings,
+}
+
+impl MetaMapBuilder for DrunkardsWalkBuilder {
+    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
+    }
 }
 
 impl InitialMapBuilder for DrunkardsWalkBuilder {
