@@ -60,6 +60,9 @@ use distant_exit::*;
 mod room_exploder;
 use room_exploder::*;
 
+mod room_corner_rounding;
+use room_corner_rounding::*;
+
 // --------------------------------------------------------------------------------
 pub struct BuilderMap {
     pub spawn_list: Vec<(usize, String)>,
@@ -149,7 +152,7 @@ pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> 
     let mut builder = BuilderChain::new(new_depth);
 
     builder.start_with(BspDungeonBuilder::new());
-    builder.with(RoomExploder::new());
+    builder.with(RoomCornerRounder::new());
     builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
     builder.with(CullUnreachable::new());
     builder.with(VoronoiSpawning::new());
