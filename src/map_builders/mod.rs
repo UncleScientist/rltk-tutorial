@@ -181,10 +181,6 @@ pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> Builde
         _ => random_shape_builder(rng, &mut builder),
     }
 
-    if rng.roll_dice(1, 3) == 1 {
-        builder.with(WaveformCollapseBuilder::new());
-    }
-
     if rng.roll_dice(1, 20) == 1 {
         builder.with(PrefabBuilder::sectional(
             prefab_builders::prefab_sections::UNDERGROUND_FORT,
@@ -276,6 +272,10 @@ fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCh
         _ => builder.start_with(PrefabBuilder::rex_level(
             "../../resources/SmallDungeon_80x50.xp",
         )),
+    }
+
+    if rng.roll_dice(1, 3) == 1 {
+        builder.with(WaveformCollapseBuilder::new());
     }
 
     // Set the start to the center and cull
