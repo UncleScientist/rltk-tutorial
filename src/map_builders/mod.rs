@@ -60,8 +60,17 @@ use distant_exit::*;
 mod room_exploder;
 use room_exploder::*;
 
+mod room_sorter;
+use room_sorter::*;
+
 mod room_corner_rounding;
 use room_corner_rounding::*;
+
+mod rooms_corridors_dogleg;
+use rooms_corridors_dogleg::*;
+
+mod rooms_corridors_bsp;
+use rooms_corridors_bsp::*;
 
 // --------------------------------------------------------------------------------
 pub struct BuilderMap {
@@ -149,14 +158,15 @@ pub trait MetaMapBuilder {
 // --------------------------------------------------------------------------------
 
 pub fn random_builder(new_depth: i32, rng: &mut rltk::RandomNumberGenerator) -> BuilderChain {
+    // xyzzy
     let mut builder = BuilderChain::new(new_depth);
 
     builder.start_with(BspDungeonBuilder::new());
-    builder.with(RoomCornerRounder::new());
-    builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
-    builder.with(CullUnreachable::new());
-    builder.with(VoronoiSpawning::new());
-    builder.with(DistantExit::new());
+    builder.with(RoomSorter::new());
+    builder.with(BspCorridors::new());
+    builder.with(RoomBasedSpawner::new());
+    builder.with(RoomBasedStartingPosition::new());
+    builder.with(RoomBasedStairs::new());
 
     /*
     let (random_starter, has_rooms) = random_initial_builder(rng);
