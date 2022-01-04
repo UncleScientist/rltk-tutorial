@@ -1,4 +1,4 @@
-use super::{BuilderMap, MetaMapBuilder, Rect};
+use super::{BuilderMap, MetaMapBuilder};
 use crate::draw_corridor;
 
 use rltk::RandomNumberGenerator;

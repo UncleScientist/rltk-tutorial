@@ -1,4 +1,4 @@
-use super::{apply_horizontal_tunnel, apply_vertical_tunnel, BuilderMap, MetaMapBuilder, Rect};
+use super::{apply_horizontal_tunnel, apply_vertical_tunnel, BuilderMap, MetaMapBuilder};
 use rltk::RandomNumberGenerator;
 
 pub struct DoglegCorridors {}
