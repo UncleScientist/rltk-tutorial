@@ -179,7 +179,7 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
 pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
 
-    if std::env::var("QWER").is_ok() {
+    if std::env::var("QWER").is_err() {
         let type_roll = rng.roll_dice(1, 2);
         match type_roll {
             1 => random_room_builder(rng, &mut builder),
@@ -225,6 +225,8 @@ fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCha
             4 => builder.with(RoomSorter::new(RoomSort::Bottommost)),
             _ => builder.with(RoomSorter::new(RoomSort::Central)),
         }
+
+        builder.with(RoomDrawer::new());
 
         match rng.roll_dice(1, 2) {
             1 => builder.with(DoglegCorridors::new()),
