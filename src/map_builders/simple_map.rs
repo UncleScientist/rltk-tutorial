@@ -1,8 +1,6 @@
 use super::{BuilderMap, InitialMapBuilder, Rect, MAPHEIGHT, MAPWIDTH};
 use rltk::RandomNumberGenerator;
 
-use crate::map_builders::*;
-
 pub struct SimpleMapBuilder {}
 
 impl InitialMapBuilder for SimpleMapBuilder {
@@ -37,9 +35,7 @@ impl SimpleMapBuilder {
                 }
             }
             if ok {
-                apply_room_to_map(&mut build_data.map, &new_room);
                 rooms.push(new_room);
-                build_data.take_snapshot();
             }
         }
         build_data.rooms = Some(rooms);

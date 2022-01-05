@@ -1,4 +1,4 @@
-use super::{Map, Rect, TileType};
+use super::{Map, TileType};
 use std::cmp::{max, min};
 
 #[derive(PartialEq, Copy, Clone)]
@@ -27,15 +27,6 @@ pub fn apply_vertical_tunnel(map: &mut Map, y1: i32, y2: i32, x: i32) {
         let idx = map.xy_idx(x, y);
         if idx > 0 && idx < last {
             map.tiles[idx] = TileType::Floor;
-        }
-    }
-}
-
-pub fn apply_room_to_map(map: &mut Map, room: &Rect) {
-    for y in room.y1 + 1..=room.y2 {
-        for x in room.x1 + 1..=room.x2 {
-            let loc = map.xy_idx(x, y);
-            map.tiles[loc] = TileType::Floor;
         }
     }
 }

@@ -38,6 +38,9 @@ use voronoi::*;
 mod waveform_collapse;
 use waveform_collapse::*;
 
+mod rooms_draw;
+use rooms_draw::*;
+
 mod room_based_spawner;
 use room_based_spawner::*;
 
@@ -175,19 +178,30 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
 
 pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
-    let type_roll = rng.roll_dice(1, 2);
-    match type_roll {
-        1 => random_room_builder(rng, &mut builder),
-        _ => random_shape_builder(rng, &mut builder),
-    }
 
-    if rng.roll_dice(1, 20) == 1 {
-        builder.with(PrefabBuilder::sectional(
-            prefab_builders::prefab_sections::UNDERGROUND_FORT,
-        ));
-    }
+    if std::env::var("QWER").is_ok() {
+        let type_roll = rng.roll_dice(1, 2);
+        match type_roll {
+            1 => random_room_builder(rng, &mut builder),
+            _ => random_shape_builder(rng, &mut builder),
+        }
 
-    builder.with(PrefabBuilder::vaults());
+        if rng.roll_dice(1, 20) == 1 {
+            builder.with(PrefabBuilder::sectional(
+                prefab_builders::prefab_sections::UNDERGROUND_FORT,
+            ));
+        }
+
+        builder.with(PrefabBuilder::vaults());
+    } else {
+        builder.start_with(SimpleMapBuilder::new());
+        builder.with(RoomDrawer::new());
+        builder.with(RoomSorter::new(RoomSort::Leftmost));
+        builder.with(BspCorridors::new());
+        builder.with(RoomBasedSpawner::new());
+        builder.with(RoomBasedStairs::new());
+        builder.with(RoomBasedStartingPosition::new());
+    }
 
     builder
 }
