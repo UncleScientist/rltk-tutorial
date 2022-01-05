@@ -86,6 +86,9 @@ use rooms_corridors_nearest::*;
 mod rooms_corridors_lines;
 use rooms_corridors_lines::*;
 
+mod door_placement;
+use door_placement::*;
+
 // --------------------------------------------------------------------------------
 pub struct BuilderMap {
     pub spawn_list: Vec<(usize, String)>,
@@ -190,7 +193,7 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
 pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
 
-    if std::env::var("QWER").is_err() {
+    if std::env::var("QWER").is_ok() {
         let type_roll = rng.roll_dice(1, 2);
         match type_roll {
             1 => random_room_builder(rng, &mut builder),
@@ -205,12 +208,9 @@ pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> Builde
 
         builder.with(PrefabBuilder::vaults());
     } else {
-        builder.start_with(SimpleMapBuilder::new());
-        builder.with(RoomDrawer::new());
-        builder.with(RoomSorter::new(RoomSort::Leftmost));
-        builder.with(StraightLineCorridors::new());
+        builder.start_with(BspInteriorBuilder::new());
+        builder.with(DoorPlacement::new());
         builder.with(RoomBasedSpawner::new());
-        builder.with(CorridorSpawner::new());
         builder.with(RoomBasedStairs::new());
         builder.with(RoomBasedStartingPosition::new());
     }
