@@ -80,6 +80,9 @@ use rooms_corridors_bsp::*;
 mod rooms_corridors_nearest;
 use rooms_corridors_nearest::*;
 
+mod rooms_corridors_lines;
+use rooms_corridors_lines::*;
+
 // --------------------------------------------------------------------------------
 pub struct BuilderMap {
     pub spawn_list: Vec<(usize, String)>,
@@ -200,7 +203,7 @@ pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> Builde
         builder.start_with(SimpleMapBuilder::new());
         builder.with(RoomDrawer::new());
         builder.with(RoomSorter::new(RoomSort::Leftmost));
-        builder.with(NearestCorridors::new());
+        builder.with(StraightLineCorridors::new());
         builder.with(RoomBasedSpawner::new());
         builder.with(RoomBasedStairs::new());
         builder.with(RoomBasedStartingPosition::new());
