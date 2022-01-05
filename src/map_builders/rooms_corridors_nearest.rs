@@ -25,6 +25,7 @@ impl NearestCorridors {
             panic!("Nearest corridors requires a builder with room structures")
         };
 
+        let mut corridors = Vec::new();
         let mut connected = HashSet::new();
         for (i, room) in rooms.iter().enumerate() {
             let mut room_distance = Vec::new();
@@ -43,7 +44,7 @@ impl NearestCorridors {
             if !room_distance.is_empty() {
                 room_distance.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
                 let dest_center = rooms[room_distance[0].0].center();
-                draw_corridor(
+                let corridor = draw_corridor(
                     &mut build_data.map,
                     room_center.0,
                     room_center.1,
@@ -52,7 +53,9 @@ impl NearestCorridors {
                 );
                 connected.insert(i);
                 build_data.take_snapshot();
+                corridors.push(corridor);
             }
         }
+        build_data.corridors = Some(corridors);
     }
 }

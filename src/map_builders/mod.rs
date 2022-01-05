@@ -89,6 +89,7 @@ pub struct BuilderMap {
     pub map: Map,
     pub starting_position: Option<Position>,
     pub rooms: Option<Vec<Rect>>,
+    pub corridors: Option<Vec<Vec<usize>>>,
     pub history: Vec<Map>,
 }
 
@@ -121,6 +122,7 @@ impl BuilderChain {
                 map: Map::new(new_depth),
                 starting_position: None,
                 rooms: None,
+                corridors: None,
                 history: Vec::new(),
             },
         }

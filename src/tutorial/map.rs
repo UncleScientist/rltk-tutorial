@@ -216,7 +216,8 @@ fn is_revealed_and_wall(map: &Map, x: i32, y: i32) -> bool {
     map.tiles[idx] == TileType::Wall && map.revealed_tiles[idx]
 }
 
-pub fn draw_corridor(map: &mut Map, x1: i32, y1: i32, x2: i32, y2: i32) {
+pub fn draw_corridor(map: &mut Map, x1: i32, y1: i32, x2: i32, y2: i32) -> Vec<usize> {
+    let mut corridor = Vec::new();
     let mut x = x1;
     let mut y = y1;
 
@@ -232,6 +233,11 @@ pub fn draw_corridor(map: &mut Map, x1: i32, y1: i32, x2: i32, y2: i32) {
         }
 
         let idx = map.xy_idx(x, y);
-        map.tiles[idx] = TileType::Floor;
+        if map.tiles[idx] != TileType::Floor {
+            map.tiles[idx] = TileType::Floor;
+            corridor.push(idx);
+        }
     }
+
+    corridor
 }

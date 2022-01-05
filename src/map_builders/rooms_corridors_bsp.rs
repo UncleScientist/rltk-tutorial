@@ -24,6 +24,7 @@ impl BspCorridors {
         };
 
         const MAX_SEARCH: usize = 32;
+        let mut corridors = Vec::new();
 
         for i in 0..rooms.len() - 1 {
             let room = rooms[i];
@@ -71,9 +72,11 @@ impl BspCorridors {
                 end_y = center.1;
             }
 
-            draw_corridor(&mut build_data.map, start_x, start_y, end_x, end_y);
+            let corridor = draw_corridor(&mut build_data.map, start_x, start_y, end_x, end_y);
+            corridors.push(corridor);
             build_data.take_snapshot();
         }
         build_data.rooms = Some(rooms);
+        build_data.corridors = Some(corridors);
     }
 }
