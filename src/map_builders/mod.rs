@@ -44,6 +44,9 @@ use rooms_draw::*;
 mod room_based_spawner;
 use room_based_spawner::*;
 
+mod room_corridor_spawner;
+use room_corridor_spawner::*;
+
 mod room_based_stairs;
 use room_based_stairs::*;
 
@@ -187,7 +190,7 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
 pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
 
-    if std::env::var("QWER").is_ok() {
+    if std::env::var("QWER").is_err() {
         let type_roll = rng.roll_dice(1, 2);
         match type_roll {
             1 => random_room_builder(rng, &mut builder),
@@ -207,6 +210,7 @@ pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> Builde
         builder.with(RoomSorter::new(RoomSort::Leftmost));
         builder.with(StraightLineCorridors::new());
         builder.with(RoomBasedSpawner::new());
+        builder.with(CorridorSpawner::new());
         builder.with(RoomBasedStairs::new());
         builder.with(RoomBasedStartingPosition::new());
     }
@@ -236,9 +240,15 @@ fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCha
 
         builder.with(RoomDrawer::new());
 
-        match rng.roll_dice(1, 2) {
+        match rng.roll_dice(1, 4) {
             1 => builder.with(DoglegCorridors::new()),
+            2 => builder.with(NearestCorridors::new()),
+            3 => builder.with(StraightLineCorridors::new()),
             _ => builder.with(BspCorridors::new()),
+        }
+
+        if rng.roll_dice(1, 2) == 1 {
+            builder.with(CorridorSpawner::new());
         }
 
         match rng.roll_dice(1, 6) {
