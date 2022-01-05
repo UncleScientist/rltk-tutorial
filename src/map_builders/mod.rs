@@ -285,9 +285,10 @@ fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCh
             prefab_builders::prefab_levels::WFC_POPULATED,
         )),
 
-        _ => builder.start_with(PrefabBuilder::rex_level(
-            "../../resources/SmallDungeon_80x50.xp",
-        )),
+        _ => {
+            rltk::console::log("chose wfc-demo1");
+            builder.start_with(PrefabBuilder::rex_level("../../resources/wfc-demo1.xp"));
+        }
     }
 
     if rng.roll_dice(1, 3) == 1 {

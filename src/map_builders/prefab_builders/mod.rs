@@ -159,7 +159,7 @@ impl PrefabBuilder {
                     .push((idx, "Health Potion".to_string()));
             }
             _ => {
-                rltk::console::log(format!("Unknwon glyph {}", ch as u8 as char));
+                rltk::console::log(format!("Unknown glyph {}", ch as u8 as char));
             }
         }
     }
