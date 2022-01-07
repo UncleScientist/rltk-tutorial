@@ -286,34 +286,27 @@ fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCha
 fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderChain) {
     let builder_roll = rng.roll_dice(1, 19);
 
-    match builder_roll {
-        1 => builder.start_with(CellularAutomataBuilder::new()),
-        2 => builder.start_with(DrunkardsWalkBuilder::open_area()),
-        3 => builder.start_with(DrunkardsWalkBuilder::open_halls()),
-        4 => builder.start_with(DrunkardsWalkBuilder::winding_passages()),
-        5 => builder.start_with(DrunkardsWalkBuilder::fat_passages()),
-        6 => builder.start_with(DrunkardsWalkBuilder::fearful_symmetry()),
-        7 => builder.start_with(MazeBuilder::new()),
-        8 => builder.start_with(DLABuilder::walk_inwards()),
-        9 => builder.start_with(DLABuilder::walk_outwards()),
-        10 => builder.start_with(DLABuilder::central_attractor()),
-        11 => builder.start_with(DLABuilder::insectoid()),
-        12 => builder.start_with(DLABuilder::crazy()),
-        13 => builder.start_with(DLABuilder::rorschach()),
-        14 => builder.start_with(DLABuilder::heavy_erosion()),
-        15 => builder.start_with(VoronoiBuilder::manhattan()),
-        16 => builder.start_with(VoronoiBuilder::chebyshev()),
-        17 => builder.start_with(VoronoiBuilder::pythagoras()),
-
-        18 => builder.start_with(PrefabBuilder::constant(
-            prefab_builders::prefab_levels::WFC_POPULATED,
-        )),
-
-        _ => {
-            rltk::console::log("chose wfc-demo1");
-            builder.start_with(PrefabBuilder::rex_level("../../resources/wfc-demo1.xp"));
-        }
-    }
+    builder.start_with(match builder_roll {
+        1 => CellularAutomataBuilder::new(),
+        2 => DrunkardsWalkBuilder::open_area(),
+        3 => DrunkardsWalkBuilder::open_halls(),
+        4 => DrunkardsWalkBuilder::winding_passages(),
+        5 => DrunkardsWalkBuilder::fat_passages(),
+        6 => DrunkardsWalkBuilder::fearful_symmetry(),
+        7 => MazeBuilder::new(),
+        8 => DLABuilder::walk_inwards(),
+        9 => DLABuilder::walk_outwards(),
+        10 => DLABuilder::central_attractor(),
+        11 => DLABuilder::insectoid(),
+        12 => DLABuilder::crazy(),
+        13 => DLABuilder::rorschach(),
+        14 => DLABuilder::heavy_erosion(),
+        15 => VoronoiBuilder::manhattan(),
+        16 => VoronoiBuilder::chebyshev(),
+        17 => VoronoiBuilder::pythagoras(),
+        18 => PrefabBuilder::constant(prefab_builders::prefab_levels::WFC_POPULATED),
+        _ => PrefabBuilder::rex_level("../../resources/wfc-demo1.xp"),
+    });
 
     if rng.roll_dice(1, 3) == 1 {
         builder.with(WaveformCollapseBuilder::new());
