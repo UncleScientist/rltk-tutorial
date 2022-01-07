@@ -1,6 +1,6 @@
 use crate::{
-    CombatStats, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack, Map, Name, Owned,
-    Player, Position, RexAssets, RunState, State, Viewshed, MAPWIDTH,
+    camera, CombatStats, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack, Map,
+    Name, Owned, Player, Position, RexAssets, RunState, State, Viewshed, MAPWIDTH,
 };
 use rltk::{
     Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED, RGB, WHITE,
@@ -67,20 +67,26 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
 }
 
 fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
+    let (min_x, _, min_y, _) = camera::get_screen_bounds(ecs, ctx);
     let map = ecs.fetch::<Map>();
     let names = ecs.read_storage::<Name>();
     let positions = ecs.read_storage::<Position>();
     let hidden = ecs.read_storage::<Hidden>();
 
     let mouse_pos = ctx.mouse_pos();
-    if mouse_pos.0 >= map.width || mouse_pos.1 >= map.height {
+    let mut mouse_map_pos = mouse_pos;
+    mouse_map_pos.0 += min_x;
+    mouse_map_pos.1 += min_y;
+    if mouse_map_pos.0 > map.width || mouse_map_pos.1 > map.height {
         return;
     }
 
+    if !map.visible_tiles[map.xy_idx(mouse_map_pos.0, mouse_map_pos.1)] {
+        return;
+    }
     let mut tooltip: Vec<String> = Vec::new();
     for (name, position, _) in (&names, &positions, !&hidden).join() {
-        let idx = map.xy_idx(position.x, position.y);
-        if position.x == mouse_pos.0 && position.y == mouse_pos.1 && map.visible_tiles[idx] {
+        if position.x == mouse_map_pos.0 && position.y == mouse_map_pos.1 {
             tooltip.push(name.name.to_string());
         }
     }
