@@ -398,6 +398,9 @@ fn door(ecs: &mut World, x: i32, y: i32) {
         .with(Name {
             name: "Door".to_string(),
         })
+        .with(BlocksTile {})
+        .with(BlocksVisibility {})
+        .with(Door { open: false })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }

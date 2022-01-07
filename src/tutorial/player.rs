@@ -4,7 +4,7 @@ use std::cmp::{max, min};
 
 use crate::*;
 
-pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
+fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let players = ecs.read_storage::<Player>();
     let mut positions = ecs.write_storage::<Position>();
     let mut viewsheds = ecs.write_storage::<Viewshed>();
@@ -13,10 +13,21 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let entities = ecs.entities();
     let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
     let map = ecs.fetch::<Map>();
+    let mut doors = ecs.write_storage::<Door>();
+    let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
+    let mut blocks_movement = ecs.write_storage::<BlocksTile>();
+    let mut renderables = ecs.write_storage::<Renderable>();
 
     for (entity, _player, pos, viewshed) in
         (&entities, &players, &mut positions, &mut viewsheds).join()
     {
+        if pos.x + delta_x < 1
+            || pos.x + delta_x > map.width - 1
+            || pos.y + delta_y < 1
+            || pos.y + delta_y > map.height - 1
+        {
+            return;
+        }
         let dest = map.xy_idx(pos.x + delta_x, pos.y + delta_y);
 
         for potential_target in map.tile_content[dest].iter() {
@@ -32,6 +43,15 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
                     )
                     .expect("Add target failed");
                 return;
+            }
+
+            if let Some(door) = doors.get_mut(*potential_target) {
+                door.open = true;
+                blocks_visibility.remove(*potential_target);
+                blocks_movement.remove(*potential_target);
+                let glyph = renderables.get_mut(*potential_target).unwrap();
+                glyph.glyph = rltk::to_cp437('/');
+                viewshed.dirty = true;
             }
         }
 
