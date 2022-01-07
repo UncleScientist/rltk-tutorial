@@ -39,6 +39,12 @@ impl DoorPlacement {
     fn door_possible(&self, build_data: &mut BuilderMap, idx: usize) -> bool {
         use TileType::*;
 
+        for spawn in build_data.spawn_list.iter() {
+            if spawn.0 == idx {
+                return false;
+            }
+        }
+
         let x = idx % build_data.map.width as usize;
         let y = idx / build_data.map.width as usize;
         let w = build_data.map.width as usize;
