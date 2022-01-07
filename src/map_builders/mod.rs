@@ -193,7 +193,7 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
 pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth);
 
-    if std::env::var("QWER").is_err() {
+    if std::env::var("QWER").is_ok() {
         let type_roll = rng.roll_dice(1, 2);
         match type_roll {
             1 => random_room_builder(rng, &mut builder),
@@ -209,11 +209,16 @@ pub fn random_builder(new_depth: i32, rng: &mut RandomNumberGenerator) -> Builde
         builder.with(DoorPlacement::new());
         builder.with(PrefabBuilder::vaults());
     } else {
-        builder.start_with(BspInteriorBuilder::new());
+        builder.start_with(MazeBuilder::new());
         builder.with(DoorPlacement::new());
+        builder.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
+        builder.with(VoronoiSpawning::new());
+        builder.with(DistantExit::new());
+        /*
         builder.with(RoomBasedSpawner::new());
         builder.with(RoomBasedStairs::new());
         builder.with(RoomBasedStartingPosition::new());
+        */
     }
 
     builder
