@@ -69,8 +69,8 @@ impl GameState for State {
             RunState::MapGeneration => {
                 if !SHOW_MAPGEN_VISUALIZER {
                     newrunstate = self.mapgen_next_state.unwrap();
-                } else {
-                    draw_map(&self.mapgen_history[self.mapgen_index], ctx);
+                } else if self.mapgen_index < self.mapgen_history.len() {
+                    camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);
                     self.mapgen_timer += ctx.frame_time_ms;
                     if self.mapgen_timer > 300.0 {
                         self.mapgen_timer = 0.0;
@@ -389,7 +389,7 @@ impl State {
         self.mapgen_history.clear();
 
         let mut rng = self.ecs.write_resource::<rltk::RandomNumberGenerator>();
-        let mut builder = random_builder(new_depth, &mut rng, 64, 64);
+        let mut builder = random_builder(new_depth, &mut rng, 80, 50);
 
         builder.build_map(&mut rng);
         std::mem::drop(rng);
