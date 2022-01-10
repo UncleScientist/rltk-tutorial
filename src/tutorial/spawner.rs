@@ -69,8 +69,11 @@ pub fn spawn_region(
 }
 
 pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
-    let x = (*spawn.0 % MAPWIDTH as usize) as i32;
-    let y = (*spawn.0 / MAPWIDTH as usize) as i32;
+    let map = ecs.fetch::<Map>();
+    let width = map.width as usize;
+    let x = (*spawn.0 % width as usize) as i32;
+    let y = (*spawn.0 / width as usize) as i32;
+    std::mem::drop(map);
 
     match spawn.1.as_ref() {
         "Goblin" => goblin(ecs, x, y),

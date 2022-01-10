@@ -1,6 +1,6 @@
 use crate::{
     camera, CombatStats, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack, Map,
-    Name, Owned, Player, Position, RexAssets, RunState, State, Viewshed, MAPWIDTH,
+    Name, Owned, Player, Position, RexAssets, RunState, State, Viewshed,
 };
 use rltk::{
     Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED, RGB, WHITE,
@@ -104,7 +104,7 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
         }
         width += 3;
 
-        if mouse_pos.0 > MAPWIDTH / 2 {
+        if mouse_pos.0 > map.width / 2 {
             let arrow_pos = Point::new(mouse_pos.0 - 2, mouse_pos.1);
             let left_x = mouse_pos.0 - width;
             let mut y = mouse_pos.1;

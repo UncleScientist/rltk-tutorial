@@ -223,11 +223,11 @@ impl GameState for State {
             }
             RunState::MagicMapReveal { row } => {
                 let mut map = self.ecs.fetch_mut::<Map>();
-                for x in 0..MAPWIDTH {
+                for x in 0..map.width {
                     let idx = map.xy_idx(x as i32, row);
                     map.revealed_tiles[idx] = true;
                 }
-                if row == MAPHEIGHT - 1 {
+                if row == map.height - 1 {
                     newrunstate = RunState::MonsterTurn;
                 } else {
                     newrunstate = RunState::MagicMapReveal { row: row + 1 }
@@ -389,7 +389,7 @@ impl State {
         self.mapgen_history.clear();
 
         let mut rng = self.ecs.write_resource::<rltk::RandomNumberGenerator>();
-        let mut builder = random_builder(new_depth, &mut rng);
+        let mut builder = random_builder(new_depth, &mut rng, 64, 64);
 
         builder.build_map(&mut rng);
         std::mem::drop(rng);
