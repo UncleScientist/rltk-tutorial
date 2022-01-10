@@ -77,7 +77,11 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     let mut mouse_map_pos = mouse_pos;
     mouse_map_pos.0 += min_x;
     mouse_map_pos.1 += min_y;
-    if mouse_map_pos.0 > map.width || mouse_map_pos.1 > map.height {
+    if mouse_map_pos.0 >= map.width - 1
+        || mouse_map_pos.1 >= map.height - 1
+        || mouse_map_pos.0 < 1
+        || mouse_map_pos.1 < 1
+    {
         return;
     }
 
