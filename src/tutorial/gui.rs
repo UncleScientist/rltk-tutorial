@@ -242,6 +242,7 @@ pub fn ranged_target(
     ctx: &mut Rltk,
     range: i32,
 ) -> (ItemMenuResult, Option<Point>) {
+    let (min_x, _, min_y, _) = camera::get_screen_bounds(&gs.ecs, ctx);
     let player_entity = gs.ecs.fetch::<Entity>();
     let player_pos = gs.ecs.fetch::<Point>();
     let viewsheds = gs.ecs.read_storage::<Viewshed>();
@@ -259,7 +260,9 @@ pub fn ranged_target(
         for idx in visible.visible_tiles.iter() {
             let dist = rltk::DistanceAlg::Pythagoras.distance2d(*player_pos, *idx);
             if dist <= range as f32 {
-                ctx.set_bg(idx.x, idx.y, RGB::named(BLUE));
+                let screen_x = idx.x - min_x;
+                let screen_y = idx.y - min_y;
+                ctx.set_bg(screen_x, screen_y, RGB::named(BLUE));
                 available_cells.push(idx);
             }
         }
@@ -267,10 +270,14 @@ pub fn ranged_target(
         return (ItemMenuResult::Cancel, None);
     }
 
+    // Draw mouse cursor
     let mouse_pos = ctx.mouse_pos();
+    let mut mouse_map_pos = mouse_pos;
+    mouse_map_pos.0 += min_x;
+    mouse_map_pos.1 += min_y;
     let mut valid_target = false;
     for idx in available_cells.iter() {
-        if idx.x == mouse_pos.0 && idx.y == mouse_pos.1 {
+        if idx.x == mouse_map_pos.0 && idx.y == mouse_map_pos.1 {
             valid_target = true;
             break;
         }
