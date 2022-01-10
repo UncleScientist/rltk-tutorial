@@ -2,6 +2,8 @@ use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
+pub mod raws;
+
 use rt::tutorial::*;
 
 fn main() -> rltk::BError {
@@ -61,6 +63,8 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
     gs.ecs.insert(rex_assets::RexAssets::new());
+
+    raws::load_raws();
 
     gs.ecs.insert(Map::new(1, 64, 64));
     gs.ecs.insert(Point::new(0, 0));

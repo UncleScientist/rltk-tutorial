@@ -1432,6 +1432,7 @@ name = "rt"
 version = "0.1.0"
 dependencies = [
  "getrandom",
+ "lazy_static",
  "rltk",
  "serde",
  "serde_json",
