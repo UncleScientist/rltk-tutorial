@@ -54,6 +54,24 @@ pub fn spawn_named_item(
             });
         }
 
+        if let Some(weapon) = &item_template.weapon {
+            eb = eb.with(Equippable {
+                slot: EquipmentSlot::Melee,
+            });
+            eb = eb.with(MeleePowerBonus {
+                power: weapon.power_bonus,
+            });
+        }
+
+        if let Some(shield) = &item_template.shield {
+            eb = eb.with(Equippable {
+                slot: EquipmentSlot::Shield,
+            });
+            eb = eb.with(DefenseBonus {
+                power: shield.defense_bonus,
+            });
+        }
+
         eb = eb.with(Name {
             name: item_template.name.clone(),
         });
