@@ -5,16 +5,17 @@ use std::collections::HashMap;
 
 use super::Raws;
 
+#[derive(Default)]
 pub struct RawMaster {
     raws: Raws,
-    pub item_index: HashMap<String, usize>,
+    item_index: HashMap<String, usize>,
+    mob_index: HashMap<String, usize>,
 }
 
 impl RawMaster {
     pub fn empty() -> RawMaster {
         RawMaster {
-            raws: Raws { items: Vec::new() },
-            item_index: HashMap::new(),
+            ..Default::default()
         }
     }
 
@@ -24,10 +25,28 @@ impl RawMaster {
         for (i, item) in self.raws.items.iter().enumerate() {
             self.item_index.insert(item.name.clone(), i);
         }
+        for (i, mob) in self.raws.mobs.iter().enumerate() {
+            self.mob_index.insert(mob.name.clone(), i);
+        }
     }
 }
 
-pub fn spawn_named_item(
+pub fn spawn_named_entity(
+    raws: &RawMaster,
+    new_entity: EntityBuilder,
+    key: &str,
+    pos: SpawnType,
+) -> Option<Entity> {
+    if raws.item_index.contains_key(key) {
+        spawn_named_item(raws, new_entity, key, pos)
+    } else if raws.mob_index.contains_key(key) {
+        spawn_named_mob(raws, new_entity, key, pos)
+    } else {
+        None
+    }
+}
+
+fn spawn_named_item(
     raws: &RawMaster,
     new_entity: EntityBuilder,
     key: &str,
@@ -35,23 +54,10 @@ pub fn spawn_named_item(
 ) -> Option<Entity> {
     if raws.item_index.contains_key(key) {
         let item_template = &raws.raws.items[raws.item_index[key]];
-        let mut eb = new_entity;
+        let mut eb = spawn_position(pos, new_entity);
 
-        // Spawn in the specified location
-        match pos {
-            SpawnType::AtPosition { x, y } => {
-                eb = eb.with(Position { x, y });
-            }
-        }
-
-        // Renderable
         if let Some(renderable) = &item_template.renderable {
-            eb = eb.with(Renderable {
-                glyph: rltk::to_cp437(renderable.glyph.chars().next().unwrap()),
-                fg: rltk::RGB::from_hex(&renderable.fg).expect("Invalid RGB"),
-                bg: rltk::RGB::from_hex(&renderable.bg).expect("Invalid RGB"),
-                render_order: renderable.order,
-            });
+            eb = eb.with(get_renderable_component(renderable));
         }
 
         if let Some(weapon) = &item_template.weapon {
@@ -124,6 +130,70 @@ pub fn spawn_named_item(
     None
 }
 
+fn spawn_named_mob(
+    raws: &RawMaster,
+    new_entity: EntityBuilder,
+    key: &str,
+    pos: SpawnType,
+) -> Option<Entity> {
+    if raws.mob_index.contains_key(key) {
+        let mob_template = &raws.raws.mobs[raws.mob_index[key]];
+        let mut eb = spawn_position(pos, new_entity);
+
+        if let Some(renderable) = &mob_template.renderable {
+            eb = eb.with(get_renderable_component(renderable));
+        }
+
+        eb = eb.with(Name {
+            name: mob_template.name.clone(),
+        });
+        eb = eb.with(Monster {});
+
+        if mob_template.blocks_tile {
+            eb = eb.with(BlocksTile {});
+        }
+
+        eb = eb.with(CombatStats {
+            max_hp: mob_template.stats.max_hp,
+            hp: mob_template.stats.hp,
+            power: mob_template.stats.power,
+            defense: mob_template.stats.defense,
+        });
+        eb = eb.with(Viewshed {
+            visible_tiles: Vec::new(),
+            range: mob_template.vision_range,
+            dirty: true,
+        });
+
+        return Some(eb.build());
+    }
+    None
+}
+
 fn str_to_i32(s: &str) -> i32 {
     s.parse::<i32>().unwrap()
+}
+
+fn spawn_position(pos: SpawnType, new_entity: EntityBuilder) -> EntityBuilder {
+    let mut eb = new_entity;
+
+    // Spawn in the specified location
+    match pos {
+        SpawnType::AtPosition { x, y } => {
+            eb = eb.with(Position { x, y });
+        }
+    }
+
+    eb
+}
+
+fn get_renderable_component(
+    renderable: &super::item_structs::Renderable,
+) -> crate::components::Renderable {
+    crate::components::Renderable {
+        glyph: rltk::to_cp437(renderable.glyph.chars().next().unwrap()),
+        fg: rltk::RGB::from_hex(&renderable.fg).expect("Invalid RGB"),
+        bg: rltk::RGB::from_hex(&renderable.bg).expect("Invalid RGB"),
+        render_order: renderable.order,
+    }
 }

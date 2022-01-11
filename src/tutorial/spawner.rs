@@ -1,4 +1,4 @@
-use rltk::{to_cp437, FontCharType, RandomNumberGenerator, RGB};
+use rltk::{to_cp437, RandomNumberGenerator, RGB};
 use specs::prelude::*;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 
@@ -79,7 +79,7 @@ pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
     let y = (*spawn.0 / width as usize) as i32;
     std::mem::drop(map);
 
-    let item_result = spawn_named_item(
+    let item_result = spawn_named_entity(
         &RAWS.lock().unwrap(),
         ecs.create_entity(),
         spawn.1,
@@ -90,8 +90,6 @@ pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
     }
 
     match spawn.1.as_ref() {
-        "Goblin" => goblin(ecs, x, y),
-        "Orc" => orc(ecs, x, y),
         "Bear Trap" => bear_trap(ecs, x, y),
         "Door" => door(ecs, x, y),
         _ => {} // panic!("could not find {} in table", spawn.1),
@@ -132,43 +130,6 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         })
         .marked::<SimpleMarker<SerializeMe>>()
         .build()
-}
-
-fn orc(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, to_cp437('o'), "Orc");
-}
-
-fn goblin(ecs: &mut World, x: i32, y: i32) {
-    monster(ecs, x, y, to_cp437('g'), "Goblin");
-}
-
-fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: FontCharType, name: S) {
-    ecs.create_entity()
-        .with(Position { x, y })
-        .with(Renderable {
-            glyph,
-            fg: RGB::named(rltk::RED),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 1,
-        })
-        .with(Viewshed {
-            visible_tiles: Vec::new(),
-            range: 8,
-            dirty: true,
-        })
-        .with(Monster {})
-        .with(Name {
-            name: name.to_string(),
-        })
-        .with(BlocksTile {})
-        .with(CombatStats {
-            max_hp: 16,
-            hp: 16,
-            defense: 1,
-            power: 4,
-        })
-        .marked::<SimpleMarker<SerializeMe>>()
-        .build();
 }
 
 // TODO: remove after removing from main()

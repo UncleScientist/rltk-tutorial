@@ -1,9 +1,21 @@
+use serde::Deserialize;
+
 mod item_structs;
-use item_structs::Raws;
+use item_structs::*;
+
+mod mob_structs;
+use mob_structs::*;
 
 mod rawmaster;
 pub use rawmaster::*;
+
 use std::sync::Mutex;
+
+#[derive(Deserialize, Debug, Default)]
+pub struct Raws {
+    pub items: Vec<Item>,
+    pub mobs: Vec<Mob>,
+}
 
 use lazy_static::lazy_static;
 
