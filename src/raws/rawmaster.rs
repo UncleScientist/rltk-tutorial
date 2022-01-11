@@ -10,6 +10,7 @@ pub struct RawMaster {
     raws: Raws,
     item_index: HashMap<String, usize>,
     mob_index: HashMap<String, usize>,
+    prop_index: HashMap<String, usize>,
 }
 
 impl RawMaster {
@@ -28,6 +29,9 @@ impl RawMaster {
         for (i, mob) in self.raws.mobs.iter().enumerate() {
             self.mob_index.insert(mob.name.clone(), i);
         }
+        for (i, props) in self.raws.props.iter().enumerate() {
+            self.prop_index.insert(props.name.clone(), i);
+        }
     }
 }
 
@@ -41,6 +45,8 @@ pub fn spawn_named_entity(
         spawn_named_item(raws, new_entity, key, pos)
     } else if raws.mob_index.contains_key(key) {
         spawn_named_mob(raws, new_entity, key, pos)
+    } else if raws.prop_index.contains_key(key) {
+        spawn_named_prop(raws, new_entity, key, pos)
     } else {
         None
     }
@@ -164,6 +170,62 @@ fn spawn_named_mob(
             range: mob_template.vision_range,
             dirty: true,
         });
+
+        return Some(eb.build());
+    }
+    None
+}
+
+fn spawn_named_prop(
+    raws: &RawMaster,
+    new_entity: EntityBuilder,
+    key: &str,
+    pos: SpawnType,
+) -> Option<Entity> {
+    if raws.prop_index.contains_key(key) {
+        let prop_template = &raws.raws.props[raws.prop_index[key]];
+        let mut eb = spawn_position(pos, new_entity);
+
+        if let Some(renderable) = &prop_template.renderable {
+            eb = eb.with(get_renderable_component(renderable));
+        }
+
+        eb = eb.with(Name {
+            name: prop_template.name.clone(),
+        });
+
+        if Some(true) == prop_template.hidden {
+            eb = eb.with(Hidden {});
+        }
+
+        if Some(true) == prop_template.blocks_tile {
+            eb = eb.with(BlocksTile {});
+        }
+
+        if Some(true) == prop_template.blocks_visibility {
+            eb = eb.with(BlocksVisibility {});
+        }
+
+        if let Some(door_open) = prop_template.door_open {
+            eb = eb.with(Door { open: door_open })
+        }
+
+        if let Some(entry_trigger) = &prop_template.entry_trigger {
+            eb = eb.with(EntryTrigger {});
+            for effect in entry_trigger.effects.iter() {
+                match effect.0.as_str() {
+                    "damage" => {
+                        eb = eb.with(InflictsDamage {
+                            damage: str_to_i32(effect.1),
+                        });
+                    }
+                    "single_activation" => {
+                        eb = eb.with(SingleActivation {});
+                    }
+                    _ => {}
+                }
+            }
+        }
 
         return Some(eb.build());
     }

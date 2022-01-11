@@ -6,6 +6,9 @@ use item_structs::*;
 mod mob_structs;
 use mob_structs::*;
 
+mod props_structs;
+use props_structs::*;
+
 mod rawmaster;
 pub use rawmaster::*;
 
@@ -15,6 +18,7 @@ use std::sync::Mutex;
 pub struct Raws {
     pub items: Vec<Item>,
     pub mobs: Vec<Mob>,
+    pub props: Vec<Prop>,
 }
 
 use lazy_static::lazy_static;

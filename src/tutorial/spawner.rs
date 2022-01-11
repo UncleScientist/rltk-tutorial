@@ -89,11 +89,7 @@ pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
         return;
     }
 
-    match spawn.1.as_ref() {
-        "Bear Trap" => bear_trap(ecs, x, y),
-        "Door" => door(ecs, x, y),
-        _ => {} // panic!("could not find {} in table", spawn.1),
-    }
+    rltk::console::log(format!("Waring: we don't know how to spawn [{}]!", spawn.1));
 }
 
 /// Spawns the player and returns his/her entity object
@@ -148,45 +144,6 @@ pub fn magic_mapping_scroll(ecs: &mut World, x: i32, y: i32) {
         .with(Item {})
         .with(MagicMapper {})
         .with(Consumable {})
-        .marked::<SimpleMarker<SerializeMe>>()
-        .build();
-}
-
-fn bear_trap(ecs: &mut World, x: i32, y: i32) {
-    ecs.create_entity()
-        .with(Position { x, y })
-        .with(Renderable {
-            glyph: to_cp437('^'),
-            fg: RGB::named(rltk::RED),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 2,
-        })
-        .with(Name {
-            name: "Bear Trap".to_string(),
-        })
-        .with(Hidden {})
-        .with(EntryTrigger {})
-        .with(InflictsDamage { damage: 6 })
-        .with(SingleActivation {})
-        .marked::<SimpleMarker<SerializeMe>>()
-        .build();
-}
-
-fn door(ecs: &mut World, x: i32, y: i32) {
-    ecs.create_entity()
-        .with(Position { x, y })
-        .with(Renderable {
-            glyph: to_cp437('+'),
-            fg: RGB::named(rltk::CHOCOLATE),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 2,
-        })
-        .with(Name {
-            name: "Door".to_string(),
-        })
-        .with(BlocksTile {})
-        .with(BlocksVisibility {})
-        .with(Door { open: false })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 }
