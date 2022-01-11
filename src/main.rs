@@ -61,10 +61,10 @@ fn main() -> rltk::BError {
     gs.ecs.register::<BlocksVisibility>();
     gs.ecs.register::<Door>();
 
+    game_state::load_raws();
+
     gs.ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
     gs.ecs.insert(rex_assets::RexAssets::new());
-
-    raws::load_raws();
 
     gs.ecs.insert(Map::new(1, 64, 64));
     gs.ecs.insert(Point::new(0, 0));
@@ -83,14 +83,12 @@ fn main() -> rltk::BError {
 
     gs.generate_world_map(1);
 
-    let idx = {
+    // cheat: to help test with mapping
+    let (x, y) = {
         let loc = gs.ecs.fetch::<Point>();
-        let map = gs.ecs.fetch::<Map>();
-        map.xy_idx(loc.x, loc.y)
+        (loc.x, loc.y)
     };
-
-    let mms: String = "Magic Mapping Scroll".to_string();
-    spawner::spawn_entity(&mut gs.ecs, &(&idx, &mms));
+    spawner::magic_mapping_scroll(&mut gs.ecs, x, y);
 
     rltk::main_loop(context, gs)
 }

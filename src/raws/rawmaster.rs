@@ -7,7 +7,7 @@ use super::Raws;
 
 pub struct RawMaster {
     raws: Raws,
-    item_index: HashMap<String, usize>,
+    pub item_index: HashMap<String, usize>,
 }
 
 impl RawMaster {
@@ -66,19 +66,31 @@ pub fn spawn_named_item(
                 match effect_name {
                     "provides_healing" => {
                         eb = eb.with(ProvidesHealing {
-                            heal_amount: effect.1.parse::<i32>().unwrap(),
+                            heal_amount: str_to_i32(effect.1),
                         })
                     }
                     "ranged" => {
                         eb = eb.with(Ranged {
-                            range: effect.1.parse::<i32>().unwrap(),
+                            range: str_to_i32(effect.1),
                         })
                     }
                     "damage" => {
                         eb = eb.with(InflictsDamage {
-                            damage: effect.1.parse::<i32>().unwrap(),
+                            damage: str_to_i32(effect.1),
                         })
                     }
+                    "area_of_effect" => {
+                        eb = eb.with(AreaOfEffect {
+                            radius: str_to_i32(effect.1),
+                        })
+                    }
+                    "confusion" => {
+                        eb = eb.with(Confusion {
+                            turns: str_to_i32(effect.1),
+                        })
+                    }
+                    "magic_mapping" => eb = eb.with(MagicMapper {}),
+                    "food" => eb = eb.with(ProvidesFood {}),
                     _ => {
                         rltk::console::log(format!(
                             "Warning: consumable effect {} not implemented",
@@ -92,4 +104,8 @@ pub fn spawn_named_item(
         return Some(eb.build());
     }
     None
+}
+
+fn str_to_i32(s: &str) -> i32 {
+    s.parse::<i32>().unwrap()
 }
