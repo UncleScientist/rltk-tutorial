@@ -8,6 +8,9 @@ use crate::SHOW_MAPGEN_VISUALIZER;
 mod common;
 use common::*;
 
+mod town;
+use town::town_builder;
+
 mod simple_map;
 use simple_map::SimpleMapBuilder;
 
@@ -192,6 +195,19 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
     };
 
     (x_start, y_start)
+}
+
+pub fn level_builder(
+    new_depth: i32,
+    rng: &mut RandomNumberGenerator,
+    width: i32,
+    height: i32,
+) -> BuilderChain {
+    rltk::console::log(format!("Depth: {}", new_depth));
+    match new_depth {
+        1 => town_builder(new_depth, rng, width, height),
+        _ => random_builder(new_depth, rng, width, height),
+    }
 }
 
 pub fn random_builder(

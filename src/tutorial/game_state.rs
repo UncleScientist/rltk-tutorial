@@ -389,7 +389,7 @@ impl State {
         self.mapgen_history.clear();
 
         let mut rng = self.ecs.write_resource::<rltk::RandomNumberGenerator>();
-        let mut builder = random_builder(new_depth, &mut rng, 80, 50);
+        let mut builder = level_builder(new_depth, &mut rng, 80, 50);
 
         builder.build_map(&mut rng);
         std::mem::drop(rng);
