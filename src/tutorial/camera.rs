@@ -120,6 +120,7 @@ fn get_tile_glyph(idx: usize, map: &Map) -> (rltk::FontCharType, RGB, RGB) {
 
     let (glyph, mut fg) = match map.tiles[idx] {
         TileType::Floor => (rltk::to_cp437('.'), RGB::from_f32(0., 0.5, 0.5)),
+        TileType::WoodFloor => (rltk::to_cp437('.'), RGB::named(rltk::CHOCOLATE)),
         TileType::DownStairs => (rltk::to_cp437('>'), RGB::from_f32(0., 1., 1.)),
         TileType::Wall => {
             let x = idx as i32 % map.width;
@@ -127,6 +128,11 @@ fn get_tile_glyph(idx: usize, map: &Map) -> (rltk::FontCharType, RGB, RGB) {
 
             (wall_glyph(&*map, x, y), RGB::from_f32(0., 1., 0.))
         }
+        TileType::Bridge => (rltk::to_cp437('.'), RGB::named(rltk::CHOCOLATE)),
+        TileType::Road => (rltk::to_cp437('!'), RGB::named(rltk::GREY)),
+        TileType::Grass => (rltk::to_cp437('"'), RGB::named(rltk::GREEN)),
+        TileType::ShallowWater => (rltk::to_cp437('≈'), RGB::named(rltk::CYAN)),
+        TileType::DeepWater => (rltk::to_cp437('≈'), RGB::named(rltk::NAVY_BLUE)),
     };
 
     if map.bloodstains.contains(&idx) {
