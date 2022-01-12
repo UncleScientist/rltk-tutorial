@@ -9,6 +9,9 @@ use mob_structs::*;
 mod props_structs;
 use props_structs::*;
 
+mod spawn_table_structs;
+use spawn_table_structs::*;
+
 mod rawmaster;
 pub use rawmaster::*;
 
@@ -19,6 +22,7 @@ pub struct Raws {
     pub items: Vec<Item>,
     pub mobs: Vec<Mob>,
     pub props: Vec<Prop>,
+    pub spawn_table: Vec<SpawnTableEntry>,
 }
 
 use lazy_static::lazy_static;

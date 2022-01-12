@@ -1,5 +1,6 @@
 use crate::components::*;
 use crate::spawner::*;
+use crate::RandomTable;
 use specs::prelude::*;
 use std::collections::HashMap;
 
@@ -258,4 +259,26 @@ fn get_renderable_component(
         bg: rltk::RGB::from_hex(&renderable.bg).expect("Invalid RGB"),
         render_order: renderable.order,
     }
+}
+
+pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> RandomTable {
+    use super::SpawnTableEntry;
+
+    let available_options: Vec<&SpawnTableEntry> = raws
+        .raws
+        .spawn_table
+        .iter()
+        .filter(|a| depth >= a.min_depth && depth <= a.max_depth)
+        .collect();
+
+    let mut rt = RandomTable::new();
+    for e in available_options.iter() {
+        let mut weight = e.weight;
+        if e.add_map_depth_to_weight.is_some() {
+            weight += depth;
+        }
+        rt = rt.add(e.name.clone(), weight);
+    }
+
+    rt
 }
