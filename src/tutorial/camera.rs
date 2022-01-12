@@ -1,4 +1,5 @@
-use super::{Hidden, Map, Position, Renderable, TileType};
+use super::{Hidden, Position, Renderable};
+use crate::{Map, TileType};
 use rltk::{Point, Rltk, RGB};
 use specs::prelude::*;
 

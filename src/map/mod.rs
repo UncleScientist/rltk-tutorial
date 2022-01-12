@@ -3,15 +3,11 @@ use rltk::{Algorithm2D, BaseMap, Point, Rltk, RGB};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
+mod tiletype;
+pub use tiletype::TileType;
+
 // ------------------------------------------------------------
 // Map Section
-
-#[derive(Eq, Hash, PartialEq, Copy, Clone, Serialize, Deserialize)]
-pub enum TileType {
-    Wall,
-    Floor,
-    DownStairs,
-}
 
 #[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Map {

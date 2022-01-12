@@ -4,9 +4,6 @@ pub use random_table::*;
 pub mod components;
 pub use components::*;
 
-pub mod map;
-pub use map::*;
-
 pub mod player;
 pub use player::*;
 

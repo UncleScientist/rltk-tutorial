@@ -1,7 +1,8 @@
 use super::{
-    gamelog::GameLog, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Map, Name,
-    ParticleBuilder, Position, SingleActivation, SufferDamage,
+    gamelog::GameLog, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Name, ParticleBuilder,
+    Position, SingleActivation, SufferDamage,
 };
+use crate::Map;
 use specs::prelude::*;
 
 pub struct TriggerSystem;

@@ -2,8 +2,7 @@ use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
-pub mod raws;
-
+use rt::map::*;
 use rt::tutorial::*;
 
 fn main() -> rltk::BError {
