@@ -61,7 +61,9 @@ pub fn spawn_region(
                 (rng.roll_dice(1, areas.len() as i32) - 1) as usize
             };
             let map_idx = areas[array_index];
-            spawn_points.insert(map_idx, spawn_table.roll(rng));
+            if let Some(spawn) = spawn_table.roll(rng) {
+                spawn_points.insert(map_idx, spawn);
+            }
             areas.remove(array_index);
         }
     }

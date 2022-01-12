@@ -37,14 +37,14 @@ impl RandomTable {
         self
     }
 
-    pub fn roll(&self, rng: &mut RandomNumberGenerator) -> String {
+    pub fn roll(&self, rng: &mut RandomNumberGenerator) -> Option<String> {
         if self.total_weight > 0 {
             let mut roll = rng.roll_dice(1, self.total_weight) - 1;
             let mut index: usize = 0;
 
             while roll > 0 {
                 if roll < self.entries[index].weight {
-                    return self.entries[index].name.clone();
+                    return Some(self.entries[index].name.clone());
                 }
 
                 roll -= self.entries[index].weight;
@@ -52,6 +52,6 @@ impl RandomTable {
             }
         }
 
-        "None".to_string()
+        None
     }
 }
