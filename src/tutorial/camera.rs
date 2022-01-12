@@ -133,6 +133,7 @@ fn get_tile_glyph(idx: usize, map: &Map) -> (rltk::FontCharType, RGB, RGB) {
         TileType::Grass => (rltk::to_cp437('"'), RGB::named(rltk::GREEN)),
         TileType::ShallowWater => (rltk::to_cp437('≈'), RGB::named(rltk::CYAN)),
         TileType::DeepWater => (rltk::to_cp437('≈'), RGB::named(rltk::NAVY_BLUE)),
+        TileType::Gravel => (rltk::to_cp437(':'), RGB::named(rltk::GREY)),
     };
 
     if map.bloodstains.contains(&idx) {
