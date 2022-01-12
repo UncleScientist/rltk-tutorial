@@ -122,6 +122,20 @@
         },
 
         {
+            "name" : "Battleaxe",
+            "renderable": {
+                "glyph" : "¶",
+                "fg" : "#FF55FF",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "weapon" : {
+                "range" : "melee",
+                "power_bonus" : 5
+            }
+        },
+
+        {
             "name" : "Shield",
             "renderable": {
                 "glyph" : "[",
@@ -183,7 +197,26 @@
                 "power" : 3
             },
             "vision_range" : 8
+        },
+
+        {
+            "name" : "Kobold",
+            "renderable": {
+                "glyph" : "k",
+                "fg" : "#FF0000",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "stats" : {
+                "max_hp" : 4,
+                "hp" : 4,
+                "defense" : 0,
+                "power" : 2
+            },
+            "vision_range" : 4
         }
+
     ],
     "props" : [
         {
@@ -217,6 +250,7 @@
         }
     ],
     "spawn_table" : [
+        { "name" : "Kobold", "weight" : 15, "min_depth" : 0, "max_depth" : 3 },
         { "name" : "Goblin", "weight" : 10, "min_depth" : 0, "max_depth" : 100 },
         { "name" : "Orc", "weight" : 1, "min_depth" : 0, "max_depth" : 100, "add_map_depth_to_weight" : true },
         { "name" : "Health Potion", "weight" : 7, "min_depth" : 0, "max_depth" : 100 },
@@ -226,6 +260,7 @@
         { "name" : "Dagger", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
         { "name" : "Shield", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
         { "name" : "Longsword", "weight" : 1, "min_depth" : 1, "max_depth" : 100 },
+        { "name" : "Battleaxe", "weight" : 1, "min_depth" : 2, "max_depth" : 100 },
         { "name" : "Tower Shield", "weight" : 1, "min_depth" : 1, "max_depth" : 100 },
         { "name" : "Rations", "weight" : 10, "min_depth" : 0, "max_depth" : 100 },
         { "name" : "Magic Mapping Scroll", "weight" : 2, "min_depth" : 0, "max_depth" : 100 },
