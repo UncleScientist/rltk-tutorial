@@ -2,7 +2,7 @@ use crate::components::*;
 use crate::spawner::*;
 use crate::RandomTable;
 use specs::prelude::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use super::Raws;
 
@@ -24,14 +24,52 @@ impl RawMaster {
     pub fn load(&mut self, raws: Raws) {
         self.raws = raws;
         self.item_index = HashMap::new();
+
+        let mut used_names = HashSet::new();
+
         for (i, item) in self.raws.items.iter().enumerate() {
-            self.item_index.insert(item.name.clone(), i);
+            if used_names.contains(&item.name) {
+                rltk::console::log(format!(
+                    "WARNING - duplicate item name in raws [{}]",
+                    item.name
+                ));
+            } else {
+                self.item_index.insert(item.name.clone(), i);
+                used_names.insert(item.name.clone());
+            }
         }
+
         for (i, mob) in self.raws.mobs.iter().enumerate() {
-            self.mob_index.insert(mob.name.clone(), i);
+            if used_names.contains(&mob.name) {
+                rltk::console::log(format!(
+                    "WARNING - duplicate mob name in raws [{}]",
+                    mob.name
+                ));
+            } else {
+                self.mob_index.insert(mob.name.clone(), i);
+                used_names.insert(mob.name.clone());
+            }
         }
+
         for (i, props) in self.raws.props.iter().enumerate() {
-            self.prop_index.insert(props.name.clone(), i);
+            if used_names.contains(&props.name) {
+                rltk::console::log(format!(
+                    "WARNING - duplicate prop name in raws [{}]",
+                    props.name
+                ));
+            } else {
+                self.prop_index.insert(props.name.clone(), i);
+                used_names.insert(props.name.clone());
+            }
+        }
+
+        for spawn in self.raws.spawn_table.iter() {
+            if !used_names.contains(&spawn.name) {
+                rltk::console::log(format!(
+                    "WARNING - spawn tables references unspeicified entity {}",
+                    spawn.name
+                ));
+            }
         }
     }
 }
