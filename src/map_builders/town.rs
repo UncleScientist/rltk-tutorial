@@ -10,7 +10,7 @@ enum BuildingTag {
     Alchemist,
     PlayerHouse,
     Hovel,
-    Abandoned,
+    AbandonedHouse,
     Unassigned,
 }
 
@@ -290,7 +290,7 @@ impl TownBuilder {
         }
 
         let last_index = building_size.len() - 1;
-        building_size[last_index].2 = BuildingTag::Abandoned;
+        building_size[last_index].2 = BuildingTag::AbandonedHouse;
 
         building_size
     }
@@ -312,6 +312,7 @@ impl TownBuilder {
                 BuildingTag::Alchemist => self.build_alchemist(building, build_data, rng),
                 BuildingTag::PlayerHouse => self.build_my_house(building, build_data, rng),
                 BuildingTag::Hovel => self.build_hovel(building, build_data, rng),
+                BuildingTag::AbandonedHouse => self.build_house(building, build_data, rng),
                 _ => {}
             }
         }
@@ -440,5 +441,24 @@ impl TownBuilder {
     ) {
         let mut to_place = vec!["Peasant", "Bed", "Chair", "Table"];
         self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_house(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        for y in building.1..building.1 + building.3 {
+            for x in building.0..building.0 + building.2 {
+                let idx = build_data.map.xy_idx(x, y);
+                if build_data.map.tiles[idx] == TileType::WoodFloor
+                    && idx != 0
+                    && rng.roll_dice(1, 2) == 1
+                {
+                    build_data.spawn_list.push((idx, "Rat".to_string()));
+                }
+            }
+        }
     }
 }

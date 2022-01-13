@@ -17,6 +17,9 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
     let mut blocks_movement = ecs.write_storage::<BlocksTile>();
     let mut renderables = ecs.write_storage::<Renderable>();
+    let bystanders = ecs.read_storage::<Bystander>();
+
+    let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
 
     for (entity, _player, pos, viewshed) in
         (&entities, &players, &mut positions, &mut viewsheds).join()
@@ -31,18 +34,35 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
         let dest = map.xy_idx(pos.x + delta_x, pos.y + delta_y);
 
         for potential_target in map.tile_content[dest].iter() {
-            let target = combat_stats.get(*potential_target);
+            let bystander = bystanders.get(*potential_target);
+            if bystander.is_some() {
+                // Note that we want to move the bystander
+                swap_entities.push((*potential_target, pos.x, pos.y));
 
-            if target.is_some() {
-                wants_to_melee
-                    .insert(
-                        entity,
-                        WantsToMelee {
-                            target: *potential_target,
-                        },
-                    )
-                    .expect("Add target failed");
-                return;
+                pos.x = min(map.width - 1, max(0, pos.x + delta_x));
+                pos.y = min(map.height - 1, max(0, pos.y + delta_y));
+                entity_moved
+                    .insert(entity, EntityMoved {})
+                    .expect("Unable to insert marker");
+
+                viewshed.dirty = true;
+                let mut ppos = ecs.write_resource::<Point>();
+                ppos.x = pos.x;
+                ppos.y = pos.y;
+            } else {
+                let target = combat_stats.get(*potential_target);
+
+                if target.is_some() {
+                    wants_to_melee
+                        .insert(
+                            entity,
+                            WantsToMelee {
+                                target: *potential_target,
+                            },
+                        )
+                        .expect("Add target failed");
+                    return;
+                }
             }
 
             if let Some(door) = doors.get_mut(*potential_target) {
@@ -67,6 +87,13 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
             entity_moved
                 .insert(entity, EntityMoved {})
                 .expect("Unable to insert marker");
+        }
+    }
+
+    for m in swap_entities.iter() {
+        if let Some(their_pos) = positions.get_mut(m.0) {
+            their_pos.x = m.1;
+            their_pos.y = m.2;
         }
     }
 }
