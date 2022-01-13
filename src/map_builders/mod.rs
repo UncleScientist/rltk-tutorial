@@ -205,7 +205,7 @@ pub fn level_builder(
 ) -> BuilderChain {
     rltk::console::log(format!("Depth: {}", new_depth));
     match new_depth {
-        1 => town_builder(new_depth, rng, width, height),
+        1 => town_builder(new_depth, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }
