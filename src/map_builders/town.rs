@@ -33,6 +33,7 @@ impl TownBuilder {
         self.grass_layer(build_data);
         self.water_and_piers(rng, build_data);
         let (mut available_building_tiles, wall_gap_y) = self.town_walls(rng, build_data);
+        let mut buildings = self.buildings(rng, build_data, &mut available_building_tiles);
 
         for t in build_data.map.visible_tiles.iter_mut() {
             *t = true;
@@ -109,5 +110,79 @@ impl TownBuilder {
         }
 
         (available_building_tiles, wall_gap_y)
+    }
+
+    fn buildings(
+        &mut self,
+        rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap,
+        available_building_tiles: &mut HashSet<usize>,
+    ) -> Vec<(i32, i32, i32, i32)> {
+        let mut buildings: Vec<(i32, i32, i32, i32)> = Vec::new();
+        let mut n_buildings = 0;
+        while n_buildings < 12 {
+            let bx = rng.roll_dice(1, build_data.map.width - 32) + 30;
+            let by = rng.roll_dice(1, build_data.map.height) - 2;
+            let bw = rng.roll_dice(1, 8) + 4;
+            let bh = rng.roll_dice(1, 8) + 4;
+            let mut possible = true;
+
+            'done: for y in by..by + bh {
+                for x in bx..bx + bw {
+                    if x < 0 || x > build_data.width - 1 || y < 0 || y > build_data.height - 1 {
+                        possible = false;
+                        break 'done;
+                    }
+
+                    let idx = build_data.map.xy_idx(x, y);
+                    if !available_building_tiles.contains(&idx) {
+                        possible = false;
+                        break 'done;
+                    }
+                }
+            }
+
+            if possible {
+                n_buildings += 1;
+                buildings.push((bx, by, bw, bh));
+                for y in by..by + bh {
+                    for x in bx..bx + bw {
+                        let idx = build_data.map.xy_idx(x, y);
+                        build_data.map.tiles[idx] = TileType::WoodFloor;
+                        available_building_tiles.remove(&idx);
+                        available_building_tiles.remove(&(idx + 1));
+                        available_building_tiles.remove(&(idx + build_data.width as usize));
+                        available_building_tiles.remove(&(idx - 1));
+                        available_building_tiles.remove(&(idx - build_data.width as usize));
+                    }
+                }
+                build_data.take_snapshot();
+            }
+        }
+
+        // Outline buildings
+        let mut mapclone = build_data.map.clone();
+        for y in 2..build_data.height - 2 {
+            for x in 32..build_data.width - 2 {
+                let idx = build_data.map.xy_idx(x, y);
+                #[allow(clippy::collapsible_if)]
+                if build_data.map.tiles[idx] == TileType::WoodFloor {
+                    if build_data.map.tiles[idx - 1] != TileType::WoodFloor
+                        || build_data.map.tiles[idx + 1] != TileType::WoodFloor
+                        || build_data.map.tiles[idx - build_data.width as usize]
+                            != TileType::WoodFloor
+                        || build_data.map.tiles[idx + build_data.width as usize]
+                            != TileType::WoodFloor
+                    {
+                        mapclone.tiles[idx] = TileType::Wall;
+                    }
+                }
+            }
+        }
+
+        build_data.map = mapclone;
+        build_data.take_snapshot();
+
+        buildings
     }
 }
