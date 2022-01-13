@@ -222,4 +222,7 @@ pub struct Viewshed {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Bystander {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Monster {}

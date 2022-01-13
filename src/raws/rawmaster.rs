@@ -192,7 +192,11 @@ fn spawn_named_mob(
         eb = eb.with(Name {
             name: mob_template.name.clone(),
         });
-        eb = eb.with(Monster {});
+        eb = match mob_template.ai.as_ref() {
+            "melee" => eb.with(Monster {}),
+            "bystander" => eb.with(Bystander {}),
+            _ => eb,
+        };
 
         if mob_template.blocks_tile {
             eb = eb.with(BlocksTile {});
