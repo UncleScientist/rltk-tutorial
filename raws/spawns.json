@@ -275,6 +275,44 @@
             },
             "vision_range" : 4,
             "ai" : "melee"
+        },
+
+        {
+            "name" : "Priest",
+            "renderable": {
+                "glyph" : "☺",
+                "fg" : "#EE82EE",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "stats" : {
+                "max_hp" : 16,
+                "hp" : 16,
+                "defense" : 1,
+                "power" : 4
+            },
+            "vision_range" : 4,
+            "ai" : "bystander"
+        },
+
+        {
+            "name" : "Parishioner",
+            "renderable": {
+                "glyph" : "☺",
+                "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "stats" : {
+                "max_hp" : 16,
+                "hp" : 16,
+                "defense" : 1,
+                "power" : 4
+            },
+            "vision_range" : 4,
+            "ai" : "bystander"
         }
 
     ],
@@ -336,6 +374,17 @@
             "renderable": {
                 "glyph" : "└",
                 "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "hidden" : false
+        },
+
+        {
+            "name" : "Candle",
+            "renderable": {
+                "glyph" : "Ä",
+                "fg" : "#FFA500",
                 "bg" : "#000000",
                 "order" : 2
             },
