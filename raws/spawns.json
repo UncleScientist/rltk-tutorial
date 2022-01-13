@@ -164,6 +164,44 @@
     ],
     "mobs" : [
         {
+            "name" : "Shady Salesman",
+            "renderable": {
+                "glyph" : "h",
+                "fg" : "#EE82EE",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "stats" : {
+                "max_hp" : 16,
+                "hp" : 16,
+                "defense" : 1,
+                "power" : 4
+            },
+            "vision_range" : 4,
+            "ai" : "bystander"
+        },
+
+        {
+            "name" : "Patron",
+            "renderable": {
+                "glyph" : "☺",
+                "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "stats" : {
+                "max_hp" : 16,
+                "hp" : 16,
+                "defense" : 1,
+                "power" : 4
+            },
+            "vision_range" : 4,
+            "ai" : "bystander"
+        },
+
+        {
             "name" : "Barkeep",
             "renderable": {
                 "glyph" : "☺",
@@ -269,7 +307,41 @@
             "blocks_tile" : true,
             "blocks_visibility" : true,
             "door_open" : true
+        },
+
+        {
+            "name" : "Keg",
+            "renderable": {
+                "glyph" : "φ",
+                "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "hidden" : false
+        },
+
+        {
+            "name" : "Table",
+            "renderable": {
+                "glyph" : "╦",
+                "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "hidden" : false
+        },
+
+        {
+            "name" : "Chair",
+            "renderable": {
+                "glyph" : "└",
+                "fg" : "#AAAAAA",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "hidden" : false
         }
+
     ],
     "spawn_table" : [
         { "name" : "Kobold", "weight" : 15, "min_depth" : 0, "max_depth" : 3 },
