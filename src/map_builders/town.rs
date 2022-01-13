@@ -34,6 +34,7 @@ impl TownBuilder {
         self.water_and_piers(rng, build_data);
         let (mut available_building_tiles, wall_gap_y) = self.town_walls(rng, build_data);
         let mut buildings = self.buildings(rng, build_data, &mut available_building_tiles);
+        let doors = self.add_doors(rng, build_data, &mut buildings, wall_gap_y);
 
         for t in build_data.map.visible_tiles.iter_mut() {
             *t = true;
@@ -184,5 +185,31 @@ impl TownBuilder {
         build_data.take_snapshot();
 
         buildings
+    }
+
+    fn add_doors(
+        &mut self,
+        rng: &mut RandomNumberGenerator,
+        build_data: &mut BuilderMap,
+        buildings: &mut Vec<(i32, i32, i32, i32)>,
+        wall_gap_y: i32,
+    ) -> Vec<usize> {
+        let mut doors = Vec::new();
+
+        for building in buildings.iter() {
+            let door_x = building.0 + 1 + rng.roll_dice(1, building.2 - 3);
+            let cy = building.1 + (building.3 / 2);
+            let idx = if cy > wall_gap_y {
+                // Door on the north wall
+                build_data.map.xy_idx(door_x, building.1)
+            } else {
+                build_data.map.xy_idx(door_x, building.1 + building.3 - 1)
+            };
+            build_data.map.tiles[idx] = TileType::Floor;
+            build_data.spawn_list.push((idx, "Door".to_string()));
+            doors.push(idx);
+        }
+        build_data.take_snapshot();
+        doors
     }
 }
