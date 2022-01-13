@@ -305,8 +305,13 @@ impl TownBuilder {
         for (i, building) in buildings.iter().enumerate() {
             let build_type = &building_index[i].2;
             match build_type {
-                BuildingTag::Pub => self.build_pub(&building, build_data, rng),
-                BuildingTag::Temple => self.build_temple(&building, build_data, rng),
+                BuildingTag::Pub => self.build_pub(building, build_data, rng),
+                BuildingTag::Temple => self.build_temple(building, build_data, rng),
+                BuildingTag::Blacksmith => self.build_smith(building, build_data, rng),
+                BuildingTag::Clothier => self.build_clothier(building, build_data, rng),
+                BuildingTag::Alchemist => self.build_alchemist(building, build_data, rng),
+                BuildingTag::PlayerHouse => self.build_my_house(building, build_data, rng),
+                BuildingTag::Hovel => self.build_hovel(building, build_data, rng),
                 _ => {}
             }
         }
@@ -378,6 +383,62 @@ impl TownBuilder {
             "Candle",
             "Candle",
         ];
+        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_smith(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        let mut to_place = vec![
+            "Blacksmith",
+            "Anvil",
+            "Water Trough",
+            "Weapon Rack",
+            "Armor Stand",
+        ];
+        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_clothier(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        let mut to_place = vec!["Clothier", "Cabinet", "Table", "Loom", "Hide Rack"];
+        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_alchemist(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        let mut to_place = vec!["Alchemist", "ChemistrySet", "Dead Thing", "Chair", "Table"];
+        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_my_house(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        let mut to_place = vec!["Mom", "Bed", "Cabinet", "Chair", "Table"];
+        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+    }
+
+    fn build_hovel(
+        &mut self,
+        building: &Building,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+    ) {
+        let mut to_place = vec!["Peasant", "Bed", "Chair", "Table"];
         self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
     }
 }

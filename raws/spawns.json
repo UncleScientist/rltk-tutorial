@@ -1,412 +1,658 @@
 {
-    "items": [
-        {
-            "name": "Health Potion",
-            "renderable": {
-                "glyph": "!",
-                "fg": "#FF00FF",
-                "bg": "#000000",
-                "order": 2
-            },
-            "consumable": {
-                "effects": { "provides_healing": "8" }
+   "items" : [
+      {
+         "consumable" : {
+            "effects" : {
+               "provides_healing" : "8"
             }
-        },
-
-        {
-            "name": "Magic Missile Scroll",
-            "renderable": {
-                "glyph": ")",
-                "fg": "#00FFFF",
-                "bg": "#000000",
-                "order": 2
-            },
-            "consumable": {
-                "effects": {
-                    "ranged": "6",
-                    "damage": "20"
-                }
+         },
+         "name" : "Health Potion",
+         "renderable" : {
+            "order" : 2,
+            "glyph" : "!",
+            "fg" : "#FF00FF",
+            "bg" : "#000000"
+         }
+      },
+      {
+         "consumable" : {
+            "effects" : {
+               "ranged" : "6",
+               "damage" : "20"
             }
-        },
-
-        {
-            "name" : "Fireball Scroll",
-            "renderable": {
-                "glyph" : ")",
-                "fg" : "#FFA500",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "consumable" : {
-                "effects" : {
-                    "ranged" : "6",
-                    "damage" : "20",
-                    "area_of_effect" : "3"
-                }
+         },
+         "name" : "Magic Missile Scroll",
+         "renderable" : {
+            "bg" : "#000000",
+            "fg" : "#00FFFF",
+            "glyph" : ")",
+            "order" : 2
+         }
+      },
+      {
+         "renderable" : {
+            "fg" : "#FFA500",
+            "glyph" : ")",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "name" : "Fireball Scroll",
+         "consumable" : {
+            "effects" : {
+               "ranged" : "6",
+               "damage" : "20",
+               "area_of_effect" : "3"
             }
-        },
-
-        {
-            "name" : "Confusion Scroll",
-            "renderable": {
-                "glyph" : ")",
-                "fg" : "#FFAAAA",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "consumable" : {
-                "effects" : {
-                    "ranged" : "6",
-                    "damage" : "20",
-                    "confusion" : "4"
-                }
+         }
+      },
+      {
+         "renderable" : {
+            "bg" : "#000000",
+            "fg" : "#FFAAAA",
+            "glyph" : ")",
+            "order" : 2
+         },
+         "name" : "Confusion Scroll",
+         "consumable" : {
+            "effects" : {
+               "ranged" : "6",
+               "damage" : "20",
+               "confusion" : "4"
             }
-        },
-
-        {
-            "name" : "Magic Mapping Scroll",
-            "renderable": {
-                "glyph" : ")",
-                "fg" : "#AAAAFF",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "consumable" : {
-                "effects" : {
-                    "magic_mapping" : ""
-                }
+         }
+      },
+      {
+         "name" : "Magic Mapping Scroll",
+         "renderable" : {
+            "order" : 2,
+            "glyph" : ")",
+            "fg" : "#AAAAFF",
+            "bg" : "#000000"
+         },
+         "consumable" : {
+            "effects" : {
+               "magic_mapping" : ""
             }
-        },
-
-        {
-            "name" : "Rations",
-            "renderable": {
-                "glyph" : "%",
-                "fg" : "#00FF00",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "consumable" : {
-                "effects" : {
-                    "food" : ""
-                }
+         }
+      },
+      {
+         "name" : "Rations",
+         "renderable" : {
+            "bg" : "#000000",
+            "fg" : "#00FF00",
+            "glyph" : "%",
+            "order" : 2
+         },
+         "consumable" : {
+            "effects" : {
+               "food" : ""
             }
-        },
-
-        {
-            "name" : "Dagger",
-            "renderable": {
-                "glyph" : "/",
-                "fg" : "#FFAAAA",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "weapon" : {
-                "range" : "melee",
-                "power_bonus" : 2
+         }
+      },
+      {
+         "name" : "Dagger",
+         "weapon" : {
+            "range" : "melee",
+            "power_bonus" : 2
+         },
+         "renderable" : {
+            "fg" : "#FFAAAA",
+            "glyph" : "/",
+            "order" : 2,
+            "bg" : "#000000"
+         }
+      },
+      {
+         "name" : "Longsword",
+         "renderable" : {
+            "fg" : "#FFAAFF",
+            "glyph" : "/",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "weapon" : {
+            "range" : "melee",
+            "power_bonus" : 4
+         }
+      },
+      {
+         "name" : "Battleaxe",
+         "renderable" : {
+            "bg" : "#000000",
+            "glyph" : "¶",
+            "fg" : "#FF55FF",
+            "order" : 2
+         },
+         "weapon" : {
+            "range" : "melee",
+            "power_bonus" : 5
+         }
+      },
+      {
+         "name" : "Shield",
+         "shield" : {
+            "defense_bonus" : 1
+         },
+         "renderable" : {
+            "fg" : "#00AAFF",
+            "glyph" : "[",
+            "order" : 2,
+            "bg" : "#000000"
+         }
+      },
+      {
+         "renderable" : {
+            "glyph" : "[",
+            "fg" : "#00FFFF",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "name" : "Tower Shield",
+         "shield" : {
+            "defense_bonus" : 3
+         }
+      }
+   ],
+   "mobs" : [
+      {
+         "renderable" : {
+            "fg" : "#EE82EE",
+            "glyph" : "h",
+            "order" : 1,
+            "bg" : "#000000"
+         },
+         "name" : "Shady Salesman",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "vision_range" : 4,
+         "stats" : {
+            "power" : 4,
+            "defense" : 1,
+            "max_hp" : 16,
+            "hp" : 16
+         }
+      },
+      {
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 1,
+            "fg" : "#AAAAAA",
+            "glyph" : "☺"
+         },
+         "name" : "Patron",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "stats" : {
+            "power" : 4,
+            "defense" : 1,
+            "hp" : 16,
+            "max_hp" : 16
+         },
+         "vision_range" : 4
+      },
+      {
+         "renderable" : {
+            "order" : 1,
+            "glyph" : "☺",
+            "fg" : "#EE82EE",
+            "bg" : "#000000"
+         },
+         "name" : "Barkeep",
+         "blocks_tile" : true,
+         "ai" : "bystander",
+         "vision_range" : 4,
+         "stats" : {
+            "defense" : 1,
+            "power" : 4,
+            "hp" : 16,
+            "max_hp" : 16
+         }
+      },
+      {
+         "vision_range" : 8,
+         "stats" : {
+            "defense" : 1,
+            "power" : 4,
+            "max_hp" : 16,
+            "hp" : 16
+         },
+         "blocks_tile" : true,
+         "ai" : "melee",
+         "name" : "Orc",
+         "renderable" : {
+            "bg" : "#000000",
+            "glyph" : "o",
+            "fg" : "#FF0000",
+            "order" : 1
+         }
+      },
+      {
+         "blocks_tile" : true,
+         "ai" : "melee",
+         "stats" : {
+            "hp" : 8,
+            "max_hp" : 8,
+            "power" : 3,
+            "defense" : 1
+         },
+         "vision_range" : 8,
+         "renderable" : {
+            "order" : 1,
+            "glyph" : "g",
+            "fg" : "#FF0000",
+            "bg" : "#000000"
+         },
+         "name" : "Goblin"
+      },
+      {
+         "renderable" : {
+            "order" : 1,
+            "fg" : "#FF0000",
+            "glyph" : "k",
+            "bg" : "#000000"
+         },
+         "name" : "Kobold",
+         "ai" : "melee",
+         "blocks_tile" : true,
+         "stats" : {
+            "power" : 2,
+            "defense" : 0,
+            "max_hp" : 4,
+            "hp" : 4
+         },
+         "vision_range" : 4
+      },
+      {
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 1,
+            "fg" : "#EE82EE",
+            "glyph" : "☺"
+         },
+         "name" : "Priest",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "vision_range" : 4,
+         "stats" : {
+            "max_hp" : 16,
+            "hp" : 16,
+            "defense" : 1,
+            "power" : 4
+         }
+      },
+      {
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "vision_range" : 4,
+         "stats" : {
+            "defense" : 1,
+            "power" : 4,
+            "hp" : 16,
+            "max_hp" : 16
+         },
+         "renderable" : {
+            "order" : 1,
+            "glyph" : "☺",
+            "fg" : "#AAAAAA",
+            "bg" : "#000000"
+         },
+         "name" : "Parishioner"
+      },
+      {
+         "renderable" : {
+            "bg" : "#000000",
+            "fg" : "#EE82EE",
+            "glyph" : "☺",
+            "order" : 1
+         },
+         "name" : "Blacksmith",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "stats" : {
+            "power" : 4,
+            "defense" : 1,
+            "hp" : 16,
+            "max_hp" : 16
+         },
+         "vision_range" : 4
+      },
+      {
+         "renderable" : {
+            "order" : 1,
+            "fg" : "#EE82EE",
+            "glyph" : "☺",
+            "bg" : "#000000"
+         },
+         "name" : "Clothier",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "vision_range" : 4,
+         "stats" : {
+            "defense" : 1,
+            "power" : 4,
+            "hp" : 16,
+            "max_hp" : 16
+         }
+      },
+      {
+         "name" : "Alchemist",
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 1,
+            "glyph" : "☺",
+            "fg" : "#EE82EE"
+         },
+         "stats" : {
+            "max_hp" : 16,
+            "hp" : 16,
+            "power" : 4,
+            "defense" : 1
+         },
+         "vision_range" : 4,
+         "ai" : "bystander",
+         "blocks_tile" : true
+      },
+      {
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 1,
+            "fg" : "#FFAAAA",
+            "glyph" : "☺"
+         },
+         "name" : "Mom",
+         "ai" : "bystander",
+         "blocks_tile" : true,
+         "stats" : {
+            "hp" : 16,
+            "max_hp" : 16,
+            "power" : 4,
+            "defense" : 1
+         },
+         "vision_range" : 4
+      },
+      {
+         "name" : "Peasant",
+         "renderable" : {
+            "glyph" : "☺",
+            "fg" : "#999999",
+            "order" : 1,
+            "bg" : "#000000"
+         },
+         "stats" : {
+            "max_hp" : 16,
+            "hp" : 16,
+            "defense" : 1,
+            "power" : 4
+         },
+         "vision_range" : 4,
+         "ai" : "bystander",
+         "blocks_tile" : true
+      }
+   ],
+   "props" : [
+      {
+         "hidden" : true,
+         "entry_trigger" : {
+            "effects" : {
+               "damage" : "6",
+               "single_activation" : "1"
             }
-        },
-
-        {
-            "name" : "Longsword",
-            "renderable": {
-                "glyph" : "/",
-                "fg" : "#FFAAFF",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "weapon" : {
-                "range" : "melee",
-                "power_bonus" : 4
-            }
-        },
-
-        {
-            "name" : "Battleaxe",
-            "renderable": {
-                "glyph" : "¶",
-                "fg" : "#FF55FF",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "weapon" : {
-                "range" : "melee",
-                "power_bonus" : 5
-            }
-        },
-
-        {
-            "name" : "Shield",
-            "renderable": {
-                "glyph" : "[",
-                "fg" : "#00AAFF",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "shield" : {
-                "defense_bonus" : 1
-            }
-        },
-
-        {
-            "name" : "Tower Shield",
-            "renderable": {
-                "glyph" : "[",
-                "fg" : "#00FFFF",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "shield" : {
-                "defense_bonus" : 3
-            }
-        }
-
-    ],
-    "mobs" : [
-        {
-            "name" : "Shady Salesman",
-            "renderable": {
-                "glyph" : "h",
-                "fg" : "#EE82EE",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 4,
-            "ai" : "bystander"
-        },
-
-        {
-            "name" : "Patron",
-            "renderable": {
-                "glyph" : "☺",
-                "fg" : "#AAAAAA",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 4,
-            "ai" : "bystander"
-        },
-
-        {
-            "name" : "Barkeep",
-            "renderable": {
-                "glyph" : "☺",
-                "fg" : "#EE82EE",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 4,
-            "ai" : "bystander"
-        },
-
-        {
-            "name" : "Orc",
-            "renderable": {
-                "glyph" : "o",
-                "fg" : "#FF0000",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 8,
-            "ai" : "melee"
-        },
-
-        {
-            "name" : "Goblin",
-            "renderable": {
-                "glyph" : "g",
-                "fg" : "#FF0000",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 8,
-                "hp" : 8,
-                "defense" : 1,
-                "power" : 3
-            },
-            "vision_range" : 8,
-            "ai" : "melee"
-        },
-
-        {
-            "name" : "Kobold",
-            "renderable": {
-                "glyph" : "k",
-                "fg" : "#FF0000",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 4,
-                "hp" : 4,
-                "defense" : 0,
-                "power" : 2
-            },
-            "vision_range" : 4,
-            "ai" : "melee"
-        },
-
-        {
-            "name" : "Priest",
-            "renderable": {
-                "glyph" : "☺",
-                "fg" : "#EE82EE",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 4,
-            "ai" : "bystander"
-        },
-
-        {
-            "name" : "Parishioner",
-            "renderable": {
-                "glyph" : "☺",
-                "fg" : "#AAAAAA",
-                "bg" : "#000000",
-                "order" : 1
-            },
-            "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
-            "vision_range" : 4,
-            "ai" : "bystander"
-        }
-
-    ],
-    "props" : [
-        {
-            "name" : "Bear Trap",
-            "renderable": {
-                "glyph" : "^",
-                "fg" : "#FF0000",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : true,
-            "entry_trigger" : {
-                "effects" : {
-                    "damage" : "6",
-                    "single_activation" : "1"
-                }
-            }
-        },
-        {
-            "name" : "Door",
-            "renderable": {
-                "glyph" : "+",
-                "fg" : "#805A46",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : false,
-            "blocks_tile" : true,
-            "blocks_visibility" : true,
-            "door_open" : true
-        },
-
-        {
-            "name" : "Keg",
-            "renderable": {
-                "glyph" : "φ",
-                "fg" : "#AAAAAA",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : false
-        },
-
-        {
-            "name" : "Table",
-            "renderable": {
-                "glyph" : "╦",
-                "fg" : "#AAAAAA",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : false
-        },
-
-        {
-            "name" : "Chair",
-            "renderable": {
-                "glyph" : "└",
-                "fg" : "#AAAAAA",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : false
-        },
-
-        {
-            "name" : "Candle",
-            "renderable": {
-                "glyph" : "Ä",
-                "fg" : "#FFA500",
-                "bg" : "#000000",
-                "order" : 2
-            },
-            "hidden" : false
-        }
-
-    ],
-    "spawn_table" : [
-        { "name" : "Kobold", "weight" : 15, "min_depth" : 0, "max_depth" : 3 },
-        { "name" : "Goblin", "weight" : 10, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Orc", "weight" : 1, "min_depth" : 0, "max_depth" : 100, "add_map_depth_to_weight" : true },
-        { "name" : "Health Potion", "weight" : 7, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Fireball Scroll", "weight" : 2, "min_depth" : 0, "max_depth" : 100, "add_map_depth_to_weight" : true },
-        { "name" : "Confusion Scroll", "weight" : 2, "min_depth" : 0, "max_depth" : 100, "add_map_depth_to_weight" : true },
-        { "name" : "Magic Missile Scroll", "weight" : 4, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Dagger", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Shield", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Longsword", "weight" : 1, "min_depth" : 1, "max_depth" : 100 },
-        { "name" : "Battleaxe", "weight" : 1, "min_depth" : 2, "max_depth" : 100 },
-        { "name" : "Tower Shield", "weight" : 1, "min_depth" : 1, "max_depth" : 100 },
-        { "name" : "Rations", "weight" : 10, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Magic Mapping Scroll", "weight" : 2, "min_depth" : 0, "max_depth" : 100 },
-        { "name" : "Bear Trap", "weight" : 5, "min_depth" : 0, "max_depth" : 100 }
-    ]
+         },
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "glyph" : "^",
+            "fg" : "#FF0000"
+         },
+         "name" : "Bear Trap"
+      },
+      {
+         "hidden" : false,
+         "blocks_tile" : true,
+         "door_open" : true,
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "glyph" : "+",
+            "fg" : "#805A46"
+         },
+         "name" : "Door",
+         "blocks_visibility" : true
+      },
+      {
+         "hidden" : false,
+         "name" : "Keg",
+         "renderable" : {
+            "glyph" : "φ",
+            "fg" : "#AAAAAA",
+            "order" : 2,
+            "bg" : "#000000"
+         }
+      },
+      {
+         "hidden" : false,
+         "name" : "Table",
+         "renderable" : {
+            "glyph" : "╦",
+            "fg" : "#AAAAAA",
+            "order" : 2,
+            "bg" : "#000000"
+         }
+      },
+      {
+         "hidden" : false,
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "fg" : "#AAAAAA",
+            "glyph" : "└"
+         },
+         "name" : "Chair"
+      },
+      {
+         "hidden" : false,
+         "renderable" : {
+            "order" : 2,
+            "glyph" : "Ä",
+            "fg" : "#FFA500",
+            "bg" : "#000000"
+         },
+         "name" : "Candle"
+      },
+      {
+         "hidden" : false,
+         "renderable" : {
+            "bg" : "#000000",
+            "glyph" : "╔",
+            "fg" : "#AAAAAA",
+            "order" : 2
+         },
+         "name" : "Anvil"
+      },
+      {
+         "hidden" : false,
+         "name" : "Water Trough",
+         "renderable" : {
+            "glyph" : "•",
+            "fg" : "#5555FF",
+            "order" : 2,
+            "bg" : "#000000"
+         }
+      },
+      {
+         "hidden" : false,
+         "renderable" : {
+            "order" : 2,
+            "fg" : "#FFD700",
+            "glyph" : "π",
+            "bg" : "#000000"
+         },
+         "name" : "Weapon Rack"
+      },
+      {
+         "hidden" : false,
+         "name" : "Armor Stand",
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "glyph" : "⌠",
+            "fg" : "#FFFFFF"
+         }
+      },
+      {
+         "name" : "Chemistry Set",
+         "renderable" : {
+            "glyph" : "δ",
+            "fg" : "#00FFFF",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "hidden" : false
+      },
+      {
+         "hidden" : false,
+         "name" : "Dead Thing",
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "glyph" : "☻",
+            "fg" : "#AA0000"
+         }
+      },
+      {
+         "name" : "Cabinet",
+         "renderable" : {
+            "fg" : "#805A46",
+            "glyph" : "∩",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "hidden" : false
+      },
+      {
+         "hidden" : false,
+         "renderable" : {
+            "bg" : "#000000",
+            "fg" : "#805A46",
+            "glyph" : "8",
+            "order" : 2
+         },
+         "name" : "Bed"
+      },
+      {
+         "name" : "Loom",
+         "renderable" : {
+            "bg" : "#000000",
+            "order" : 2,
+            "glyph" : "≡",
+            "fg" : "#805A46"
+         },
+         "hidden" : false
+      },
+      {
+         "name" : "Hide Rack",
+         "renderable" : {
+            "glyph" : "π",
+            "fg" : "#805A46",
+            "order" : 2,
+            "bg" : "#000000"
+         },
+         "hidden" : false
+      }
+   ],
+   "spawn_table" : [
+      {
+         "name" : "Kobold",
+         "weight" : 15,
+         "min_depth" : 0,
+         "max_depth" : 3
+      },
+      {
+         "name" : "Goblin",
+         "weight" : 10,
+         "min_depth" : 0,
+         "max_depth" : 100
+      },
+      {
+         "add_map_depth_to_weight" : true,
+         "min_depth" : 0,
+         "max_depth" : 100,
+         "name" : "Orc",
+         "weight" : 1
+      },
+      {
+         "weight" : 7,
+         "name" : "Health Potion",
+         "min_depth" : 0,
+         "max_depth" : 100
+      },
+      {
+         "name" : "Fireball Scroll",
+         "weight" : 2,
+         "max_depth" : 100,
+         "min_depth" : 0,
+         "add_map_depth_to_weight" : true
+      },
+      {
+         "add_map_depth_to_weight" : true,
+         "weight" : 2,
+         "name" : "Confusion Scroll",
+         "min_depth" : 0,
+         "max_depth" : 100
+      },
+      {
+         "weight" : 4,
+         "name" : "Magic Missile Scroll",
+         "max_depth" : 100,
+         "min_depth" : 0
+      },
+      {
+         "weight" : 3,
+         "name" : "Dagger",
+         "max_depth" : 100,
+         "min_depth" : 0
+      },
+      {
+         "max_depth" : 100,
+         "min_depth" : 0,
+         "weight" : 3,
+         "name" : "Shield"
+      },
+      {
+         "min_depth" : 1,
+         "max_depth" : 100,
+         "weight" : 1,
+         "name" : "Longsword"
+      },
+      {
+         "name" : "Battleaxe",
+         "weight" : 1,
+         "min_depth" : 2,
+         "max_depth" : 100
+      },
+      {
+         "min_depth" : 1,
+         "max_depth" : 100,
+         "weight" : 1,
+         "name" : "Tower Shield"
+      },
+      {
+         "name" : "Rations",
+         "weight" : 10,
+         "max_depth" : 100,
+         "min_depth" : 0
+      },
+      {
+         "min_depth" : 0,
+         "max_depth" : 100,
+         "name" : "Magic Mapping Scroll",
+         "weight" : 2
+      },
+      {
+         "weight" : 5,
+         "name" : "Bear Trap",
+         "min_depth" : 0,
+         "max_depth" : 100
+      }
+   ]
 }
