@@ -14,7 +14,8 @@ pub fn player_hp_at_level(fitness: i32, level: i32) -> i32 {
 }
 
 pub fn npc_hp(fitness: i32, level: i32) -> i32 {
-    (0..level).fold(1, |sum, _| sum + i32::max(1, 8 + attr_bonus(fitness)))
+    // TODO: check state mutations for npc HP calculations
+    level * i32::max(1, 8 + attr_bonus(fitness))
 }
 
 pub fn mana_per_level(intelligence: i32) -> i32 {
