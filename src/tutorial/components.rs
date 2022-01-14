@@ -9,6 +9,11 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Quips {
+    pub available: Vec<String>,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Vendor {}
 
 #[derive(Component, Serialize, Deserialize, Clone)]

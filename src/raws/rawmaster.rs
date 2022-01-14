@@ -189,6 +189,12 @@ fn spawn_named_mob(
             eb = eb.with(get_renderable_component(renderable));
         }
 
+        if let Some(quips) = &mob_template.quips {
+            eb = eb.with(Quips {
+                available: quips.clone(),
+            })
+        }
+
         eb = eb.with(Name {
             name: mob_template.name.clone(),
         });

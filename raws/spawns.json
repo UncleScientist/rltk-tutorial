@@ -207,7 +207,8 @@
             "hp" : 16,
             "max_hp" : 16
          },
-         "vision_range" : 4
+         "vision_range" : 4,
+         "quips": [ "Quiet down, it's too early!", "Oh my, I drank too much.", "Still saving the world, eh?" ]
       },
       {
          "renderable" : {
