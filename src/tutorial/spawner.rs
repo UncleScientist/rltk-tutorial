@@ -137,6 +137,18 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             ..Default::default()
         })
         .with(skills)
+        .with(Pools {
+            hit_points: Pool {
+                current: player_hp_at_level(11, 1),
+                max: player_hp_at_level(11, 1),
+            },
+            mana: Pool {
+                current: mana_at_level(11, 1),
+                max: mana_at_level(11, 1),
+            },
+            xp: 0,
+            level: 1,
+        })
         .marked::<SimpleMarker<SerializeMe>>()
         .build()
 }

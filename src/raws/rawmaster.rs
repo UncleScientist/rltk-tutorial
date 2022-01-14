@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::spawner::*;
-use crate::RandomTable;
+use crate::{mana_at_level, npc_hp, RandomTable};
 use specs::prelude::*;
 use std::collections::{HashMap, HashSet};
 
@@ -199,12 +199,15 @@ fn spawn_named_mob(
             ..Default::default()
         };
 
+        let mut mob_fitness = 11;
+        let mut mob_int = 11;
         if let Some(might) = mob_template.attributes.might {
             attr.might = Attribute::new_base(might);
         }
 
         if let Some(fitness) = mob_template.attributes.fitness {
             attr.fitness = Attribute::new_base(fitness);
+            mob_fitness = fitness;
         }
 
         if let Some(quickness) = mob_template.attributes.quickness {
@@ -213,7 +216,27 @@ fn spawn_named_mob(
 
         if let Some(intelligence) = mob_template.attributes.intelligence {
             attr.intelligence = Attribute::new_base(intelligence);
+            mob_int = intelligence;
         }
+        eb = eb.with(attr);
+
+        let mob_level = mob_template.level.unwrap_or(1);
+        let mob_hp = npc_hp(mob_fitness, mob_level);
+        let mob_mana = mana_at_level(mob_int, mob_level);
+
+        let pools = Pools {
+            level: mob_level,
+            xp: 0,
+            hit_points: Pool {
+                current: mob_hp,
+                max: mob_hp,
+            },
+            mana: Pool {
+                current: mob_mana,
+                max: mob_mana,
+            },
+        };
+        eb = eb.with(pools);
 
         let mut skills = Skills {
             skills: HashMap::new(),
