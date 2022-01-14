@@ -43,6 +43,9 @@ impl TownBuilder {
         let doors = self.add_doors(rng, build_data, &mut buildings, wall_gap_y);
         self.add_paths(build_data, &doors);
 
+        self.spawn_dockers(build_data, rng);
+        self.spawn_townsfolk(build_data, rng, &mut available_building_tiles);
+
         let exit_idx = build_data.map.xy_idx(build_data.width - 5, wall_gap_y);
         build_data.map.tiles[exit_idx] = TileType::DownStairs;
 
@@ -81,7 +84,7 @@ impl TownBuilder {
             let y = rng.roll_dice(1, build_data.height) - 1;
             for x in 2 + rng.roll_dice(1, 6)..water_width[y as usize] + 4 {
                 let idx = build_data.map.xy_idx(x, y);
-                build_data.map.tiles[idx] = TileType::WoodFloor;
+                build_data.map.tiles[idx] = TileType::Bridge;
             }
         }
         build_data.take_snapshot();
@@ -457,6 +460,38 @@ impl TownBuilder {
                     && rng.roll_dice(1, 2) == 1
                 {
                     build_data.spawn_list.push((idx, "Rat".to_string()));
+                }
+            }
+        }
+    }
+
+    fn spawn_dockers(&mut self, build_data: &mut BuilderMap, rng: &mut RandomNumberGenerator) {
+        for (idx, &tt) in build_data.map.tiles.iter().enumerate() {
+            if tt == TileType::Bridge && rng.roll_dice(1, 6) == 1 {
+                match rng.roll_dice(1, 3) {
+                    1 => build_data.spawn_list.push((idx, "Dock Worker".to_string())),
+                    2 => build_data
+                        .spawn_list
+                        .push((idx, "Wannabe Pirate".to_string())),
+                    _ => build_data.spawn_list.push((idx, "Fisher".to_string())),
+                }
+            }
+        }
+    }
+
+    fn spawn_townsfolk(
+        &mut self,
+        build_data: &mut BuilderMap,
+        rng: &mut RandomNumberGenerator,
+        available_building_tiles: &mut HashSet<usize>,
+    ) {
+        for &idx in available_building_tiles.iter() {
+            if rng.roll_dice(1, 10) == 1 {
+                match rng.roll_dice(1, 4) {
+                    1 => build_data.spawn_list.push((idx, "Peasant".to_string())),
+                    2 => build_data.spawn_list.push((idx, "Drunk".to_string())),
+                    3 => build_data.spawn_list.push((idx, "Dock Worker".to_string())),
+                    _ => build_data.spawn_list.push((idx, "Fisher".to_string())),
                 }
             }
         }
