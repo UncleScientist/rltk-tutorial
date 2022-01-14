@@ -9,6 +9,9 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Vendor {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct BlocksVisibility {}
 
 #[derive(Component, Serialize, Deserialize, Clone)]

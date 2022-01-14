@@ -10,6 +10,9 @@ pub use player::*;
 pub mod rect;
 pub use rect::*;
 
+pub mod bystander_ai_system;
+pub use bystander_ai_system::*;
+
 pub mod visibility_system;
 pub use visibility_system::*;
 

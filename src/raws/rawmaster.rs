@@ -195,6 +195,7 @@ fn spawn_named_mob(
         eb = match mob_template.ai.as_ref() {
             "melee" => eb.with(Monster {}),
             "bystander" => eb.with(Bystander {}),
+            "vendor" => eb.with(Vendor {}),
             _ => eb,
         };
 

@@ -181,7 +181,7 @@
             "bg" : "#000000"
          },
          "name" : "Shady Salesman",
-         "ai" : "bystander",
+         "ai" : "vendor",
          "blocks_tile" : true,
          "vision_range" : 4,
          "stats" : {
@@ -218,7 +218,7 @@
          },
          "name" : "Barkeep",
          "blocks_tile" : true,
-         "ai" : "bystander",
+         "ai" : "vendor",
          "vision_range" : 4,
          "stats" : {
             "defense" : 1,
@@ -325,7 +325,7 @@
             "order" : 1
          },
          "name" : "Blacksmith",
-         "ai" : "bystander",
+         "ai" : "vendor",
          "blocks_tile" : true,
          "stats" : {
             "power" : 4,
@@ -343,7 +343,7 @@
             "bg" : "#000000"
          },
          "name" : "Clothier",
-         "ai" : "bystander",
+         "ai" : "vendor",
          "blocks_tile" : true,
          "vision_range" : 4,
          "stats" : {
@@ -368,7 +368,7 @@
             "defense" : 1
          },
          "vision_range" : 4,
-         "ai" : "bystander",
+         "ai" : "vendor",
          "blocks_tile" : true
       },
       {

@@ -18,6 +18,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let mut blocks_movement = ecs.write_storage::<BlocksTile>();
     let mut renderables = ecs.write_storage::<Renderable>();
     let bystanders = ecs.read_storage::<Bystander>();
+    let vendors = ecs.read_storage::<Vendor>();
 
     let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
 
@@ -35,7 +36,8 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
 
         for potential_target in map.tile_content[dest].iter() {
             let bystander = bystanders.get(*potential_target);
-            if bystander.is_some() {
+            let vendor = vendors.get(*potential_target);
+            if bystander.is_some() || vendor.is_some() {
                 // Note that we want to move the bystander
                 swap_entities.push((*potential_target, pos.x, pos.y));
 
