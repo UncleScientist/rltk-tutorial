@@ -60,3 +60,6 @@ pub use rex_assets::*;
 
 pub mod camera;
 pub use camera::*;
+
+pub mod gamesystem;
+pub use gamesystem::*;

@@ -1,3 +1,4 @@
+use crate::attr_bonus;
 use crate::Map;
 use rltk::RGB;
 use serde::{Deserialize, Serialize};
@@ -7,6 +8,35 @@ use specs::saveload::{ConvertSaveload, Marker};
 use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
+
+#[derive(Serialize, Deserialize, Clone, Default)]
+pub struct Attribute {
+    pub base: i32,
+    pub modifiers: i32,
+    pub bonus: i32,
+}
+
+impl Attribute {
+    pub fn new() -> Attribute {
+        Attribute::new_base(11)
+    }
+
+    pub fn new_base(base: i32) -> Attribute {
+        Attribute {
+            base,
+            modifiers: 0,
+            bonus: attr_bonus(base),
+        }
+    }
+}
+
+#[derive(Default, Component, Serialize, Deserialize, Clone)]
+pub struct Attributes {
+    pub might: Attribute,
+    pub fitness: Attribute,
+    pub quickness: Attribute,
+    pub intelligence: Attribute,
+}
 
 #[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Quips {

@@ -195,6 +195,26 @@ fn spawn_named_mob(
             })
         }
 
+        let mut attr = Attributes {
+            ..Default::default()
+        };
+
+        if let Some(might) = mob_template.attributes.might {
+            attr.might = Attribute::new_base(might);
+        }
+
+        if let Some(fitness) = mob_template.attributes.fitness {
+            attr.fitness = Attribute::new_base(fitness);
+        }
+
+        if let Some(quickness) = mob_template.attributes.quickness {
+            attr.quickness = Attribute::new_base(quickness);
+        }
+
+        if let Some(intelligence) = mob_template.attributes.intelligence {
+            attr.intelligence = Attribute::new_base(intelligence);
+        }
+
         eb = eb.with(Name {
             name: mob_template.name.clone(),
         });

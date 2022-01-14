@@ -157,6 +157,7 @@
 
         {
             "name" : "Dock Worker",
+            "attributes" : {},
             "renderable": {
                 "glyph" : "☺",
                 "fg" : "#999999",
@@ -177,6 +178,7 @@
 
         {
             "name" : "Fisher",
+            "attributes" : {},
             "renderable": {
                 "glyph" : "☺",
                 "fg" : "#999999",
@@ -197,6 +199,7 @@
 
         {
             "name" : "Wannabe Pirate",
+            "attributes" : {},
             "renderable": {
                 "glyph" : "☺",
                 "fg" : "#aa9999",
@@ -217,6 +220,7 @@
 
         {
             "name" : "Drunk",
+            "attributes" : {},
             "renderable": {
                 "glyph" : "☺",
                 "fg" : "#aa9999",
@@ -237,6 +241,7 @@
 
         {
             "name" : "Rat",
+            "attributes" : {},
             "renderable": {
                 "glyph" : "r",
                 "fg" : "#FF0000",
@@ -255,6 +260,7 @@
         },
 
       {
+          "attributes" : {},
          "renderable" : {
             "fg" : "#EE82EE",
             "glyph" : "h",
@@ -273,6 +279,7 @@
          }
       },
       {
+          "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "order" : 1,
@@ -292,6 +299,7 @@
          "quips": [ "Quiet down, it's too early!", "Oh my, I drank too much.", "Still saving the world, eh?" ]
       },
       {
+          "attributes" : { "intelligence": 13 },
          "renderable" : {
             "order" : 1,
             "glyph" : "☺",
@@ -320,6 +328,7 @@
          "blocks_tile" : true,
          "ai" : "melee",
          "name" : "Orc",
+         "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "glyph" : "o",
@@ -337,6 +346,7 @@
             "defense" : 1
          },
          "vision_range" : 8,
+         "attributes" : {},
          "renderable" : {
             "order" : 1,
             "glyph" : "g",
@@ -346,6 +356,7 @@
          "name" : "Goblin"
       },
       {
+          "attributes" : {},
          "renderable" : {
             "order" : 1,
             "fg" : "#FF0000",
@@ -364,6 +375,7 @@
          "vision_range" : 4
       },
       {
+          "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "order" : 1,
@@ -391,6 +403,7 @@
             "hp" : 16,
             "max_hp" : 16
          },
+         "attributes" : {},
          "renderable" : {
             "order" : 1,
             "glyph" : "☺",
@@ -400,6 +413,7 @@
          "name" : "Parishioner"
       },
       {
+          "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "fg" : "#EE82EE",
@@ -418,6 +432,7 @@
          "vision_range" : 4
       },
       {
+          "attributes" : {},
          "renderable" : {
             "order" : 1,
             "fg" : "#EE82EE",
@@ -437,6 +452,7 @@
       },
       {
          "name" : "Alchemist",
+         "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "order" : 1,
@@ -454,6 +470,7 @@
          "blocks_tile" : true
       },
       {
+          "attributes" : {},
          "renderable" : {
             "bg" : "#000000",
             "order" : 1,
@@ -473,6 +490,7 @@
       },
       {
          "name" : "Peasant",
+         "attributes" : {},
          "renderable" : {
             "glyph" : "☺",
             "fg" : "#999999",
