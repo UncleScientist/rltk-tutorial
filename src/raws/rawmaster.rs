@@ -215,6 +215,32 @@ fn spawn_named_mob(
             attr.intelligence = Attribute::new_base(intelligence);
         }
 
+        let mut skills = Skills {
+            skills: HashMap::new(),
+        };
+        skills.skills.insert(Skill::Melee, 1);
+        skills.skills.insert(Skill::Defense, 1);
+        skills.skills.insert(Skill::Magic, 1);
+        if let Some(mobskills) = &mob_template.skills {
+            for sk in mobskills.iter() {
+                match sk.0.as_str() {
+                    "Melee" => {
+                        skills.skills.insert(Skill::Melee, *sk.1);
+                    }
+                    "Defense" => {
+                        skills.skills.insert(Skill::Defense, *sk.1);
+                    }
+                    "Magic" => {
+                        skills.skills.insert(Skill::Magic, *sk.1);
+                    }
+                    _ => {
+                        rltk::console::log(format!("Unknown skill referneced: [{}]", sk.0));
+                    }
+                }
+            }
+        }
+        eb = eb.with(skills);
+
         eb = eb.with(Name {
             name: mob_template.name.clone(),
         });

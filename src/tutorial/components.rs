@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::attr_bonus;
 use crate::Map;
 use rltk::RGB;
@@ -8,6 +10,18 @@ use specs::saveload::{ConvertSaveload, Marker};
 use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
+
+#[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
+pub enum Skill {
+    Melee,
+    Defense,
+    Magic,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Skills {
+    pub skills: HashMap<Skill, i32>,
+}
 
 #[derive(Serialize, Deserialize, Clone, Default)]
 pub struct Attribute {

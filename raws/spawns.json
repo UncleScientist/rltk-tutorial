@@ -299,7 +299,8 @@
          "quips": [ "Quiet down, it's too early!", "Oh my, I drank too much.", "Still saving the world, eh?" ]
       },
       {
-          "attributes" : { "intelligence": 13 },
+         "attributes" : { "intelligence": 13 },
+         "skills" : { "Melee": 2 },
          "renderable" : {
             "order" : 1,
             "glyph" : "☺",

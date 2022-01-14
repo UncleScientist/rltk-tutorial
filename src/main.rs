@@ -21,6 +21,7 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<Skills>();
     gs.ecs.register::<Attributes>();
     gs.ecs.register::<Quips>();
     gs.ecs.register::<Position>();
