@@ -419,7 +419,7 @@ impl TownBuilder {
         build_data: &mut BuilderMap,
         rng: &mut RandomNumberGenerator,
     ) {
-        let mut to_place = vec!["Alchemist", "ChemistrySet", "Dead Thing", "Chair", "Table"];
+        let mut to_place = vec!["Alchemist", "Chemistry Set", "Dead Thing", "Chair", "Table"];
         self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
     }
 
