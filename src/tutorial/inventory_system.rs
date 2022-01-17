@@ -1,8 +1,8 @@
 use specs::prelude::*;
 
 use crate::{
-    AreaOfEffect, CombatStats, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock,
-    HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder, Position,
+    AreaOfEffect, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock, HungerState,
+    InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder, Pools, Position,
     ProvidesFood, ProvidesHealing, RunState, SufferDamage, WantsToDropItem, WantsToPickupItem,
     WantsToRemoveItem, WantsToUseItem,
 };
@@ -56,7 +56,7 @@ type ItemUseData<'a> = (
     WriteStorage<'a, WantsToUseItem>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, ProvidesHealing>,
-    WriteStorage<'a, CombatStats>,
+    WriteStorage<'a, Pools>,
     ReadStorage<'a, Consumable>,
     ReadStorage<'a, InflictsDamage>,
     ReadStorage<'a, AreaOfEffect>,
@@ -178,7 +178,10 @@ impl<'a> System<'a> for ItemUseSystem {
             if let Some(healer) = healing.get(useitem.item) {
                 for target in targets.iter() {
                     if let Some(stats) = combat_stats.get_mut(*target) {
-                        stats.hp = i32::min(stats.max_hp, stats.hp + healer.heal_amount);
+                        stats.hit_points.current = i32::min(
+                            stats.hit_points.max,
+                            stats.hit_points.current + healer.heal_amount,
+                        );
                         if entity == *player_entity {
                             gamelog.entries.push(format!(
                                 "You drink the {}, healing {} hp.",

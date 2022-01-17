@@ -165,12 +165,6 @@
                 "order" : 1
             },
             "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
             "vision_range" : 4,
             "ai" : "bystander",
             "quips" : [ "Lovely day, eh?", "Nice weather", "Hello" ]
@@ -186,12 +180,6 @@
                 "order" : 1
             },
             "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
             "vision_range" : 4,
             "ai" : "bystander",
             "quips" : [ "They're biting today!", "I caught something, but it wasn't a fish!", "Looks like rain" ]
@@ -207,12 +195,6 @@
                 "order" : 1
             },
             "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
             "vision_range" : 4,
             "ai" : "bystander",
             "quips" : [ "Arrr", "Grog!", "Booze!" ]
@@ -228,12 +210,6 @@
                 "order" : 1
             },
             "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 16,
-                "hp" : 16,
-                "defense" : 1,
-                "power" : 4
-            },
             "vision_range" : 4,
             "ai" : "bystander",
             "quips" : [ "Hic", "Need... more... booze!", "Spare a copper?" ]
@@ -241,7 +217,6 @@
 
         {
             "name" : "Rat",
-            "attributes" : {},
             "renderable": {
                 "glyph" : "r",
                 "fg" : "#FF0000",
@@ -249,14 +224,10 @@
                 "order" : 1
             },
             "blocks_tile" : true,
-            "stats" : {
-                "max_hp" : 2,
-                "hp" : 2,
-                "defense" : 1,
-                "power" : 3
-            },
             "vision_range" : 8,
-            "ai" : "melee"
+            "ai" : "melee",
+            "attributes": { "Might": 3, "Fitness": 3 },
+            "skills": { "Melee": -1, "Defense": -1 }
         },
 
       {
@@ -270,13 +241,7 @@
          "name" : "Shady Salesman",
          "ai" : "vendor",
          "blocks_tile" : true,
-         "vision_range" : 4,
-         "stats" : {
-            "power" : 4,
-            "defense" : 1,
-            "max_hp" : 16,
-            "hp" : 16
-         }
+         "vision_range" : 4
       },
       {
           "attributes" : {},
@@ -289,12 +254,6 @@
          "name" : "Patron",
          "ai" : "bystander",
          "blocks_tile" : true,
-         "stats" : {
-            "power" : 4,
-            "defense" : 1,
-            "hp" : 16,
-            "max_hp" : 16
-         },
          "vision_range" : 4,
          "quips": [ "Quiet down, it's too early!", "Oh my, I drank too much.", "Still saving the world, eh?" ]
       },
@@ -310,22 +269,10 @@
          "name" : "Barkeep",
          "blocks_tile" : true,
          "ai" : "vendor",
-         "vision_range" : 4,
-         "stats" : {
-            "defense" : 1,
-            "power" : 4,
-            "hp" : 16,
-            "max_hp" : 16
-         }
+         "vision_range" : 4
       },
       {
          "vision_range" : 8,
-         "stats" : {
-            "defense" : 1,
-            "power" : 4,
-            "max_hp" : 16,
-            "hp" : 16
-         },
          "blocks_tile" : true,
          "ai" : "melee",
          "name" : "Orc",
@@ -340,12 +287,6 @@
       {
          "blocks_tile" : true,
          "ai" : "melee",
-         "stats" : {
-            "hp" : 8,
-            "max_hp" : 8,
-            "power" : 3,
-            "defense" : 1
-         },
          "vision_range" : 8,
          "attributes" : {},
          "renderable" : {
@@ -367,12 +308,6 @@
          "name" : "Kobold",
          "ai" : "melee",
          "blocks_tile" : true,
-         "stats" : {
-            "power" : 2,
-            "defense" : 0,
-            "max_hp" : 4,
-            "hp" : 4
-         },
          "vision_range" : 4
       },
       {
@@ -386,24 +321,12 @@
          "name" : "Priest",
          "ai" : "bystander",
          "blocks_tile" : true,
-         "vision_range" : 4,
-         "stats" : {
-            "max_hp" : 16,
-            "hp" : 16,
-            "defense" : 1,
-            "power" : 4
-         }
+         "vision_range" : 4
       },
       {
          "ai" : "bystander",
          "blocks_tile" : true,
          "vision_range" : 4,
-         "stats" : {
-            "defense" : 1,
-            "power" : 4,
-            "hp" : 16,
-            "max_hp" : 16
-         },
          "attributes" : {},
          "renderable" : {
             "order" : 1,
@@ -424,12 +347,6 @@
          "name" : "Blacksmith",
          "ai" : "vendor",
          "blocks_tile" : true,
-         "stats" : {
-            "power" : 4,
-            "defense" : 1,
-            "hp" : 16,
-            "max_hp" : 16
-         },
          "vision_range" : 4
       },
       {
@@ -443,13 +360,7 @@
          "name" : "Clothier",
          "ai" : "vendor",
          "blocks_tile" : true,
-         "vision_range" : 4,
-         "stats" : {
-            "defense" : 1,
-            "power" : 4,
-            "hp" : 16,
-            "max_hp" : 16
-         }
+         "vision_range" : 4
       },
       {
          "name" : "Alchemist",
@@ -459,12 +370,6 @@
             "order" : 1,
             "glyph" : "☺",
             "fg" : "#EE82EE"
-         },
-         "stats" : {
-            "max_hp" : 16,
-            "hp" : 16,
-            "power" : 4,
-            "defense" : 1
          },
          "vision_range" : 4,
          "ai" : "vendor",
@@ -481,12 +386,6 @@
          "name" : "Mom",
          "ai" : "bystander",
          "blocks_tile" : true,
-         "stats" : {
-            "hp" : 16,
-            "max_hp" : 16,
-            "power" : 4,
-            "defense" : 1
-         },
          "vision_range" : 4
       },
       {
@@ -497,12 +396,6 @@
             "fg" : "#999999",
             "order" : 1,
             "bg" : "#000000"
-         },
-         "stats" : {
-            "max_hp" : 16,
-            "hp" : 16,
-            "defense" : 1,
-            "power" : 4
          },
          "vision_range" : 4,
          "ai" : "bystander",

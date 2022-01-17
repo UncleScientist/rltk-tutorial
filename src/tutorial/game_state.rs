@@ -360,14 +360,9 @@ impl State {
         self.generate_world_map(current_depth + 1);
 
         // Place the player and update resources
-        let player_entity = if everything {
-            let new_player = spawner::player(&mut self.ecs, 0, 0);
-            let mut player_entity_writer = self.ecs.write_resource::<Entity>();
-            *player_entity_writer = new_player;
-            *player_entity_writer
-        } else {
-            *self.ecs.fetch::<Entity>()
-        };
+        let new_player = spawner::player(&mut self.ecs, 0, 0);
+        let mut player_entity_writer = self.ecs.write_resource::<Entity>();
+        *player_entity_writer = new_player;
 
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
         if everything {
@@ -376,13 +371,9 @@ impl State {
                 .entries
                 .push("Welcome to Rusty Roguelike... again!".to_string());
         } else {
-            let mut player_health_store = self.ecs.write_storage::<CombatStats>();
-            if let Some(player_health) = player_health_store.get_mut(player_entity) {
-                player_health.hp = i32::max(player_health.hp, player_health.max_hp / 2);
-            }
             gamelog
                 .entries
-                .push("You descend to the next level, and take a moment to heal".to_string());
+                .push("You descend to the next level".to_string());
         }
     }
 

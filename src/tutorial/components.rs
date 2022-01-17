@@ -246,14 +246,6 @@ impl SufferDamage {
     }
 }
 
-#[derive(Component, ConvertSaveload, Clone)]
-pub struct CombatStats {
-    pub max_hp: i32,
-    pub hp: i32,
-    pub defense: i32,
-    pub power: i32,
-}
-
 #[derive(Component, Serialize, Deserialize, Clone)]
 pub struct BlocksTile {}
 

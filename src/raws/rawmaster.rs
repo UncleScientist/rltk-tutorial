@@ -278,12 +278,6 @@ fn spawn_named_mob(
             eb = eb.with(BlocksTile {});
         }
 
-        eb = eb.with(CombatStats {
-            max_hp: mob_template.stats.max_hp,
-            hp: mob_template.stats.hp,
-            power: mob_template.stats.power,
-            defense: mob_template.stats.defense,
-        });
         eb = eb.with(Viewshed {
             visible_tiles: Vec::new(),
             range: mob_template.vision_range,
