@@ -298,7 +298,16 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             dirty: true,
         });
 
-        return Some(eb.build());
+        let new_mob = eb.build();
+
+        // Are they wielding anything?
+        if let Some(wielding) = &mob_template.equipped {
+            for tag in wielding.iter() {
+                spawn_named_entity(raws, ecs, tag, SpawnType::Equipped { by: new_mob });
+            }
+        }
+
+        return Some(new_mob);
     }
     None
 }

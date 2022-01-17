@@ -1,5 +1,63 @@
 {
    "items" : [
+
+   {
+        "name" : "Cudgel",
+        "renderable": {
+            "glyph" : "/",
+            "fg" : "#A52A2A",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "weapon" : {
+            "range" : "melee",
+            "attribute" : "Quickness",
+            "base_damage" : "1d4",
+            "hit_bonus" : 0
+        }
+    },
+
+    {
+        "name" : "Cloth Tunic",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#00FF00",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Torso",
+            "armor_class" : 0.1
+        }
+    },
+
+    {
+        "name" : "Cloth Pants",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#00FFFF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Legs",
+            "armor_class" : 0.1
+        }
+    },
+
+    {
+        "name" : "Slippers",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#FF9999",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Legs",
+            "armor_class" : 0.1
+        }
+    },
       {
          "consumable" : {
             "effects" : {
@@ -262,6 +320,7 @@
             "blocks_tile" : true,
             "vision_range" : 4,
             "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Lovely day, eh?", "Nice weather", "Hello" ]
         },
 
@@ -277,6 +336,7 @@
             "blocks_tile" : true,
             "vision_range" : 4,
             "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "They're biting today!", "I caught something, but it wasn't a fish!", "Looks like rain" ]
         },
 
@@ -292,6 +352,7 @@
             "blocks_tile" : true,
             "vision_range" : 4,
             "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Arrr", "Grog!", "Booze!" ]
         },
 
@@ -307,6 +368,7 @@
             "blocks_tile" : true,
             "vision_range" : 4,
             "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Hic", "Need... more... booze!", "Spare a copper?" ]
         },
 
@@ -335,6 +397,7 @@
          },
          "name" : "Shady Salesman",
          "ai" : "vendor",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
@@ -348,6 +411,7 @@
          },
          "name" : "Patron",
          "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4,
          "quips": [ "Quiet down, it's too early!", "Oh my, I drank too much.", "Still saving the world, eh?" ]
@@ -364,7 +428,8 @@
          "name" : "Barkeep",
          "blocks_tile" : true,
          "ai" : "vendor",
-         "vision_range" : 4
+         "vision_range" : 4,
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ]
       },
       {
          "vision_range" : 8,
@@ -415,11 +480,13 @@
          },
          "name" : "Priest",
          "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
       {
          "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4,
          "attributes" : {},
@@ -441,6 +508,7 @@
          },
          "name" : "Blacksmith",
          "ai" : "vendor",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
@@ -454,6 +522,7 @@
          },
          "name" : "Clothier",
          "ai" : "vendor",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
@@ -468,6 +537,7 @@
          },
          "vision_range" : 4,
          "ai" : "vendor",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true
       },
       {
@@ -480,6 +550,7 @@
          },
          "name" : "Mom",
          "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
@@ -494,10 +565,12 @@
          },
          "vision_range" : 4,
          "ai" : "bystander",
+         "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true
       }
    ],
    "props" : [
+
       {
          "hidden" : true,
          "entry_trigger" : {
