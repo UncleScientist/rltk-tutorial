@@ -141,7 +141,7 @@
               "bg": "#000000",
               "order": 2
           },
-          "weapons": {
+          "weapon": {
               "range": "melee",
               "attribute": "Might",
               "base_damage": "1d8-1",
@@ -180,8 +180,9 @@
       },
       {
          "name" : "Shield",
-         "shield" : {
-            "defense_bonus" : 1
+         "wearable" : {
+             "slot": "Shield",
+             "armor_class": 1.0
          },
          "renderable" : {
             "fg" : "#00AAFF",
@@ -198,10 +199,54 @@
             "bg" : "#000000"
          },
          "name" : "Tower Shield",
-         "shield" : {
-            "defense_bonus" : 3
+         "wearable" : {
+             "slot": "Shield",
+             "armor_class": 2.0
          }
-      }
+      },
+
+        {
+            "name" : "Stained Tunic",
+            "renderable": {
+                "glyph" : "[",
+                "fg" : "#00FF00",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "wearable" : {
+                "slot" : "Torso",
+                "armor_class" : 0.1
+            }
+        },
+
+        {
+            "name" : "Torn Trousers",
+            "renderable": {
+                "glyph" : "[",
+                "fg" : "#00FFFF",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "wearable" : {
+                "slot" : "Legs",
+                "armor_class" : 0.1
+            }
+        },
+
+        {
+            "name" : "Old Boots",
+            "renderable": {
+                "glyph" : "[",
+                "fg" : "#FF9999",
+                "bg" : "#000000",
+                "order" : 2
+            },
+            "wearable" : {
+                "slot" : "Legs",
+                "armor_class" : 0.1
+            }
+        }
+
    ],
    "mobs" : [
 

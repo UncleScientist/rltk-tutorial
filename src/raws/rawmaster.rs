@@ -132,12 +132,12 @@ fn spawn_named_item(
             eb = eb.with(wpn);
         }
 
-        if let Some(shield) = &item_template.shield {
-            eb = eb.with(Equippable {
-                slot: EquipmentSlot::Shield,
-            });
-            eb = eb.with(DefenseBonus {
-                power: shield.defense_bonus,
+        if let Some(wearable) = &item_template.wearable {
+            let slot = string_to_slot(&wearable.slot);
+            eb = eb.with(Equippable { slot });
+            eb = eb.with(Wearable {
+                slot,
+                armor_class: wearable.armor_class,
             });
         }
 
@@ -419,14 +419,13 @@ pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> RandomTable {
 }
 
 fn find_slot_for_equippable_item(tag: &str, raws: &RawMaster) -> EquipmentSlot {
-    EquipmentSlot::Melee
-    /* future code
     if !raws.item_index.contains_key(tag) {
         panic!("Trying to equip an unknown item: {}", tag);
     }
 
     let item_index = raws.item_index[tag];
     let item = &raws.raws.items[item_index];
+    println!("{:?}", item);
     if item.weapon.is_some() {
         return EquipmentSlot::Melee;
     }
@@ -436,12 +435,16 @@ fn find_slot_for_equippable_item(tag: &str, raws: &RawMaster) -> EquipmentSlot {
     }
 
     panic!("Trying to equip {}, but it has no slot tag", tag);
-    */
 }
 
-/*
 fn string_to_slot(slot: &str) -> EquipmentSlot {
     match slot {
+        "Shield" => EquipmentSlot::Shield,
+        "Head" => EquipmentSlot::Head,
+        "Torso" => EquipmentSlot::Torso,
+        "Legs" => EquipmentSlot::Legs,
+        "Feet" => EquipmentSlot::Feet,
+        "Hands" => EquipmentSlot::Hands,
         "Melee" => EquipmentSlot::Melee,
         _ => {
             rltk::console::log(format!("Warning: unknown equipment slot type [{}]", slot));
@@ -449,4 +452,3 @@ fn string_to_slot(slot: &str) -> EquipmentSlot {
         }
     }
 }
-*/

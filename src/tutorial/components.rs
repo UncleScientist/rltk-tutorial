@@ -117,6 +117,11 @@ pub struct HungerClock {
 pub enum EquipmentSlot {
     Melee,
     Shield,
+    Head,
+    Torso,
+    Legs,
+    Feet,
+    Hands,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
@@ -145,8 +150,9 @@ pub struct MeleeWeapon {
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
-pub struct DefenseBonus {
-    pub power: i32,
+pub struct Wearable {
+    pub armor_class: f32,
+    pub slot: EquipmentSlot,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
