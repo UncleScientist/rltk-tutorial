@@ -93,7 +93,9 @@
          "name" : "Dagger",
          "weapon" : {
             "range" : "melee",
-            "power_bonus" : 2
+            "attribute" : "Quickness",
+            "base_damage": "1d4",
+            "hit_bonus": 0
          },
          "renderable" : {
             "fg" : "#FFAAAA",
@@ -101,6 +103,22 @@
             "order" : 2,
             "bg" : "#000000"
          }
+      },
+      {
+          "name": "Rusty Longsword",
+          "slot": "Melee",
+          "renderable": {
+              "glyph": "/",
+              "fg": "#BB77BB",
+              "bg": "#000000",
+              "order": 2
+          },
+          "weapons": {
+              "range": "melee",
+              "attribute": "Might",
+              "base_damage": "1d8-1",
+              "hit_bonus": -1
+          }
       },
       {
          "name" : "Longsword",
@@ -112,7 +130,9 @@
          },
          "weapon" : {
             "range" : "melee",
-            "power_bonus" : 4
+              "attribute": "Might",
+              "base_damage": "1d8-1",
+              "hit_bonus": -1
          }
       },
       {
@@ -125,7 +145,9 @@
          },
          "weapon" : {
             "range" : "melee",
-            "power_bonus" : 5
+              "attribute": "Might",
+              "base_damage": "1d8-1",
+              "hit_bonus": -1
          }
       },
       {

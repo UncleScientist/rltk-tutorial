@@ -51,7 +51,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SerializationHelper>();
     gs.ecs.register::<Equippable>();
     gs.ecs.register::<Equipped>();
-    gs.ecs.register::<MeleePowerBonus>();
+    gs.ecs.register::<MeleeWeapon>();
     gs.ecs.register::<DefenseBonus>();
     gs.ecs.register::<WantsToRemoveItem>();
     gs.ecs.register::<ParticleLifetime>();

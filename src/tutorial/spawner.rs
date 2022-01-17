@@ -6,10 +6,6 @@ use std::collections::HashMap;
 
 use crate::*;
 
-pub enum SpawnType {
-    AtPosition { x: i32, y: i32 },
-}
-
 /// Fills a room with stuff!
 pub fn spawn_room(
     map: &Map,
@@ -83,7 +79,7 @@ pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
 
     let item_result = spawn_named_entity(
         &RAWS.lock().unwrap(),
-        ecs.create_entity(),
+        ecs,
         spawn.1,
         SpawnType::AtPosition { x, y },
     );
@@ -103,7 +99,8 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
     skills.skills.insert(Skill::Defense, 1);
     skills.skills.insert(Skill::Magic, 1);
 
-    ecs.create_entity()
+    let player = ecs
+        .create_entity()
         .with(Position {
             x: player_x,
             y: player_y,
@@ -144,7 +141,17 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             level: 1,
         })
         .marked::<SimpleMarker<SerializeMe>>()
-        .build()
+        .build();
+
+    // Starting Equipment
+    spawn_named_entity(
+        &RAWS.lock().unwrap(),
+        ecs,
+        "Rusty Longsword",
+        SpawnType::Equipped { by: player },
+    );
+
+    player
 }
 
 // TODO: remove after removing from main()

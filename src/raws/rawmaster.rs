@@ -1,10 +1,16 @@
 use crate::components::*;
-use crate::spawner::*;
 use crate::{mana_at_level, npc_hp, RandomTable};
 use specs::prelude::*;
+use specs::saveload::{MarkedBuilder, SimpleMarker};
 use std::collections::{HashMap, HashSet};
 
-use super::Raws;
+use super::{parse_dice_string, Raws};
+
+pub enum SpawnType {
+    AtPosition { x: i32, y: i32 },
+    Equipped { by: Entity },
+    Carried { by: Entity },
+}
 
 #[derive(Default)]
 pub struct RawMaster {
@@ -76,16 +82,16 @@ impl RawMaster {
 
 pub fn spawn_named_entity(
     raws: &RawMaster,
-    new_entity: EntityBuilder,
+    ecs: &mut World,
     key: &str,
     pos: SpawnType,
 ) -> Option<Entity> {
     if raws.item_index.contains_key(key) {
-        spawn_named_item(raws, new_entity, key, pos)
+        spawn_named_item(raws, ecs, key, pos)
     } else if raws.mob_index.contains_key(key) {
-        spawn_named_mob(raws, new_entity, key, pos)
+        spawn_named_mob(raws, ecs, key, pos)
     } else if raws.prop_index.contains_key(key) {
-        spawn_named_prop(raws, new_entity, key, pos)
+        spawn_named_prop(raws, ecs, key, pos)
     } else {
         None
     }
@@ -93,13 +99,15 @@ pub fn spawn_named_entity(
 
 fn spawn_named_item(
     raws: &RawMaster,
-    new_entity: EntityBuilder,
+    ecs: &mut World,
     key: &str,
     pos: SpawnType,
 ) -> Option<Entity> {
     if raws.item_index.contains_key(key) {
         let item_template = &raws.raws.items[raws.item_index[key]];
-        let mut eb = spawn_position(pos, new_entity);
+
+        let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
+        eb = spawn_position(pos, eb, key, raws);
 
         if let Some(renderable) = &item_template.renderable {
             eb = eb.with(get_renderable_component(renderable));
@@ -109,9 +117,19 @@ fn spawn_named_item(
             eb = eb.with(Equippable {
                 slot: EquipmentSlot::Melee,
             });
-            eb = eb.with(MeleePowerBonus {
-                power: weapon.power_bonus,
-            });
+            let (n_dice, die_type, bonus) = parse_dice_string(&weapon.base_damage);
+            let wpn = MeleeWeapon {
+                attribute: match weapon.attribute.as_str() {
+                    "Quickness" => WeaponAttribute::Quickness,
+                    _ => WeaponAttribute::Might,
+                },
+                damage_n_dice: n_dice,
+                damage_die_type: die_type,
+                damage_bonus: bonus,
+                hit_bonus: weapon.hit_bonus,
+            };
+
+            eb = eb.with(wpn);
         }
 
         if let Some(shield) = &item_template.shield {
@@ -175,15 +193,11 @@ fn spawn_named_item(
     None
 }
 
-fn spawn_named_mob(
-    raws: &RawMaster,
-    new_entity: EntityBuilder,
-    key: &str,
-    pos: SpawnType,
-) -> Option<Entity> {
+fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType) -> Option<Entity> {
     if raws.mob_index.contains_key(key) {
         let mob_template = &raws.raws.mobs[raws.mob_index[key]];
-        let mut eb = spawn_position(pos, new_entity);
+        let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
+        eb = spawn_position(pos, eb, key, raws);
 
         if let Some(renderable) = &mob_template.renderable {
             eb = eb.with(get_renderable_component(renderable));
@@ -291,13 +305,14 @@ fn spawn_named_mob(
 
 fn spawn_named_prop(
     raws: &RawMaster,
-    new_entity: EntityBuilder,
+    ecs: &mut World,
     key: &str,
     pos: SpawnType,
 ) -> Option<Entity> {
     if raws.prop_index.contains_key(key) {
         let prop_template = &raws.raws.props[raws.prop_index[key]];
-        let mut eb = spawn_position(pos, new_entity);
+        let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
+        eb = spawn_position(pos, eb, key, raws);
 
         if let Some(renderable) = &prop_template.renderable {
             eb = eb.with(get_renderable_component(renderable));
@@ -349,13 +364,21 @@ fn str_to_i32(s: &str) -> i32 {
     s.parse::<i32>().unwrap()
 }
 
-fn spawn_position(pos: SpawnType, new_entity: EntityBuilder) -> EntityBuilder {
+fn spawn_position<'a>(
+    pos: SpawnType,
+    new_entity: EntityBuilder<'a>,
+    tag: &str,
+    raws: &RawMaster,
+) -> EntityBuilder<'a> {
     let mut eb = new_entity;
 
     // Spawn in the specified location
     match pos {
-        SpawnType::AtPosition { x, y } => {
-            eb = eb.with(Position { x, y });
+        SpawnType::AtPosition { x, y } => eb = eb.with(Position { x, y }),
+        SpawnType::Carried { by } => eb = eb.with(InBackpack { owner: by }),
+        SpawnType::Equipped { by } => {
+            let slot = find_slot_for_equippable_item(tag, raws);
+            eb = eb.with(Equipped { owner: by, slot })
         }
     }
 
@@ -394,3 +417,36 @@ pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> RandomTable {
 
     rt
 }
+
+fn find_slot_for_equippable_item(tag: &str, raws: &RawMaster) -> EquipmentSlot {
+    EquipmentSlot::Melee
+    /* future code
+    if !raws.item_index.contains_key(tag) {
+        panic!("Trying to equip an unknown item: {}", tag);
+    }
+
+    let item_index = raws.item_index[tag];
+    let item = &raws.raws.items[item_index];
+    if item.weapon.is_some() {
+        return EquipmentSlot::Melee;
+    }
+
+    if let Some(wearable) = &item.wearable {
+        return string_to_slot(&wearable.slot);
+    }
+
+    panic!("Trying to equip {}, but it has no slot tag", tag);
+    */
+}
+
+/*
+fn string_to_slot(slot: &str) -> EquipmentSlot {
+    match slot {
+        "Melee" => EquipmentSlot::Melee,
+        _ => {
+            rltk::console::log(format!("Warning: unknown equipment slot type [{}]", slot));
+            EquipmentSlot::Melee
+        }
+    }
+}
+*/

@@ -1,3 +1,4 @@
+use regex::Regex;
 use serde::Deserialize;
 
 mod item_structs;
@@ -45,4 +46,27 @@ pub fn load_raws() {
     let decoder: Raws = serde_json::from_str(raw_string).expect("Unable to parse JSON");
 
     RAWS.lock().unwrap().load(decoder);
+}
+
+pub fn parse_dice_string(dice: &str) -> (i32, i32, i32) {
+    lazy_static! {
+        static ref DICE_RE: Regex = Regex::new(r"(\d+)d(\d+)([\+\-]\d+)?").unwrap();
+    }
+
+    let mut n_dice = 1;
+    let mut die_type = 4;
+    let mut die_bonus = 0;
+
+    for cap in DICE_RE.captures_iter(dice) {
+        if let Some(group) = cap.get(1) {
+            n_dice = group.as_str().parse::<i32>().expect("not a digit");
+        }
+        if let Some(group) = cap.get(2) {
+            die_type = group.as_str().parse::<i32>().expect("not a digit");
+        }
+        if let Some(group) = cap.get(3) {
+            die_bonus = group.as_str().parse::<i32>().expect("not a digit");
+        }
+    }
+    (n_dice, die_type, die_bonus)
 }

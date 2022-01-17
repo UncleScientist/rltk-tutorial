@@ -129,9 +129,19 @@ pub struct WantsToRemoveItem {
     pub item: Entity,
 }
 
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
+pub enum WeaponAttribute {
+    Might,
+    Quickness,
+}
+
 #[derive(Component, ConvertSaveload, Clone)]
-pub struct MeleePowerBonus {
-    pub power: i32,
+pub struct MeleeWeapon {
+    pub attribute: WeaponAttribute,
+    pub damage_n_dice: i32,
+    pub damage_die_type: i32,
+    pub damage_bonus: i32,
+    pub hit_bonus: i32,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
