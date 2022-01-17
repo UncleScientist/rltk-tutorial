@@ -298,6 +298,28 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             dirty: true,
         });
 
+        if let Some(na) = &mob_template.natural {
+            let mut nature = NaturalAttackDefense {
+                armor_class: na.armor_class,
+                attacks: Vec::new(),
+            };
+            if let Some(attacks) = &na.attacks {
+                for nattack in attacks.iter() {
+                    let (damage_n_dice, damage_die_type, damage_bonus) =
+                        parse_dice_string(&nattack.damage);
+                    let attack = NaturalAttack {
+                        name: nattack.name.clone(),
+                        hit_bonus: nattack.hit_bonus,
+                        damage_n_dice,
+                        damage_die_type,
+                        damage_bonus,
+                    };
+                    nature.attacks.push(attack);
+                }
+            }
+            eb = eb.with(nature);
+        }
+
         let new_mob = eb.build();
 
         // Are they wielding anything?

@@ -384,7 +384,13 @@
             "vision_range" : 8,
             "ai" : "melee",
             "attributes": { "Might": 3, "Fitness": 3 },
-            "skills": { "Melee": -1, "Defense": -1 }
+            "skills": { "Melee": -1, "Defense": -1 },
+            "natural": {
+                "armor_class": 11,
+                "attacks": [
+                    { "name": "bite", "hit_bonus": 0, "damage": "1d4" }
+                ]
+            }
         },
 
       {

@@ -30,6 +30,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Player>();
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<Monster>();
+    gs.ecs.register::<NaturalAttackDefense>();
     gs.ecs.register::<Bystander>();
     gs.ecs.register::<Vendor>();
     gs.ecs.register::<Name>();
