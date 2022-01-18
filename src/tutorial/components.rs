@@ -52,11 +52,17 @@ pub struct Skills {
     pub skills: HashMap<Skill, i32>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Attribute {
     pub base: i32,
     pub modifiers: i32,
     pub bonus: i32,
+}
+
+impl Default for Attribute {
+    fn default() -> Attribute {
+        Attribute::new()
+    }
 }
 
 impl Attribute {

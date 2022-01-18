@@ -1,10 +1,10 @@
 use crate::{
-    camera, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack, Map, Name, Owned,
-    Player, Pools, Position, RexAssets, RunState, State, Viewshed,
+    camera, Attribute, Attributes, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack,
+    Map, Name, Owned, Player, Pools, Position, RexAssets, RunState, State, Viewshed,
 };
 use rltk::{
-    Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED, RGB, WHITE,
-    YELLOW,
+    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED,
+    RGB, WHITE, YELLOW,
 };
 use specs::prelude::*;
 
@@ -21,7 +21,134 @@ pub enum MainMenuSelection {
     Quit,
 }
 
+pub fn draw_hollow_box(
+    console: &mut Rltk,
+    sx: i32,
+    sy: i32,
+    width: i32,
+    height: i32,
+    fg: RGB,
+    bg: RGB,
+) {
+    console.set(sx, sy, fg, bg, to_cp437('┌'));
+    console.set(sx + width, sy, fg, bg, to_cp437('┐'));
+    console.set(sx, sy + height, fg, bg, to_cp437('└'));
+    console.set(sx + width, sy + height, fg, bg, to_cp437('┘'));
+
+    for x in sx + 1..sx + width {
+        console.set(x, sy, fg, bg, to_cp437('─'));
+        console.set(x, sy + height, fg, bg, to_cp437('─'));
+    }
+
+    for y in sy + 1..sy + height {
+        console.set(sx, y, fg, bg, to_cp437('│'));
+        console.set(sx + width, y, fg, bg, to_cp437('│'));
+    }
+}
+
+fn draw_attribute(name: &str, attribute: &Attribute, y: i32, ctx: &mut Rltk) {
+    let black: RGB = RGB::named(rltk::BLACK);
+    let white: RGB = RGB::named(rltk::WHITE);
+    let attr_grey: RGB = RGB::from_hex("#CCCCCC").expect("oops");
+
+    ctx.print_color(50, y, attr_grey, black, name);
+    let color: RGB = match attribute.modifiers {
+        x if x < 0 => RGB::from_f32(1., 0., 0.),
+        0 => white,
+        _ => RGB::from_f32(0., 1., 0.),
+    };
+
+    ctx.print_color(
+        67,
+        y,
+        color,
+        black,
+        &format!("{}", attribute.base + attribute.modifiers),
+    );
+    ctx.print_color(73, y, color, black, &format!("{}", attribute.bonus));
+    if attribute.bonus > 0 {
+        ctx.set(72, y, color, black, to_cp437('+'));
+    }
+}
+
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
+    let box_grey: RGB = RGB::from_hex("#999999").expect("oops");
+    let black: RGB = RGB::named(rltk::BLACK);
+    let white: RGB = RGB::named(rltk::WHITE);
+    let red: RGB = RGB::named(rltk::RED);
+    let blue: RGB = RGB::named(rltk::BLUE);
+
+    draw_hollow_box(ctx, 0, 0, 79, 59, box_grey, black);
+    draw_hollow_box(ctx, 0, 0, 49, 45, box_grey, black);
+    draw_hollow_box(ctx, 0, 45, 79, 14, box_grey, black);
+    draw_hollow_box(ctx, 49, 0, 30, 8, box_grey, black);
+
+    ctx.set(0, 45, box_grey, black, to_cp437('├'));
+    ctx.set(49, 8, box_grey, black, to_cp437('├'));
+    ctx.set(49, 0, box_grey, black, to_cp437('┬'));
+    ctx.set(49, 45, box_grey, black, to_cp437('┴'));
+    ctx.set(49, 45, box_grey, black, to_cp437('┴'));
+    ctx.set(79, 8, box_grey, black, to_cp437('┤'));
+    ctx.set(79, 45, box_grey, black, to_cp437('┤'));
+
+    // Draw the town name
+    let map = ecs.fetch::<Map>();
+    let name_length = map.name.len() + 2;
+    let x_pos = (22 - (name_length / 2)) as i32;
+    ctx.set(x_pos, 0, box_grey, black, to_cp437('┤'));
+    ctx.set(
+        x_pos + name_length as i32,
+        0,
+        box_grey,
+        black,
+        to_cp437('├'),
+    );
+    ctx.print_color(x_pos + 1, 0, white, black, &map.name);
+    std::mem::drop(map);
+
+    let player_entity = ecs.fetch::<Entity>();
+    let pools = ecs.read_storage::<Pools>();
+    let player_pools = pools.get(*player_entity).unwrap();
+    // let (hp, mana, _, _) ...
+    let health = format!(
+        "Health: {}/{}",
+        player_pools.hit_points.current, player_pools.hit_points.max
+    );
+    let mana = format!(
+        "Mana: {}/{}",
+        player_pools.mana.current, player_pools.mana.max
+    );
+    ctx.print_color(50, 1, white, black, &health);
+    ctx.print_color(50, 2, white, black, &mana);
+    ctx.draw_bar_horizontal(
+        64,
+        1,
+        14,
+        player_pools.hit_points.current,
+        player_pools.hit_points.max,
+        red,
+        black,
+    );
+    ctx.draw_bar_horizontal(
+        64,
+        2,
+        14,
+        player_pools.mana.current,
+        player_pools.mana.max,
+        blue,
+        black,
+    );
+
+    // Attributes
+    let attributes = ecs.read_storage::<Attributes>();
+    let attr = attributes.get(*player_entity).unwrap();
+    draw_attribute("Might:", &attr.might, 4, ctx);
+    draw_attribute("Quickness:", &attr.quickness, 5, ctx);
+    draw_attribute("Fitness:", &attr.fitness, 6, ctx);
+    draw_attribute("Intelligence:", &attr.intelligence, 7, ctx);
+}
+
+pub fn _old_draw_ui(ecs: &World, ctx: &mut Rltk) {
     let white = RGB::named(WHITE);
     let black = RGB::named(BLACK);
     let red = RGB::named(RED);
