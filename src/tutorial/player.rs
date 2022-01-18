@@ -2,6 +2,7 @@ use rltk::{Point, Rltk, VirtualKeyCode};
 use specs::prelude::*;
 use std::cmp::{max, min};
 
+use crate::components::Ranged;
 use crate::*;
 
 fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
@@ -119,6 +120,24 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
     if let Some(key) = ctx.key {
         use VirtualKeyCode::*;
 
+        if ctx.shift {
+            let key: Option<i32> = match key {
+                Key1 => Some(1),
+                Key2 => Some(2),
+                Key3 => Some(3),
+                Key4 => Some(4),
+                Key5 => Some(5),
+                Key6 => Some(6),
+                Key7 => Some(7),
+                Key8 => Some(8),
+                Key9 => Some(9),
+                _ => None,
+            };
+            if let Some(key) = key {
+                return use_consumable_hotkey(gs, key - 1);
+            }
+        }
+
         match key {
             Left | Numpad4 | H => try_move_player(-1, 0, &mut gs.ecs),
             Right | Numpad6 | L => try_move_player(1, 0, &mut gs.ecs),
@@ -147,6 +166,47 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
     } else {
         RunState::AwaitingInput
     }
+}
+
+fn use_consumable_hotkey(gs: &mut State, key: i32) -> RunState {
+    let consumables = gs.ecs.read_storage::<Consumable>();
+    let backpack = gs.ecs.read_storage::<InBackpack>();
+    let player_entity = gs.ecs.fetch::<Entity>();
+    let entities = gs.ecs.entities();
+
+    let mut carried_consumables = Vec::new();
+    for (entity, carried_by, _) in (&entities, &backpack, &consumables).join() {
+        if carried_by.owner == *player_entity {
+            carried_consumables.push(entity);
+        }
+    }
+
+    if (key as usize) < carried_consumables.len() {
+        if let Some(ranged) = gs
+            .ecs
+            .read_storage::<Ranged>()
+            .get(carried_consumables[key as usize])
+        {
+            return RunState::ShowTargeting {
+                range: ranged.range,
+                item: carried_consumables[key as usize],
+            };
+        }
+
+        let mut intent = gs.ecs.write_storage::<WantsToUseItem>();
+        intent
+            .insert(
+                *player_entity,
+                WantsToUseItem {
+                    item: carried_consumables[key as usize],
+                    target: None,
+                },
+            )
+            .expect("Unable to insert intent");
+        return RunState::PlayerTurn;
+    }
+
+    RunState::PlayerTurn
 }
 
 fn skip_turn(ecs: &mut World) -> RunState {
