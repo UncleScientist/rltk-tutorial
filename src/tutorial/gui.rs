@@ -202,11 +202,14 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     let names = ecs.read_storage::<Name>();
     let positions = ecs.read_storage::<Position>();
     let hidden = ecs.read_storage::<Hidden>();
+    let attributes = ecs.read_storage::<Attributes>();
+    let pools = ecs.read_storage::<Pools>();
+    let entities = ecs.entities();
 
     let mouse_pos = ctx.mouse_pos();
     let mut mouse_map_pos = mouse_pos;
-    mouse_map_pos.0 += min_x - 1;
-    mouse_map_pos.1 += min_y - 1;
+    mouse_map_pos.0 += min_x;
+    mouse_map_pos.1 += min_y;
     if mouse_map_pos.0 >= map.width - 1
         || mouse_map_pos.1 >= map.height - 1
         || mouse_map_pos.0 < 1
@@ -218,73 +221,82 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     if !map.visible_tiles[map.xy_idx(mouse_map_pos.0, mouse_map_pos.1)] {
         return;
     }
-    let mut tooltip: Vec<String> = Vec::new();
-    for (name, position, _) in (&names, &positions, !&hidden).join() {
+
+    let mut tip_boxes: Vec<Tooltip> = Vec::new();
+    for (entity, name, position, _) in (&entities, &names, &positions, !&hidden).join() {
         if position.x == mouse_map_pos.0 && position.y == mouse_map_pos.1 {
-            tooltip.push(name.name.to_string());
+            let mut tip = Tooltip::new();
+            tip.add(name.name.to_string());
+
+            if let Some(attr) = attributes.get(entity) {
+                let mut s = "".to_string(); // String::new()
+                if attr.might.bonus < 0 {
+                    s += "Weak. "
+                };
+                if attr.might.bonus > 0 {
+                    s += "Strong. "
+                };
+                if attr.quickness.bonus < 0 {
+                    s += "Clumsy. "
+                };
+                if attr.quickness.bonus > 0 {
+                    s += "Agile. "
+                };
+                if attr.fitness.bonus < 0 {
+                    s += "Unhealthy. "
+                };
+                if attr.fitness.bonus > 0 {
+                    s += "Healthy. "
+                };
+                if attr.intelligence.bonus < 0 {
+                    s += "Unintelligent. "
+                };
+                if attr.intelligence.bonus > 0 {
+                    s += "Smart. "
+                };
+                if s.is_empty() {
+                    s = "Quite Average".to_string()
+                }
+                tip.add(s);
+            }
+
+            // Comment on pools
+            if let Some(stat) = pools.get(entity) {
+                tip.add(format!("Level: {}", stat.level));
+            }
+            tip_boxes.push(tip);
         }
     }
 
-    if !tooltip.is_empty() {
-        let mut width: i32 = 0;
-        for s in tooltip.iter() {
-            if width < s.len() as i32 {
-                width = s.len() as i32;
-            }
-        }
-        width += 3;
+    if tip_boxes.is_empty() {
+        return;
+    }
 
-        if mouse_pos.0 > map.width / 2 {
-            let arrow_pos = Point::new(mouse_pos.0 - 2, mouse_pos.1);
-            let left_x = mouse_pos.0 - width;
-            let mut y = mouse_pos.1;
-            for s in tooltip.iter() {
-                ctx.print_color(left_x, y, RGB::named(WHITE), RGB::named(GREY), s);
-                let padding = (width - s.len() as i32) - 1;
-                for i in 0..padding {
-                    ctx.print_color(
-                        arrow_pos.x - i,
-                        y,
-                        RGB::named(WHITE),
-                        RGB::named(GREY),
-                        &" ".to_string(),
-                    );
-                }
-                y += 1;
-            }
-            ctx.print_color(
-                arrow_pos.x,
-                arrow_pos.y,
-                RGB::named(WHITE),
-                RGB::named(GREY),
-                &"->".to_string(),
-            );
+    let box_grey = RGB::from_hex("#999999").expect("oops");
+    let white = RGB::named(WHITE);
+
+    let arrow_y = mouse_pos.1;
+    let (arrow, arrow_x) = if mouse_pos.0 < 40 {
+        (to_cp437('→'), mouse_pos.0 - 1)
+    } else {
+        (to_cp437('←'), mouse_pos.0 + 1)
+    };
+    ctx.set(arrow_x, arrow_y, white, box_grey, arrow);
+
+    let total_height = tip_boxes.iter().map(|tt| tt.height()).sum::<i32>();
+    let mut y = mouse_pos.1 - (total_height / 2);
+    while y + (total_height / 2) > 50 {
+        y -= 1;
+    }
+
+    for tt in tip_boxes.iter() {
+        let x = if mouse_pos.0 < 40 {
+            mouse_pos.0 - (1 + tt.width())
         } else {
-            let arrow_pos = Point::new(mouse_pos.0 + 1, mouse_pos.1);
-            let left_x = mouse_pos.0 + 3;
-            let mut y = mouse_pos.1;
-            for s in tooltip.iter() {
-                ctx.print_color(left_x + 1, y, RGB::named(WHITE), RGB::named(GREY), s);
-                let padding = (width - s.len() as i32) - 1;
-                for i in 0..padding {
-                    ctx.print_color(
-                        arrow_pos.x + 1 + i,
-                        y,
-                        RGB::named(WHITE),
-                        RGB::named(GREY),
-                        &" ".to_string(),
-                    );
-                }
-                y += 1;
-            }
-            ctx.print_color(
-                arrow_pos.x,
-                arrow_pos.y,
-                RGB::named(WHITE),
-                RGB::named(GREY),
-                &"<-".to_string(),
-            );
-        }
+            mouse_pos.0 + (1 + tt.width())
+        };
+        tt.render(ctx, x, y);
+        y += tt.height();
     }
 }
 
@@ -580,5 +592,42 @@ pub fn game_over(ctx: &mut Rltk) -> GameOverResult {
     match ctx.key {
         Some(VirtualKeyCode::Escape) => GameOverResult::QuitToMenu,
         _ => GameOverResult::NoSelection,
+    }
+}
+
+// --- Tooltips ---
+
+struct Tooltip {
+    lines: Vec<String>,
+}
+
+impl Tooltip {
+    fn new() -> Tooltip {
+        Tooltip { lines: Vec::new() }
+    }
+
+    fn add<S: ToString>(&mut self, line: S) {
+        self.lines.push(line.to_string())
+    }
+
+    fn width(&self) -> i32 {
+        self.lines.iter().map(|x| x.len()).max().unwrap() as i32 + 2
+    }
+
+    fn height(&self) -> i32 {
+        self.lines.len() as i32 + 2
+    }
+
+    fn render(&self, ctx: &mut Rltk, x: i32, y: i32) {
+        let box_grey = RGB::from_hex("#999999").expect("oops");
+        let light_grey = RGB::from_hex("#DDDDDD").expect("oops");
+        let white = RGB::named(WHITE);
+        let black = RGB::named(BLACK);
+
+        ctx.draw_box(x, y, self.width() - 1, self.height() - 1, white, box_grey);
+        for (i, s) in self.lines.iter().enumerate() {
+            let col = if i == 0 { white } else { light_grey };
+            ctx.print_color(x + 1, y + i as i32 + 1, col, black, &s);
+        }
     }
 }
