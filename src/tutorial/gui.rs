@@ -1,10 +1,10 @@
 use crate::{
-    camera, Attribute, Attributes, Equipped, GameLog, Hidden, HungerClock, HungerState, InBackpack,
-    Map, Name, Owned, Player, Pools, Position, RexAssets, RunState, State, Viewshed,
+    camera, Attribute, Attributes, Consumable, Equipped, GameLog, Hidden, HungerClock, HungerState,
+    InBackpack, Map, Name, Owned, Pools, Position, RexAssets, RunState, State, Viewshed,
 };
 use rltk::{
-    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREEN, GREY, MAGENTA, ORANGE, RED,
-    RGB, WHITE, YELLOW,
+    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, ORANGE, RED, RGB,
+    WHITE, YELLOW,
 };
 use specs::prelude::*;
 
@@ -47,8 +47,8 @@ pub fn draw_hollow_box(
 }
 
 fn draw_attribute(name: &str, attribute: &Attribute, y: i32, ctx: &mut Rltk) {
-    let black: RGB = RGB::named(rltk::BLACK);
-    let white: RGB = RGB::named(rltk::WHITE);
+    let black: RGB = RGB::named(BLACK);
+    let white: RGB = RGB::named(WHITE);
     let attr_grey: RGB = RGB::from_hex("#CCCCCC").expect("oops");
 
     ctx.print_color(50, y, attr_grey, black, name);
@@ -73,10 +73,13 @@ fn draw_attribute(name: &str, attribute: &Attribute, y: i32, ctx: &mut Rltk) {
 
 pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let box_grey: RGB = RGB::from_hex("#999999").expect("oops");
-    let black: RGB = RGB::named(rltk::BLACK);
-    let white: RGB = RGB::named(rltk::WHITE);
-    let red: RGB = RGB::named(rltk::RED);
-    let blue: RGB = RGB::named(rltk::BLUE);
+    let black: RGB = RGB::named(BLACK);
+    let white: RGB = RGB::named(WHITE);
+    let red: RGB = RGB::named(RED);
+    let blue: RGB = RGB::named(BLUE);
+    let yellow: RGB = RGB::named(YELLOW);
+    let green: RGB = RGB::from_f32(0., 1., 0.);
+    let orange = RGB::named(ORANGE);
 
     draw_hollow_box(ctx, 0, 0, 79, 59, box_grey, black);
     draw_hollow_box(ctx, 0, 0, 49, 45, box_grey, black);
@@ -146,61 +149,50 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     draw_attribute("Quickness:", &attr.quickness, 5, ctx);
     draw_attribute("Fitness:", &attr.fitness, 6, ctx);
     draw_attribute("Intelligence:", &attr.intelligence, 7, ctx);
-}
 
-pub fn _old_draw_ui(ecs: &World, ctx: &mut Rltk) {
-    let white = RGB::named(WHITE);
-    let black = RGB::named(BLACK);
-    let red = RGB::named(RED);
-    let green = RGB::named(GREEN);
-    let orange = RGB::named(ORANGE);
-    let yellow = RGB::named(YELLOW);
-
-    ctx.draw_box(0, 43, 79, 6, white, black);
-
-    let combat_stats = ecs.read_storage::<Pools>();
-    let players = ecs.read_storage::<Player>();
-    let hunger = ecs.read_storage::<HungerClock>();
-
-    for (_player, stats, hc) in (&players, &combat_stats, &hunger).join() {
-        let health = format!(
-            " HP: {} / {} ",
-            stats.hit_points.current, stats.hit_points.max
-        );
-        ctx.print_color(12, 43, yellow, black, &health);
-        ctx.draw_bar_horizontal(
-            28,
-            43,
-            51,
-            stats.hit_points.current,
-            stats.hit_points.max,
-            red,
-            black,
-        );
-
-        match hc.state {
-            HungerState::WellFed => ctx.print_color(71, 42, green, black, "Well Fed"),
-            HungerState::Normal => {}
-            HungerState::Hungry => ctx.print_color(71, 42, orange, black, "Hungry"),
-            HungerState::Starving => ctx.print_color(71, 42, red, black, "Starving"),
+    // Equipped
+    let mut y = 9;
+    let equipped = ecs.read_storage::<Equipped>();
+    let name = ecs.read_storage::<Name>();
+    for (equipped_by, item_name) in (&equipped, &name).join() {
+        if equipped_by.owner == *player_entity {
+            ctx.print_color(50, y, white, black, &item_name.name);
+            y += 1;
         }
     }
 
+    y += 1;
+    let consumables = ecs.read_storage::<Consumable>();
+    let backpack = ecs.read_storage::<InBackpack>();
+    let mut index = 1;
+    for (carried_by, _, item_name) in (&backpack, &consumables, &name).join() {
+        if carried_by.owner == *player_entity && index < 10 {
+            ctx.print_color(50, y, yellow, black, &format!("↑{}", index));
+            ctx.print_color(53, y, green, black, &item_name.name);
+            y += 1;
+            index += 1;
+        }
+    }
+
+    let hunger = ecs.read_storage::<HungerClock>();
+    let hc = hunger.get(*player_entity).unwrap();
+    match hc.state {
+        HungerState::WellFed => ctx.print_color(50, 44, green, black, "Well Fed"),
+        HungerState::Normal => {}
+        HungerState::Hungry => ctx.print_color(50, 44, orange, black, "Hungry"),
+        HungerState::Starving => ctx.print_color(50, 44, red, black, "Starving"),
+    }
+
+    // Draw the log
     let log = ecs.fetch::<GameLog>();
-    let mut y = 44;
+    let mut y = 46;
     for s in log.entries.iter().rev() {
-        if y < 49 {
+        if y < 59 {
             ctx.print(2, y, s);
         }
         y += 1;
     }
 
-    let map = ecs.fetch::<Map>();
-    let depth = format!("Depth: {}", map.depth);
-    ctx.print_color(2, 43, RGB::named(YELLOW), RGB::named(BLACK), &depth);
-
-    let mouse_pos = ctx.mouse_pos();
-    ctx.set_bg(mouse_pos.0, mouse_pos.1, RGB::named(MAGENTA));
     draw_tooltips(ecs, ctx);
 }
 
@@ -213,8 +205,8 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
 
     let mouse_pos = ctx.mouse_pos();
     let mut mouse_map_pos = mouse_pos;
-    mouse_map_pos.0 += min_x;
-    mouse_map_pos.1 += min_y;
+    mouse_map_pos.0 += min_x - 1;
+    mouse_map_pos.1 += min_y - 1;
     if mouse_map_pos.0 >= map.width - 1
         || mouse_map_pos.1 >= map.height - 1
         || mouse_map_pos.0 < 1
