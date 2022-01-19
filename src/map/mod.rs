@@ -3,6 +3,9 @@ use rltk::{Algorithm2D, BaseMap, Point};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
+mod themes;
+pub use themes::*;
+
 mod tiletype;
 pub use tiletype::*;
 
