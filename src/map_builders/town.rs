@@ -46,8 +46,10 @@ impl TownBuilder {
         self.spawn_dockers(build_data, rng);
         self.spawn_townsfolk(build_data, rng, &mut available_building_tiles);
 
-        let exit_idx = build_data.map.xy_idx(build_data.width - 5, wall_gap_y);
-        build_data.map.tiles[exit_idx] = TileType::DownStairs;
+        for y in wall_gap_y - 3..wall_gap_y + 4 {
+            let exit_idx = build_data.map.xy_idx(build_data.width - 2, y);
+            build_data.map.tiles[exit_idx] = TileType::DownStairs;
+        }
 
         let building_size = self.sort_buildings(&buildings);
         self.building_factory(rng, build_data, &buildings, &building_size);

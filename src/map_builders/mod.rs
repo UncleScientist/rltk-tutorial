@@ -11,6 +11,9 @@ use common::*;
 mod town;
 use town::town_builder;
 
+mod forest;
+use forest::forest_builder;
+
 mod simple_map;
 use simple_map::SimpleMapBuilder;
 
@@ -206,6 +209,7 @@ pub fn level_builder(
     rltk::console::log(format!("Depth: {}", new_depth));
     match new_depth {
         1 => town_builder(new_depth, width, height),
+        2 => forest_builder(new_depth, rng, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }
