@@ -1,5 +1,5 @@
 use super::{Hidden, Position, Renderable};
-use crate::map::tile_glyph;
+use crate::map::{tile_glyph, RenderTile};
 use crate::Map;
 use rltk::{Point, Rltk, RGB};
 use specs::prelude::*;
@@ -36,7 +36,7 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
             if tx > 0 && tx < map_width && ty > 0 && ty < map_height {
                 let idx = map.xy_idx(tx, ty);
                 if map.revealed_tiles[idx] {
-                    let (glyph, fg, bg) = tile_glyph(idx, &*map);
+                    let RenderTile(glyph, fg, bg) = tile_glyph(idx, &*map);
                     ctx.set(x, y, fg, bg, glyph);
                 }
             } else if SHOW_BOUNDARIES {
@@ -101,7 +101,7 @@ pub fn render_debug_map(map: &Map, ctx: &mut Rltk) {
             if tx > 0 && tx < map_width && ty > 0 && ty < map_height {
                 let idx = map.xy_idx(tx, ty);
                 if map.revealed_tiles[idx] {
-                    let (glyph, fg, bg) = tile_glyph(idx, &*map);
+                    let RenderTile(glyph, fg, bg) = tile_glyph(idx, &*map);
                     ctx.set(x, y, fg, bg, glyph);
                 }
             } else if SHOW_BOUNDARIES {

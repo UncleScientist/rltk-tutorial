@@ -1,8 +1,8 @@
-use super::{Map, TileType};
+use super::{Map, RenderTile, TileType};
 use rltk::{FontCharType, RGB};
 
-pub fn tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
-    let (glyph, mut fg, mut bg) = match map.depth {
+pub fn tile_glyph(idx: usize, map: &Map) -> RenderTile {
+    let RenderTile(glyph, mut fg, mut bg) = match map.depth {
         2 => get_forest_glyph(idx, map),
         _ => get_tile_glyph_default(idx, map),
     };
@@ -15,10 +15,10 @@ pub fn tile_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         bg = RGB::from_f32(0., 0., 0.);
     }
 
-    (glyph, fg, bg)
+    RenderTile(glyph, fg, bg)
 }
 
-fn get_tile_glyph_default(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
+fn get_tile_glyph_default(idx: usize, map: &Map) -> RenderTile {
     let bg = RGB::from_f32(0., 0., 0.);
 
     let (glyph, fg) = match map.tiles[idx] {
@@ -39,10 +39,10 @@ fn get_tile_glyph_default(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         TileType::Gravel => (rltk::to_cp437(':'), RGB::named(rltk::GREY)),
     };
 
-    (glyph, fg, bg)
+    RenderTile(glyph, fg, bg)
 }
 
-fn get_forest_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
+fn get_forest_glyph(idx: usize, map: &Map) -> RenderTile {
     let bg = RGB::from_f32(0., 0., 0.);
 
     let (glyph, fg) = match map.tiles[idx] {
@@ -57,7 +57,7 @@ fn get_forest_glyph(idx: usize, map: &Map) -> (FontCharType, RGB, RGB) {
         _ => (rltk::to_cp437('"'), RGB::from_f32(0., 0.6, 0.0)),
     };
 
-    (glyph, fg, bg)
+    RenderTile(glyph, fg, bg)
 }
 
 fn wall_glyph(map: &Map, x: i32, y: i32) -> FontCharType {

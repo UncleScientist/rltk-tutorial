@@ -1,5 +1,5 @@
 use crate::*;
-use rltk::{Algorithm2D, BaseMap, Point};
+use rltk::{Algorithm2D, BaseMap, FontCharType, Point, RGB};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -8,6 +8,8 @@ pub use themes::*;
 
 mod tiletype;
 pub use tiletype::*;
+
+pub struct RenderTile(pub FontCharType, pub RGB, pub RGB);
 
 // ------------------------------------------------------------
 // Map Section
