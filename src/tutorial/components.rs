@@ -11,6 +11,11 @@ use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
 
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct LootTable {
+    pub table: String,
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct NaturalAttack {
     pub name: String,

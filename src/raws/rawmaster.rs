@@ -1,3 +1,5 @@
+use rltk::RandomNumberGenerator;
+
 use crate::components::*;
 use crate::{mana_at_level, npc_hp, RandomTable};
 use specs::prelude::*;
@@ -18,6 +20,7 @@ pub struct RawMaster {
     item_index: HashMap<String, usize>,
     mob_index: HashMap<String, usize>,
     prop_index: HashMap<String, usize>,
+    loot_index: HashMap<String, usize>,
 }
 
 impl RawMaster {
@@ -77,7 +80,28 @@ impl RawMaster {
                 ));
             }
         }
+
+        for (i, loot) in self.raws.loot_tables.iter().enumerate() {
+            self.loot_index.insert(loot.name.clone(), i);
+        }
     }
+}
+
+pub fn get_item_drop(
+    raws: &RawMaster,
+    rng: &mut RandomNumberGenerator,
+    table: &str,
+) -> Option<String> {
+    if raws.loot_index.contains_key(table) {
+        let mut rt = RandomTable::new();
+        let available_options = &raws.raws.loot_tables[raws.loot_index[table]];
+        for item in available_options.drops.iter() {
+            rt = rt.add(item.name.clone(), item.weight);
+        }
+        return rt.roll(rng);
+    }
+
+    None
 }
 
 pub fn spawn_named_entity(
@@ -251,6 +275,12 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             },
         };
         eb = eb.with(pools);
+
+        if let Some(loot) = &mob_template.loot_table {
+            eb = eb.with(LootTable {
+                table: loot.clone(),
+            });
+        }
 
         let mut skills = Skills {
             skills: HashMap::new(),

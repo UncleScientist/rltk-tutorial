@@ -22,6 +22,7 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<LootTable>();
     gs.ecs.register::<Pools>();
     gs.ecs.register::<Skills>();
     gs.ecs.register::<Attributes>();
