@@ -468,7 +468,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "bystander",
+            "ai" : "herbivore",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {
@@ -511,7 +511,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "melee",
+            "ai" : "carnivore",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {

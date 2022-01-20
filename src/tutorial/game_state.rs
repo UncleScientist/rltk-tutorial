@@ -262,6 +262,9 @@ impl State {
         let mut bystander = bystander_ai_system::BystanderAI {};
         bystander.run_now(&self.ecs);
 
+        let mut animal_ai = animal_ai_system::AnimalAI {};
+        animal_ai.run_now(&self.ecs);
+
         let mut melee_combat_system = MeleeCombatSystem {};
         melee_combat_system.run_now(&self.ecs);
 

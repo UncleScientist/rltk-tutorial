@@ -315,6 +315,8 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             "melee" => eb.with(Monster {}),
             "bystander" => eb.with(Bystander {}),
             "vendor" => eb.with(Vendor {}),
+            "carnivore" => eb.with(Carnivore {}),
+            "herbivore" => eb.with(Herbivore {}),
             _ => eb,
         };
 

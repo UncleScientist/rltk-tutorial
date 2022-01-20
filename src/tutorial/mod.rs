@@ -13,6 +13,9 @@ pub use rect::*;
 pub mod bystander_ai_system;
 pub use bystander_ai_system::*;
 
+pub mod animal_ai_system;
+pub use animal_ai_system::*;
+
 pub mod visibility_system;
 pub use visibility_system::*;
 

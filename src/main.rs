@@ -22,6 +22,8 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<Carnivore>();
+    gs.ecs.register::<Herbivore>();
     gs.ecs.register::<LootTable>();
     gs.ecs.register::<Pools>();
     gs.ecs.register::<Skills>();
