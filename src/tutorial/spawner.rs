@@ -181,6 +181,8 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         SpawnType::Equipped { by: player },
     );
 
+    rltk::console::log("Created new player entity");
+
     player
 }
 
