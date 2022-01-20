@@ -359,10 +359,12 @@ impl State {
         };
         self.generate_world_map(current_depth + 1);
 
-        // Place the player and update resources
-        let new_player = spawner::player(&mut self.ecs, 0, 0);
-        let mut player_entity_writer = self.ecs.write_resource::<Entity>();
-        *player_entity_writer = new_player;
+        if everything {
+            // Place the player and update resources
+            let new_player = spawner::player(&mut self.ecs, 0, 0);
+            let mut player_entity_writer = self.ecs.write_resource::<Entity>();
+            *player_entity_writer = new_player;
+        }
 
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
         if everything {
