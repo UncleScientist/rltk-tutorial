@@ -393,6 +393,48 @@
             }
         },
 
+        {
+            "name" : "Mangy Wolf",
+            "renderable": {
+                "glyph" : "w",
+                "fg" : "#FF0000",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "vision_range" : 8,
+            "ai" : "melee",
+            "attributes": { "Might": 3, "Fitness": 3 },
+            "skills": { "Melee": -1, "Defense": -1 },
+            "natural": {
+                "armor_class": 12,
+                "attacks": [
+                    { "name": "bite", "hit_bonus": 0, "damage": "1d6" }
+                ]
+            }
+        },
+
+        {
+            "name" : "Fox",
+            "renderable": {
+                "glyph" : "f",
+                "fg" : "#FF0000",
+                "bg" : "#000000",
+                "order" : 1
+            },
+            "blocks_tile" : true,
+            "vision_range" : 8,
+            "ai" : "melee",
+            "attributes": { "Might": 3, "Fitness": 3 },
+            "skills": { "Melee": -1, "Defense": -1 },
+            "natural": {
+                "armor_class": 11,
+                "attacks": [
+                    { "name": "bite", "hit_bonus": 0, "damage": "1d4" }
+                ]
+            }
+        },
+
       {
           "attributes" : {},
          "renderable" : {
@@ -748,21 +790,24 @@
       }
    ],
    "spawn_table" : [
+       { "name": "Rat", "weight": 15, "min_depth": 2, "max_depth": 3 },
+       { "name": "Mangy Wolf", "weight": 13, "min_depth": 2, "max_depth": 3 },
+       { "name": "Fox", "weight": 15, "min_depth": 2, "max_depth": 3 },
       {
          "name" : "Kobold",
          "weight" : 15,
-         "min_depth" : 0,
+         "min_depth" : 3,
          "max_depth" : 3
       },
       {
          "name" : "Goblin",
          "weight" : 10,
-         "min_depth" : 0,
+         "min_depth" : 3,
          "max_depth" : 100
       },
       {
          "add_map_depth_to_weight" : true,
-         "min_depth" : 0,
+         "min_depth" : 3,
          "max_depth" : 100,
          "name" : "Orc",
          "weight" : 1
