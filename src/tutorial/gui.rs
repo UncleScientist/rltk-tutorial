@@ -3,8 +3,8 @@ use crate::{
     InBackpack, Map, Name, Owned, Pools, Position, RexAssets, RunState, State, Viewshed,
 };
 use rltk::{
-    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, ORANGE, RED, RGB,
-    WHITE, YELLOW,
+    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
+    RGB, WHITE, YELLOW,
 };
 use specs::prelude::*;
 
@@ -80,6 +80,7 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let yellow: RGB = RGB::named(YELLOW);
     let green: RGB = RGB::from_f32(0., 1., 0.);
     let orange = RGB::named(ORANGE);
+    let gold = RGB::named(GOLD);
 
     draw_hollow_box(ctx, 0, 0, 79, 59, box_grey, black);
     draw_hollow_box(ctx, 0, 0, 49, 45, box_grey, black);
@@ -121,8 +122,10 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
         "Mana: {}/{}",
         player_pools.mana.current, player_pools.mana.max
     );
+    let xp = format!("Level: {}", player_pools.level);
     ctx.print_color(50, 1, white, black, &health);
     ctx.print_color(50, 2, white, black, &mana);
+    ctx.print_color(50, 3, white, black, &xp);
     ctx.draw_bar_horizontal(
         64,
         1,
@@ -139,6 +142,16 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
         player_pools.mana.current,
         player_pools.mana.max,
         blue,
+        black,
+    );
+    let xp_level_start = (player_pools.level - 1) * 1000;
+    ctx.draw_bar_horizontal(
+        64,
+        3,
+        14,
+        player_pools.xp - xp_level_start,
+        1000,
+        gold,
         black,
     );
 

@@ -26,6 +26,7 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, MeleeWeapon>,
     ReadStorage<'a, Wearable>,
     ReadStorage<'a, NaturalAttackDefense>,
+    ReadExpect<'a, Entity>,
 );
 
 impl<'a> System<'a> for MeleeCombatSystem {
@@ -49,6 +50,7 @@ impl<'a> System<'a> for MeleeCombatSystem {
             meleeweapons,
             wearables,
             natural,
+            player_entity,
         ) = data;
 
         for (entity, wants_melee, name, attacker_attributes, attacker_skills, attacker_pools) in (
@@ -146,7 +148,12 @@ impl<'a> System<'a> for MeleeCombatSystem {
                             + skill_damage_bonus
                             + weapon_damage_bonus,
                     );
-                    SufferDamage::new_damage(&mut inflict_damage, wants_melee.target, damage);
+                    SufferDamage::new_damage(
+                        &mut inflict_damage,
+                        wants_melee.target,
+                        damage,
+                        entity == *player_entity,
+                    );
                     log.entries.push(format!(
                         "{} hits {}, for {} hp",
                         &name.name, &target_name.name, damage

@@ -62,7 +62,7 @@ impl<'a> System<'a> for TriggerSystem {
                             rltk::to_cp437('‼'),
                             200.0,
                         );
-                        SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage);
+                        SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage, false);
                     }
 
                     if single_activation.get(*entity_id).is_some() {

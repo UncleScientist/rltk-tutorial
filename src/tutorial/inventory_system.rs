@@ -227,7 +227,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     let item_name = names.get(useitem.item).unwrap();
                     let mob_name = names.get(*mob).unwrap();
                     if combat_stats.get(*mob).is_some() {
-                        SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage);
+                        SufferDamage::new_damage(&mut suffer_damage, *mob, damage.damage, true);
                         if entity == *player_entity {
                             gamelog.entries.push(format!(
                                 "You use {} on {}, inflicting {} hp.",
