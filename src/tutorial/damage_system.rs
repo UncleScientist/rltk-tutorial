@@ -1,10 +1,10 @@
-use rltk::RandomNumberGenerator;
+use rltk::{Point, RandomNumberGenerator};
 
 use crate::{
     mana_at_level, player_hp_at_level,
     raws::{get_item_drop, spawn_named_entity, SpawnType, RAWS},
-    Attributes, Equipped, GameLog, InBackpack, LootTable, Map, Name, Player, Pools, Position,
-    RunState, SufferDamage,
+    Attributes, Equipped, GameLog, InBackpack, LootTable, Map, Name, ParticleBuilder, Player,
+    Pools, Position, RunState, SufferDamage,
 };
 use specs::prelude::*;
 
@@ -19,10 +19,24 @@ impl<'a> System<'a> for DamageSystem {
         Entities<'a>,
         ReadExpect<'a, Entity>,
         ReadStorage<'a, Attributes>,
+        WriteExpect<'a, GameLog>,
+        WriteExpect<'a, ParticleBuilder>,
+        ReadExpect<'a, Point>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut stats, mut damage, positions, mut map, entities, player, attributes) = data;
+        let (
+            mut stats,
+            mut damage,
+            positions,
+            mut map,
+            entities,
+            player,
+            attributes,
+            mut log,
+            mut particles,
+            player_pos,
+        ) = data;
         let mut xp_gain = 0;
 
         for (entity, mut stats, damage) in (&entities, &mut stats, &damage).join() {
@@ -56,6 +70,23 @@ impl<'a> System<'a> for DamageSystem {
                     player_stats.level,
                 );
                 player_stats.mana.current = player_stats.mana.max;
+                log.entries.push(format!(
+                    "Congratulations, you are now level {}",
+                    player_stats.level
+                ));
+
+                for i in 0..10 {
+                    if player_pos.y - i > 1 {
+                        particles.request(
+                            player_pos.x,
+                            player_pos.y - i,
+                            rltk::RGB::named(rltk::GOLD),
+                            rltk::RGB::named(rltk::BLACK),
+                            rltk::to_cp437('░'),
+                            200.0,
+                        );
+                    }
+                }
             }
         }
 
