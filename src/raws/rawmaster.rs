@@ -488,7 +488,6 @@ fn find_slot_for_equippable_item(tag: &str, raws: &RawMaster) -> EquipmentSlot {
 
     let item_index = raws.item_index[tag];
     let item = &raws.raws.items[item_index];
-    println!("{:?}", item);
     if item.weapon.is_some() {
         return EquipmentSlot::Melee;
     }
