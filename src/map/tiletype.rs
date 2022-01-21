@@ -12,6 +12,7 @@ pub enum TileType {
     WoodFloor,
     Bridge,
     Gravel,
+    UpStairs,
 }
 
 use TileType::*;
@@ -19,7 +20,7 @@ use TileType::*;
 pub fn tile_walkable(tt: TileType) -> bool {
     matches!(
         tt,
-        Floor | DownStairs | Road | Grass | ShallowWater | WoodFloor | Bridge | Gravel
+        Floor | DownStairs | Road | Grass | ShallowWater | WoodFloor | Bridge | Gravel | UpStairs
     )
 }
 

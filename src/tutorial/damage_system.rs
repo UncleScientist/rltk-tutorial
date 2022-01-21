@@ -10,19 +10,21 @@ use specs::prelude::*;
 
 pub struct DamageSystem {}
 
+type DamageData<'a> = (
+    WriteStorage<'a, Pools>,
+    WriteStorage<'a, SufferDamage>,
+    ReadStorage<'a, Position>,
+    WriteExpect<'a, Map>,
+    Entities<'a>,
+    ReadExpect<'a, Entity>,
+    ReadStorage<'a, Attributes>,
+    WriteExpect<'a, GameLog>,
+    WriteExpect<'a, ParticleBuilder>,
+    ReadExpect<'a, Point>,
+);
+
 impl<'a> System<'a> for DamageSystem {
-    type SystemData = (
-        WriteStorage<'a, Pools>,
-        WriteStorage<'a, SufferDamage>,
-        ReadStorage<'a, Position>,
-        WriteExpect<'a, Map>,
-        Entities<'a>,
-        ReadExpect<'a, Entity>,
-        ReadStorage<'a, Attributes>,
-        WriteExpect<'a, GameLog>,
-        WriteExpect<'a, ParticleBuilder>,
-        ReadExpect<'a, Point>,
-    );
+    type SystemData = DamageData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
         let (

@@ -101,6 +101,21 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     }
 }
 
+fn try_previous_level(ecs: &mut World) -> bool {
+    let player_pos = ecs.fetch::<Point>();
+    let map = ecs.fetch::<Map>();
+    let player_idx = map.xy_idx(player_pos.x, player_pos.y);
+    if map.tiles[player_idx] == TileType::UpStairs {
+        true
+    } else {
+        let mut gamelog = ecs.fetch_mut::<GameLog>();
+        gamelog
+            .entries
+            .push("There is no way up from here".to_string());
+        false
+    }
+}
+
 fn try_next_level(ecs: &mut World) -> bool {
     let player_pos = ecs.fetch::<Point>();
     let map = ecs.fetch::<Map>();
@@ -151,6 +166,11 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Period => {
                 if try_next_level(&mut gs.ecs) {
                     return RunState::NextLevel;
+                }
+            }
+            Comma => {
+                if try_previous_level(&mut gs.ecs) {
+                    return RunState::PreviousLevel;
                 }
             }
             Escape => return RunState::SaveGame,

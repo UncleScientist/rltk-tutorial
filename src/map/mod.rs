@@ -9,6 +9,9 @@ pub use themes::*;
 mod tiletype;
 pub use tiletype::*;
 
+pub mod dungeon;
+pub use dungeon::*;
+
 pub struct RenderTile(pub FontCharType, pub RGB, pub RGB);
 
 // ------------------------------------------------------------

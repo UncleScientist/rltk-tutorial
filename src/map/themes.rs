@@ -25,6 +25,7 @@ fn get_tile_glyph_default(idx: usize, map: &Map) -> RenderTile {
         TileType::Floor => (rltk::to_cp437('.'), RGB::from_f32(0., 0.5, 0.5)),
         TileType::WoodFloor => (rltk::to_cp437('.'), RGB::named(rltk::CHOCOLATE)),
         TileType::DownStairs => (rltk::to_cp437('>'), RGB::from_f32(0., 1., 1.)),
+        TileType::UpStairs => (rltk::to_cp437('<'), RGB::from_f32(0., 1., 1.)),
         TileType::Wall => {
             let x = idx as i32 % map.width;
             let y = idx as i32 / map.width;
@@ -54,6 +55,7 @@ fn get_forest_glyph(idx: usize, map: &Map) -> RenderTile {
         TileType::DeepWater => (rltk::to_cp437('~'), RGB::named(rltk::BLUE)),
         TileType::Gravel => (rltk::to_cp437(';'), RGB::named(rltk::GREY)),
         TileType::DownStairs => (rltk::to_cp437('>'), RGB::from_f32(0., 1., 1.)),
+        TileType::UpStairs => (rltk::to_cp437('<'), RGB::from_f32(0., 1., 1.)),
         _ => (rltk::to_cp437('"'), RGB::from_f32(0., 0.6, 0.0)),
     };
 

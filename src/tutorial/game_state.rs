@@ -1,7 +1,5 @@
 use crate::*;
-use rltk::{GameState, Point, Rltk};
-
-use crate::map_builders::*;
+use rltk::{GameState, Rltk};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState {
@@ -21,6 +19,7 @@ pub enum RunState {
     },
     SaveGame,
     NextLevel,
+    PreviousLevel,
     GameOver,
     MagicMapReveal {
         row: i32,
@@ -88,8 +87,14 @@ impl GameState for State {
         }
 
         match newrunstate {
+            RunState::PreviousLevel => {
+                self.goto_previous_level();
+                self.mapgen_next_state = Some(RunState::PreRun);
+                newrunstate = RunState::PreRun;
+            }
             RunState::NextLevel => {
                 self.goto_next_level();
+                self.mapgen_next_state = Some(RunState::PreRun);
                 newrunstate = RunState::PreRun;
             }
             RunState::SaveGame => {
@@ -334,14 +339,18 @@ impl State {
     }
 
     pub fn game_over_cleanup(&mut self) {
-        self.level_cleanup(true);
+        self.level_cleanup(true, false);
     }
 
     fn goto_next_level(&mut self) {
-        self.level_cleanup(false);
+        self.level_cleanup(false, true);
     }
 
-    fn level_cleanup(&mut self, everything: bool) {
+    fn goto_previous_level(&mut self) {
+        self.level_cleanup(false, false);
+    }
+
+    fn level_cleanup(&mut self, everything: bool, descend: bool) {
         let to_delete = if everything {
             self.entities_to_remove_on_game_over()
         } else {
@@ -360,7 +369,11 @@ impl State {
             let worldmap_resource = self.ecs.fetch::<Map>();
             worldmap_resource.depth
         };
-        self.generate_world_map(current_depth + 1);
+        if descend {
+            self.generate_world_map(current_depth + 1);
+        } else {
+            self.generate_world_map(current_depth - 1);
+        }
 
         if everything {
             // Place the player and update resources
@@ -369,16 +382,28 @@ impl State {
             *player_entity_writer = new_player;
         }
 
+        if everything {
+            // Replace the world maps
+            self.ecs.insert(map::MasterDungeonMap::new());
+
+            // Build a new map and place the player
+            self.generate_world_map(1);
+        }
+
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
         if everything {
             gamelog.entries.clear();
             gamelog
                 .entries
                 .push("Welcome to Rusty Roguelike... again!".to_string());
-        } else {
+        } else if descend {
             gamelog
                 .entries
                 .push("You descend to the next level".to_string());
+        } else {
+            gamelog
+                .entries
+                .push("You ascend to the previous level".to_string());
         }
     }
 
@@ -387,42 +412,8 @@ impl State {
         self.mapgen_timer = 0.0;
         self.mapgen_history.clear();
 
-        let mut rng = self.ecs.write_resource::<rltk::RandomNumberGenerator>();
-        let mut builder = level_builder(new_depth, &mut rng, 80, 50);
-
-        builder.build_map(&mut rng);
-        std::mem::drop(rng);
-
-        self.mapgen_history = builder.build_data.history.clone();
-
-        let player_start = {
-            let mut worldmap_resource = self.ecs.write_resource::<Map>();
-            *worldmap_resource = builder.build_data.map.clone();
-            builder
-                .build_data
-                .starting_position
-                .as_mut()
-                .unwrap()
-                .clone()
-        };
-
-        builder.spawn_entities(&mut self.ecs);
-
-        // Place the player and update resources
-        let (player_x, player_y) = (player_start.x, player_start.y);
-        let mut player_position = self.ecs.write_resource::<Point>();
-        *player_position = Point::new(player_x, player_y);
-        let mut position_components = self.ecs.write_storage::<Position>();
-        let player_entity = self.ecs.fetch::<Entity>();
-        if let Some(player_pos_comp) = position_components.get_mut(*player_entity) {
-            player_pos_comp.x = player_x;
-            player_pos_comp.y = player_y;
-        }
-
-        // Mark the player's visibility as dirty
-        let mut viewshed_components = self.ecs.write_storage::<Viewshed>();
-        if let Some(vs) = viewshed_components.get_mut(*player_entity) {
-            vs.dirty = true;
+        if let Some(history) = map::level_transition(&mut self.ecs, new_depth) {
+            self.mapgen_history = history;
         }
     }
 }
