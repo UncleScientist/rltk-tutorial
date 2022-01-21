@@ -48,7 +48,7 @@ fn get_forest_glyph(idx: usize, map: &Map) -> RenderTile {
     let (glyph, fg) = match map.tiles[idx] {
         TileType::Wall => (rltk::to_cp437('♣'), RGB::from_f32(0., 0.6, 0.)),
         TileType::Bridge => (rltk::to_cp437('.'), RGB::named(rltk::CHOCOLATE)),
-        TileType::Road => (rltk::to_cp437('≡'), RGB::named(rltk::GREY)),
+        TileType::Road => (rltk::to_cp437('≡'), RGB::named(rltk::YELLOW)),
         TileType::Grass => (rltk::to_cp437('"'), RGB::named(rltk::GREEN)),
         TileType::ShallowWater => (rltk::to_cp437('~'), RGB::named(rltk::CYAN)),
         TileType::DeepWater => (rltk::to_cp437('~'), RGB::named(rltk::BLUE)),
