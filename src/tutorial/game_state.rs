@@ -88,12 +88,12 @@ impl GameState for State {
 
         match newrunstate {
             RunState::PreviousLevel => {
-                self.goto_previous_level();
+                self.goto_level(-1);
                 self.mapgen_next_state = Some(RunState::PreRun);
                 newrunstate = RunState::PreRun;
             }
             RunState::NextLevel => {
-                self.goto_next_level();
+                self.goto_level(1);
                 self.mapgen_next_state = Some(RunState::PreRun);
                 newrunstate = RunState::PreRun;
             }
@@ -297,65 +297,23 @@ impl State {
         self.ecs.maintain();
     }
 
-    fn entities_to_remove_on_game_over(&mut self) -> Vec<Entity> {
+    pub fn goto_level(&mut self, offset: i32) {
+        freeze_level_entities(&mut self.ecs);
+
+        // Build a new map and place the player
+        let current_depth = self.ecs.fetch::<Map>().depth;
+        self.generate_world_map(current_depth + offset, offset);
+
+        // Notify the player
+        let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
+        gamelog.entries.push("You change level".to_string());
+    }
+
+    pub fn game_over_cleanup(&mut self) {
         let mut to_delete = Vec::new();
         for e in self.ecs.entities().join() {
             to_delete.push(e);
         }
-        to_delete
-    }
-
-    fn entities_to_remove_on_level_change(&mut self) -> Vec<Entity> {
-        let entities = self.ecs.entities();
-        let player_entity = self.ecs.fetch::<Entity>();
-
-        let player = self.ecs.read_storage::<Player>();
-        let backpack = self.ecs.read_storage::<InBackpack>();
-        let equipped = self.ecs.read_storage::<Equipped>();
-
-        let mut to_delete: Vec<Entity> = Vec::new();
-
-        for entity in entities.join() {
-            if player.get(entity).is_some() {
-                continue;
-            }
-
-            if let Some(bp) = backpack.get(entity) {
-                if bp.owner == *player_entity {
-                    continue;
-                }
-            }
-
-            if let Some(eq) = equipped.get(entity) {
-                if eq.owner == *player_entity {
-                    continue;
-                }
-            }
-
-            to_delete.push(entity);
-        }
-
-        to_delete
-    }
-
-    pub fn game_over_cleanup(&mut self) {
-        self.level_cleanup(true, false);
-    }
-
-    fn goto_next_level(&mut self) {
-        self.level_cleanup(false, true);
-    }
-
-    fn goto_previous_level(&mut self) {
-        self.level_cleanup(false, false);
-    }
-
-    fn level_cleanup(&mut self, everything: bool, descend: bool) {
-        let to_delete = if everything {
-            self.entities_to_remove_on_game_over()
-        } else {
-            self.entities_to_remove_on_level_change()
-        };
 
         for target in to_delete {
             self.ecs
@@ -363,57 +321,35 @@ impl State {
                 .expect("Unable to delete entity");
         }
 
-        let current_depth = if everything {
-            1
-        } else {
-            let worldmap_resource = self.ecs.fetch::<Map>();
-            worldmap_resource.depth
-        };
-        if descend {
-            self.generate_world_map(current_depth + 1);
-        } else {
-            self.generate_world_map(current_depth - 1);
-        }
-
-        if everything {
+        {
             // Place the player and update resources
             let new_player = spawner::player(&mut self.ecs, 0, 0);
             let mut player_entity_writer = self.ecs.write_resource::<Entity>();
             *player_entity_writer = new_player;
         }
 
-        if everything {
-            // Replace the world maps
-            self.ecs.insert(map::MasterDungeonMap::new());
+        // Replace the world maps
+        self.ecs.insert(map::MasterDungeonMap::new());
 
-            // Build a new map and place the player
-            self.generate_world_map(1);
-        }
+        // Build a new map and place the player
+        self.generate_world_map(1, 0);
 
         let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
-        if everything {
-            gamelog.entries.clear();
-            gamelog
-                .entries
-                .push("Welcome to Rusty Roguelike... again!".to_string());
-        } else if descend {
-            gamelog
-                .entries
-                .push("You descend to the next level".to_string());
-        } else {
-            gamelog
-                .entries
-                .push("You ascend to the previous level".to_string());
-        }
+        gamelog.entries.clear();
+        gamelog
+            .entries
+            .push("Welcome to Rusty Roguelike... again!".to_string());
     }
 
-    pub fn generate_world_map(&mut self, new_depth: i32) {
+    pub fn generate_world_map(&mut self, new_depth: i32, offset: i32) {
         self.mapgen_index = 0;
         self.mapgen_timer = 0.0;
         self.mapgen_history.clear();
 
-        if let Some(history) = map::level_transition(&mut self.ecs, new_depth) {
+        if let Some(history) = map::level_transition(&mut self.ecs, new_depth, offset) {
             self.mapgen_history = history;
+        } else {
+            map::thaw_level_entities(&mut self.ecs);
         }
     }
 }

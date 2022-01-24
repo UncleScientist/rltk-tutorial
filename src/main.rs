@@ -22,6 +22,7 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<OtherLevelPosition>();
     gs.ecs.register::<Carnivore>();
     gs.ecs.register::<Herbivore>();
     gs.ecs.register::<LootTable>();
@@ -91,7 +92,7 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(particle_system::ParticleBuilder::new());
 
-    gs.generate_world_map(1);
+    gs.generate_world_map(1, 0);
 
     // cheat: to help test with mapping
     let (x, y) = {
