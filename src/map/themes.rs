@@ -3,6 +3,7 @@ use rltk::{FontCharType, RGB};
 
 pub fn tile_glyph(idx: usize, map: &Map) -> RenderTile {
     let RenderTile(glyph, mut fg, mut bg) = match map.depth {
+        3 => get_limestone_cavern_glyph(idx, map),
         2 => get_forest_glyph(idx, map),
         _ => get_tile_glyph_default(idx, map),
     };
@@ -38,6 +39,8 @@ fn get_tile_glyph_default(idx: usize, map: &Map) -> RenderTile {
         TileType::ShallowWater => (rltk::to_cp437('~'), RGB::named(rltk::CYAN)),
         TileType::DeepWater => (rltk::to_cp437('~'), RGB::named(rltk::NAVY_BLUE)),
         TileType::Gravel => (rltk::to_cp437(':'), RGB::named(rltk::GREY)),
+        TileType::Stalagmite => (rltk::to_cp437('╨'), RGB::from_f32(0.5, 0.5, 0.5)),
+        TileType::Stalactite => (rltk::to_cp437('╥'), RGB::from_f32(0.5, 0.5, 0.5)),
     };
 
     RenderTile(glyph, fg, bg)
@@ -57,6 +60,27 @@ fn get_forest_glyph(idx: usize, map: &Map) -> RenderTile {
         TileType::DownStairs => (rltk::to_cp437('>'), RGB::from_f32(0., 1., 1.)),
         TileType::UpStairs => (rltk::to_cp437('<'), RGB::from_f32(0., 1., 1.)),
         _ => (rltk::to_cp437('"'), RGB::from_f32(0., 0.6, 0.0)),
+    };
+
+    RenderTile(glyph, fg, bg)
+}
+
+fn get_limestone_cavern_glyph(idx: usize, map: &Map) -> RenderTile {
+    let bg = RGB::from_f32(0., 0., 0.);
+
+    let (glyph, fg) = match map.tiles[idx] {
+        TileType::Wall => (rltk::to_cp437('▒'), RGB::from_f32(0.7, 0.7, 0.7)),
+        TileType::Bridge => (rltk::to_cp437('.'), RGB::named(rltk::CHOCOLATE)),
+        TileType::Road => (rltk::to_cp437('≡'), RGB::named(rltk::YELLOW)),
+        TileType::Grass => (rltk::to_cp437('"'), RGB::named(rltk::GREEN)),
+        TileType::ShallowWater => (rltk::to_cp437('░'), RGB::named(rltk::CYAN)),
+        TileType::DeepWater => (rltk::to_cp437('▓'), RGB::named(rltk::BLUE)),
+        TileType::Gravel => (rltk::to_cp437(';'), RGB::named(rltk::GREY)),
+        TileType::DownStairs => (rltk::to_cp437('>'), RGB::from_f32(0., 1., 1.)),
+        TileType::UpStairs => (rltk::to_cp437('<'), RGB::from_f32(0., 1., 1.)),
+        TileType::Stalagmite => (rltk::to_cp437('╨'), RGB::from_f32(0.5, 0.5, 0.5)),
+        TileType::Stalactite => (rltk::to_cp437('╥'), RGB::from_f32(0.5, 0.5, 0.5)),
+        _ => (rltk::to_cp437('░'), RGB::from_f32(0.4, 0.4, 0.4)),
     };
 
     RenderTile(glyph, fg, bg)
