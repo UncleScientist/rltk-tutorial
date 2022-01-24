@@ -5,15 +5,15 @@ use std::cmp::{max, min};
 use crate::components::Ranged;
 use crate::*;
 
-fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
-    let players = ecs.read_storage::<Player>();
+fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
     let mut positions = ecs.write_storage::<Position>();
+    let players = ecs.read_storage::<Player>();
     let mut viewsheds = ecs.write_storage::<Viewshed>();
-    let mut entity_moved = ecs.write_storage::<EntityMoved>();
-    let combat_stats = ecs.read_storage::<Pools>();
     let entities = ecs.entities();
-    let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
+    let combat_stats = ecs.read_storage::<Pools>();
     let map = ecs.fetch::<Map>();
+    let mut wants_to_melee = ecs.write_storage::<WantsToMelee>();
+    let mut entity_moved = ecs.write_storage::<EntityMoved>();
     let mut doors = ecs.write_storage::<Door>();
     let mut blocks_visibility = ecs.write_storage::<BlocksVisibility>();
     let mut blocks_movement = ecs.write_storage::<BlocksTile>();
@@ -21,6 +21,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let bystanders = ecs.read_storage::<Bystander>();
     let vendors = ecs.read_storage::<Vendor>();
 
+    let mut result = RunState::AwaitingInput;
     let mut swap_entities: Vec<(Entity, i32, i32)> = Vec::new();
 
     for (entity, _player, pos, viewshed) in
@@ -31,7 +32,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
             || pos.y + delta_y < 1
             || pos.y + delta_y > map.height - 1
         {
-            return;
+            return result;
         }
         let dest = map.xy_idx(pos.x + delta_x, pos.y + delta_y);
 
@@ -52,6 +53,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
                 let mut ppos = ecs.write_resource::<Point>();
                 ppos.x = pos.x;
                 ppos.y = pos.y;
+                result = RunState::PlayerTurn;
             } else {
                 let target = combat_stats.get(*potential_target);
 
@@ -64,7 +66,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
                             },
                         )
                         .expect("Add target failed");
-                    return;
+                    return RunState::PlayerTurn;
                 }
             }
 
@@ -81,15 +83,15 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
         if !map.blocked[dest] {
             pos.x = min(map.width - 1, max(0, pos.x + delta_x));
             pos.y = min(map.height - 1, max(0, pos.y + delta_y));
-            viewshed.dirty = true;
-
-            let mut ppos = ecs.write_resource::<Point>();
-            ppos.x = pos.x;
-            ppos.y = pos.y;
-
             entity_moved
                 .insert(entity, EntityMoved {})
                 .expect("Unable to insert marker");
+
+            viewshed.dirty = true;
+            let mut ppos = ecs.write_resource::<Point>();
+            ppos.x = pos.x;
+            ppos.y = pos.y;
+            result = RunState::PlayerTurn;
         }
     }
 
@@ -99,6 +101,8 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
             their_pos.y = m.2;
         }
     }
+
+    result
 }
 
 fn try_previous_level(ecs: &mut World) -> bool {
@@ -162,27 +166,31 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Numpad7 | Y => try_move_player(-1, -1, &mut gs.ecs),
             Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
             Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
-            Numpad5 | Space => return skip_turn(&mut gs.ecs),
+            Numpad5 | Space => skip_turn(&mut gs.ecs),
             Period => {
                 if try_next_level(&mut gs.ecs) {
-                    return RunState::NextLevel;
+                    RunState::NextLevel
+                } else {
+                    RunState::PlayerTurn
                 }
             }
             Comma => {
                 if try_previous_level(&mut gs.ecs) {
-                    return RunState::PreviousLevel;
+                    RunState::PreviousLevel
+                } else {
+                    RunState::PlayerTurn
                 }
             }
-            Escape => return RunState::SaveGame,
-            D => return RunState::ShowDropItem,
-            G => get_item(&mut gs.ecs),
-            I => return RunState::ShowInventory,
-            R => return RunState::ShowRemoveItem,
-            _ => {
-                return RunState::AwaitingInput;
+            Escape => RunState::SaveGame,
+            D => RunState::ShowDropItem,
+            G => {
+                get_item(&mut gs.ecs);
+                RunState::AwaitingInput
             }
+            I => RunState::ShowInventory,
+            R => RunState::ShowRemoveItem,
+            _ => RunState::AwaitingInput,
         }
-        RunState::PlayerTurn
     } else {
         RunState::AwaitingInput
     }
