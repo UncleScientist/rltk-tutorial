@@ -9,6 +9,13 @@ use rltk::{
 use specs::prelude::*;
 
 #[derive(PartialEq, Copy, Clone)]
+pub enum CheatMenuResult {
+    NoResponse,
+    Cancel,
+    TeleportToExit,
+}
+
+#[derive(PartialEq, Copy, Clone)]
 pub enum MainMenuResult {
     NoSelection { selected: MainMenuSelection },
     Selected { selected: MainMenuSelection },
@@ -318,6 +325,65 @@ pub enum ItemMenuResult {
     Cancel,
     NoResponse,
     Selected,
+}
+
+pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
+    let count = 2;
+    let y = (25 - (count / 2)) as i32;
+    ctx.draw_box(
+        15,
+        y - 2,
+        31,
+        (count + 3) as i32,
+        RGB::named(WHITE),
+        RGB::named(BLACK),
+    );
+    ctx.print_color(
+        18,
+        y - 2,
+        RGB::named(YELLOW),
+        RGB::named(BLACK),
+        "Cheating!",
+    );
+    ctx.print_color(
+        18,
+        y + count as i32 + 1,
+        RGB::named(YELLOW),
+        RGB::named(BLACK),
+        "ESC to cancel",
+    );
+
+    ctx.set(
+        17,
+        y,
+        RGB::named(WHITE),
+        RGB::named(BLACK),
+        rltk::to_cp437('('),
+    );
+    ctx.set(
+        18,
+        y,
+        RGB::named(WHITE),
+        RGB::named(BLACK),
+        rltk::to_cp437('T'),
+    );
+    ctx.set(
+        19,
+        y,
+        RGB::named(WHITE),
+        RGB::named(BLACK),
+        rltk::to_cp437(')'),
+    );
+    ctx.print(21, y, "Teleport to exit");
+
+    match ctx.key {
+        None => CheatMenuResult::NoResponse,
+        Some(key) => match key {
+            VirtualKeyCode::T => CheatMenuResult::TeleportToExit,
+            VirtualKeyCode::Escape => CheatMenuResult::Cancel,
+            _ => CheatMenuResult::NoResponse,
+        },
+    }
 }
 
 pub fn show_inventory(gs: &mut State, ctx: &mut Rltk) -> (ItemMenuResult, Option<Entity>) {

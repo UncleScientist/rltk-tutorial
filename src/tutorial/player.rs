@@ -186,6 +186,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
                 }
             }
             Escape => RunState::SaveGame,
+            Backslash => RunState::ShowCheatMenu,
             D => RunState::ShowDropItem,
             G => {
                 get_item(&mut gs.ecs);

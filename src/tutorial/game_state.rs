@@ -25,6 +25,7 @@ pub enum RunState {
         row: i32,
     },
     MapGeneration,
+    ShowCheatMenu,
 }
 
 pub struct State {
@@ -43,6 +44,19 @@ impl GameState for State {
         cull_dead_particles(&mut self.ecs, ctx);
 
         match newrunstate {
+            RunState::ShowCheatMenu => {
+                let result = gui::show_cheat_mode(self, ctx);
+                match result {
+                    gui::CheatMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
+                    gui::CheatMenuResult::NoResponse => {}
+                    gui::CheatMenuResult::TeleportToExit => {
+                        self.goto_level(1);
+                        self.mapgen_next_state = Some(RunState::PreRun);
+                        newrunstate = RunState::MapGeneration;
+                    }
+                }
+            }
+
             RunState::MainMenu { .. } => {
                 let result = gui::main_menu(self, ctx);
                 match result {
@@ -238,7 +252,7 @@ impl GameState for State {
                     newrunstate = RunState::MagicMapReveal { row: row + 1 }
                 }
             }
-            RunState::MapGeneration => {}
+            RunState::MapGeneration | RunState::ShowCheatMenu => {}
         }
 
         {
