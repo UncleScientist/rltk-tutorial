@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::attr_bonus;
-use crate::Map;
+use crate::{Map, MasterDungeonMap};
 use rltk::RGB;
 use serde::{Deserialize, Serialize};
 use specs::error::NoError;
@@ -210,6 +210,11 @@ impl Owned for Equipped {
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct Equippable {
     pub slot: EquipmentSlot,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct DMSerializationHelper {
+    pub map: MasterDungeonMap,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
