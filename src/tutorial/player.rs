@@ -53,7 +53,6 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
                 let mut ppos = ecs.write_resource::<Point>();
                 ppos.x = pos.x;
                 ppos.y = pos.y;
-                result = RunState::PlayerTurn;
             } else {
                 let target = combat_stats.get(*potential_target);
 
@@ -77,6 +76,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
                 let glyph = renderables.get_mut(*potential_target).unwrap();
                 glyph.glyph = rltk::to_cp437('/');
                 viewshed.dirty = true;
+                result = RunState::PlayerTurn;
             }
         }
 
