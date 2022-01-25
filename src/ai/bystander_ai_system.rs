@@ -1,5 +1,5 @@
-use super::{Bystander, EntityMoved, Position, RunState, Viewshed};
 use crate::map::*;
+use crate::{Bystander, EntityMoved, Position, RunState, Viewshed};
 use crate::{GameLog, Name, Quips};
 use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;

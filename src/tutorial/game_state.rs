@@ -275,10 +275,10 @@ impl State {
         let mut mapindex = MapIndexingSystem {};
         mapindex.run_now(&self.ecs);
 
-        let mut animal_ai = animal_ai_system::AnimalAI {};
+        let mut animal_ai = ai::animal_ai_system::AnimalAI {};
         animal_ai.run_now(&self.ecs);
 
-        let mut bystander = bystander_ai_system::BystanderAI {};
+        let mut bystander = ai::bystander_ai_system::BystanderAI {};
         bystander.run_now(&self.ecs);
 
         let mut triggers = TriggerSystem {};

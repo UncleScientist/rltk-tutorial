@@ -1,5 +1,5 @@
-use super::{Carnivore, EntityMoved, Herbivore, Item, Position, RunState, Viewshed, WantsToMelee};
 use crate::map::*;
+use crate::{Carnivore, EntityMoved, Herbivore, Item, Position, RunState, Viewshed, WantsToMelee};
 use rltk::{DijkstraMap, DistanceAlg, Point};
 use specs::prelude::*;
 
