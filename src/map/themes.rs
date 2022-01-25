@@ -14,6 +14,9 @@ pub fn tile_glyph(idx: usize, map: &Map) -> RenderTile {
     if !map.visible_tiles[idx] {
         fg = fg.to_greyscale();
         bg = RGB::from_f32(0., 0., 0.);
+    } else if !map.outdoors {
+        fg = fg * map.light[idx];
+        bg = bg * map.light[idx];
     }
 
     RenderTile(glyph, fg, bg)

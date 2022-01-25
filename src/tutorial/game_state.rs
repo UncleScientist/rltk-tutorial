@@ -308,6 +308,9 @@ impl State {
         let mut particles = ParticleSpawnSystem {};
         particles.run_now(&self.ecs);
 
+        let mut lighting = lighting_system::LightingSystem {};
+        lighting.run_now(&self.ecs);
+
         self.ecs.maintain();
     }
 

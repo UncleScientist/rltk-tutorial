@@ -29,6 +29,8 @@ pub struct Map {
     pub bloodstains: HashSet<usize>,
     pub view_blocked: HashSet<usize>,
     pub name: String,
+    pub outdoors: bool,
+    pub light: Vec<RGB>,
 
     #[serde(skip_serializing)]
     #[serde(skip_deserializing)]
@@ -48,6 +50,8 @@ impl Map {
             tile_content: vec![Vec::new(); map_tile_count],
             depth: new_depth,
             name: name.to_string(),
+            outdoors: true,
+            light: vec![RGB::from_f32(0., 0., 0.); map_tile_count],
             ..Default::default()
         }
     }

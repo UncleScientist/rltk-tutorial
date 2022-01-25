@@ -22,6 +22,7 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<LightSource>();
     gs.ecs.register::<DMSerializationHelper>();
     gs.ecs.register::<OtherLevelPosition>();
     gs.ecs.register::<Carnivore>();
