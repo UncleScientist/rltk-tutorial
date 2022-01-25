@@ -442,9 +442,12 @@
                 "attacks" : [
                     { "name" : "engulf", "hit_bonus" : 0, "damage" : "1d8" }
                 ]
+            },
+            "light": {
+                "range": 4,
+                "color": "#550000"
             }
         },
-
 
         {
             "name" : "Bandit",
@@ -459,7 +462,8 @@
             "ai" : "melee",
             "quips" : [ "Stand and deliver!", "Alright, hand it over" ],
             "attributes" : {},
-            "equipped": [ "Shortsword", "Shield", "Leather Armor", "Leather Boots" ]
+            "equipped": [ "Shortsword", "Shield", "Leather Armor", "Leather Boots" ],
+            "light": { "range": 6, "color": "#FFFF55" }
         },
 
         {

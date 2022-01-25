@@ -233,6 +233,13 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             })
         }
 
+        if let Some(light) = &mob_template.light {
+            eb = eb.with(LightSource {
+                range: light.range,
+                color: rltk::RGB::from_hex(&light.color).expect("Bad color"),
+            });
+        }
+
         let mut attr = Attributes {
             ..Default::default()
         };
