@@ -70,11 +70,6 @@ impl Map {
         }
     }
 
-    pub fn is_visible(&self, x: i32, y: i32) -> bool {
-        let idx = self.xy_idx(x, y);
-        self.visible_tiles[idx]
-    }
-
     pub fn clear_content_index(&mut self) {
         for content in self.tile_content.iter_mut() {
             content.clear();
