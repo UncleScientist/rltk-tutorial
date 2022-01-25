@@ -190,7 +190,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             D => RunState::ShowDropItem,
             G => {
                 get_item(&mut gs.ecs);
-                RunState::AwaitingInput
+                RunState::PlayerTurn
             }
             I => RunState::ShowInventory,
             R => RunState::ShowRemoveItem,
