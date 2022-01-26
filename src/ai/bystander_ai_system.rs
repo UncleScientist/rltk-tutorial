@@ -1,5 +1,5 @@
 use crate::map::*;
-use crate::{Bystander, EntityMoved, Position, RunState, Viewshed};
+use crate::{Bystander, EntityMoved, MyTurn, Position, RunState, Viewshed};
 use crate::{GameLog, Name, Quips};
 use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
@@ -19,6 +19,7 @@ type BystanderAIData<'a> = (
     WriteExpect<'a, GameLog>,
     WriteStorage<'a, Quips>,
     ReadStorage<'a, Name>,
+    ReadStorage<'a, MyTurn>,
 );
 
 impl<'a> System<'a> for BystanderAI {
@@ -38,14 +39,11 @@ impl<'a> System<'a> for BystanderAI {
             mut gamelog,
             mut quips,
             names,
+            turns,
         ) = data;
 
-        if *runstate != RunState::MonsterTurn {
-            return;
-        }
-
-        for (entity, mut viewshed, _, mut pos) in
-            (&entities, &mut viewshed, &bystander, &mut position).join()
+        for (entity, mut viewshed, _, mut pos, _turn) in
+            (&entities, &mut viewshed, &bystander, &mut position, &turns).join()
         {
             // Possibly quip
             if let Some(quip) = quips.get_mut(entity) {

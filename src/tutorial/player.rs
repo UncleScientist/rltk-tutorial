@@ -65,7 +65,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
                             },
                         )
                         .expect("Add target failed");
-                    return RunState::PlayerTurn;
+                    return RunState::Ticking;
                 }
             }
 
@@ -76,7 +76,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
                 let glyph = renderables.get_mut(*potential_target).unwrap();
                 glyph.glyph = rltk::to_cp437('/');
                 viewshed.dirty = true;
-                result = RunState::PlayerTurn;
+                result = RunState::Ticking;
             }
         }
 
@@ -94,7 +94,7 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) -> RunState {
             result = match map.tiles[dest] {
                 TileType::DownStairs => RunState::NextLevel,
                 TileType::UpStairs => RunState::PreviousLevel,
-                _ => RunState::PlayerTurn,
+                _ => RunState::Ticking,
             };
         }
     }
@@ -175,14 +175,14 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
                 if try_next_level(&mut gs.ecs) {
                     RunState::NextLevel
                 } else {
-                    RunState::PlayerTurn
+                    RunState::Ticking
                 }
             }
             Comma => {
                 if try_previous_level(&mut gs.ecs) {
                     RunState::PreviousLevel
                 } else {
-                    RunState::PlayerTurn
+                    RunState::Ticking
                 }
             }
             Escape => RunState::SaveGame,
@@ -190,7 +190,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             D => RunState::ShowDropItem,
             G => {
                 get_item(&mut gs.ecs);
-                RunState::PlayerTurn
+                RunState::Ticking
             }
             I => RunState::ShowInventory,
             R => RunState::ShowRemoveItem,
@@ -236,10 +236,10 @@ fn use_consumable_hotkey(gs: &mut State, key: i32) -> RunState {
                 },
             )
             .expect("Unable to insert intent");
-        return RunState::PlayerTurn;
+        return RunState::Ticking;
     }
 
-    RunState::PlayerTurn
+    RunState::Ticking
 }
 
 fn skip_turn(ecs: &mut World) -> RunState {
@@ -273,7 +273,7 @@ fn skip_turn(ecs: &mut World) -> RunState {
         pools.hit_points.current = i32::min(pools.hit_points.current + 1, pools.hit_points.max);
     }
 
-    RunState::PlayerTurn
+    RunState::Ticking
 }
 
 fn get_item(ecs: &mut World) {

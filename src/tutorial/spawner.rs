@@ -112,6 +112,7 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             render_order: 0,
         })
         .with(Player {})
+        .with(Initiative { current: 0 })
         .with(LightSource {
             color: RGB::from_f32(1., 1., 0.5),
             range: 8,
@@ -183,6 +184,12 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         ecs,
         "Old Boots",
         SpawnType::Equipped { by: player },
+    );
+    spawn_named_entity(
+        &RAWS.lock().unwrap(),
+        ecs,
+        "Confusion Scroll",
+        SpawnType::Carried { by: player },
     );
 
     player

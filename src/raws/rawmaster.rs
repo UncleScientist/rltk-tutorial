@@ -240,6 +240,9 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             });
         }
 
+        // why is the mob defaulted to 2?
+        eb = eb.with(Initiative { current: 2 });
+
         let mut attr = Attributes {
             ..Default::default()
         };

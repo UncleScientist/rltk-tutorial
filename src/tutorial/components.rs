@@ -12,6 +12,14 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct MyTurn {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Initiative {
+    pub current: i32,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct LightSource {
     pub color: RGB,
     pub range: i32,

@@ -72,6 +72,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SingleActivation>();
     gs.ecs.register::<BlocksVisibility>();
     gs.ecs.register::<Door>();
+    gs.ecs.register::<Initiative>();
+    gs.ecs.register::<MyTurn>();
 
     game_state::load_raws();
 
