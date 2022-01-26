@@ -509,7 +509,7 @@ pub fn ranged_target(
         if ctx.left_click {
             return (
                 ItemMenuResult::Selected,
-                Some(Point::new(mouse_pos.0, mouse_pos.1)),
+                Some(Point::new(mouse_map_pos.0, mouse_map_pos.1)),
             );
         }
     } else {
