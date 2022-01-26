@@ -1,4 +1,4 @@
-use crate::{Map, Monster, MyTurn, Position, RunState, Viewshed, WantsToMelee};
+use crate::{Map, Monster, MyTurn, Position, Viewshed, WantsToMelee};
 use rltk::Point;
 use specs::prelude::*;
 
@@ -8,7 +8,6 @@ type MonsterAIData<'a> = (
     WriteExpect<'a, Map>,
     ReadExpect<'a, Point>,
     ReadExpect<'a, Entity>,
-    ReadExpect<'a, RunState>,
     Entities<'a>,
     WriteStorage<'a, Viewshed>,
     ReadStorage<'a, Monster>,
@@ -25,7 +24,6 @@ impl<'a> System<'a> for MonsterAI {
             mut map,
             player_pos,
             player_entity,
-            runstate,
             entities,
             mut viewshed,
             monster,

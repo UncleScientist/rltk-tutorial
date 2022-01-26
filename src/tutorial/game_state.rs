@@ -274,6 +274,9 @@ impl State {
         let mut turnstatus = ai::TurnStatusSystem {};
         turnstatus.run_now(&self.ecs);
 
+        let mut quipper = ai::QuipSystem {};
+        quipper.run_now(&self.ecs);
+
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
 

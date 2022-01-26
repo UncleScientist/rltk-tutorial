@@ -1,7 +1,5 @@
 use crate::map::*;
-use crate::{
-    Carnivore, EntityMoved, Herbivore, Item, MyTurn, Position, RunState, Viewshed, WantsToMelee,
-};
+use crate::{Carnivore, EntityMoved, Herbivore, Item, MyTurn, Position, Viewshed, WantsToMelee};
 use rltk::{DijkstraMap, DistanceAlg, Point};
 use specs::prelude::*;
 
@@ -10,7 +8,6 @@ pub struct AnimalAI {}
 type AnimalAIData<'a> = (
     WriteExpect<'a, Map>,
     ReadExpect<'a, Entity>,
-    ReadExpect<'a, RunState>,
     Entities<'a>,
     WriteStorage<'a, Viewshed>,
     ReadStorage<'a, Herbivore>,
@@ -29,7 +26,6 @@ impl<'a> System<'a> for AnimalAI {
         let (
             mut map,
             player_entity,
-            runstate,
             entities,
             mut viewshed,
             herbivore,

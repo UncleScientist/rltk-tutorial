@@ -1,24 +1,18 @@
 use crate::map::*;
-use crate::{Bystander, EntityMoved, MyTurn, Position, RunState, Viewshed};
-use crate::{GameLog, Name, Quips};
-use rltk::{Point, RandomNumberGenerator};
+use crate::{Bystander, EntityMoved, MyTurn, Position, Viewshed};
+use rltk::RandomNumberGenerator;
 use specs::prelude::*;
 
 pub struct BystanderAI {}
 
 type BystanderAIData<'a> = (
     WriteExpect<'a, Map>,
-    ReadExpect<'a, RunState>,
     Entities<'a>,
     WriteStorage<'a, Viewshed>,
     ReadStorage<'a, Bystander>,
     WriteStorage<'a, Position>,
     WriteStorage<'a, EntityMoved>,
     WriteExpect<'a, RandomNumberGenerator>,
-    ReadExpect<'a, Point>,
-    WriteExpect<'a, GameLog>,
-    WriteStorage<'a, Quips>,
-    ReadStorage<'a, Name>,
     ReadStorage<'a, MyTurn>,
 );
 
@@ -28,41 +22,18 @@ impl<'a> System<'a> for BystanderAI {
     fn run(&mut self, data: Self::SystemData) {
         let (
             mut map,
-            runstate,
             entities,
             mut viewshed,
             bystander,
             mut position,
             mut entity_moved,
             mut rng,
-            player_pos,
-            mut gamelog,
-            mut quips,
-            names,
             turns,
         ) = data;
 
         for (entity, mut viewshed, _, mut pos, _turn) in
             (&entities, &mut viewshed, &bystander, &mut position, &turns).join()
         {
-            // Possibly quip
-            if let Some(quip) = quips.get_mut(entity) {
-                if !quip.available.is_empty()
-                    && viewshed.visible_tiles.contains(&player_pos)
-                    && rng.roll_dice(1, 6) == 1
-                {
-                    let name = names.get(entity);
-                    if let Some(quip_index) = rng.random_slice_index(&quip.available) {
-                        gamelog.entries.push(format!(
-                            "{} says \"{}\"",
-                            name.unwrap().name,
-                            quip.available[quip_index]
-                        ));
-                        quip.available.remove(quip_index);
-                    }
-                }
-            }
-
             // Try to move randomly
             let mut x = pos.x;
             let mut y = pos.y;
