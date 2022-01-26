@@ -1,3 +1,6 @@
+pub mod adjacent_ai_system;
+pub use adjacent_ai_system::AdjacentAI;
+
 pub mod animal_ai_system;
 pub use animal_ai_system::AnimalAI;
 

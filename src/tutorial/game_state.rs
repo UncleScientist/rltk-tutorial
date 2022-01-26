@@ -277,6 +277,9 @@ impl State {
         let mut quipper = ai::QuipSystem {};
         quipper.run_now(&self.ecs);
 
+        let mut adjacent = ai::AdjacentAI {};
+        adjacent.run_now(&self.ecs);
+
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
 

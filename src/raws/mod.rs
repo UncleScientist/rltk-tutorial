@@ -2,7 +2,7 @@ use regex::Regex;
 use serde::Deserialize;
 
 mod faction_structs;
-use faction_structs::*;
+pub use faction_structs::*;
 
 mod item_structs;
 use item_structs::*;
