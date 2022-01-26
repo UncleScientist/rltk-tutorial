@@ -12,6 +12,11 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Faction {
+    pub name: String,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct MyTurn {}
 
 #[derive(Component, Serialize, Deserialize, Clone)]

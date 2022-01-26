@@ -20,6 +20,7 @@ pub struct Mob {
     pub natural: Option<MobNatural>,
     pub loot_table: Option<String>,
     pub light: Option<MobLight>,
+    pub faction: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]

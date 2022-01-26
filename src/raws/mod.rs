@@ -1,6 +1,9 @@
 use regex::Regex;
 use serde::Deserialize;
 
+mod faction_structs;
+use faction_structs::*;
+
 mod item_structs;
 use item_structs::*;
 
@@ -28,6 +31,7 @@ pub struct Raws {
     pub props: Vec<Prop>,
     pub spawn_table: Vec<SpawnTableEntry>,
     pub loot_tables: Vec<LootTable>,
+    pub faction_table: Vec<FactionInfo>,
 }
 
 use lazy_static::lazy_static;

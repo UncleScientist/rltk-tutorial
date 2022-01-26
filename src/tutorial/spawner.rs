@@ -113,6 +113,9 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         })
         .with(Player {})
         .with(Initiative { current: 0 })
+        .with(Faction {
+            name: "Player".to_string(),
+        })
         .with(LightSource {
             color: RGB::from_f32(1., 1., 0.5),
             range: 8,
