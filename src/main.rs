@@ -28,6 +28,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<BlocksVisibility>();
     gs.ecs.register::<Bystander>();
     gs.ecs.register::<Carnivore>();
+    gs.ecs.register::<Chasing>();
     gs.ecs.register::<Confusion>();
     gs.ecs.register::<Consumable>();
     gs.ecs.register::<DMSerializationHelper>();
