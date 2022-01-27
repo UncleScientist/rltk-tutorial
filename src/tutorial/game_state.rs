@@ -289,12 +289,6 @@ impl State {
         let mut flee = ai::FleeAI {};
         flee.run_now(&self.ecs);
 
-        let mut mob = MonsterAI {};
-        mob.run_now(&self.ecs);
-
-        let mut animal_ai = ai::animal_ai_system::AnimalAI {};
-        animal_ai.run_now(&self.ecs);
-
         let mut bystander = ai::bystander_ai_system::BystanderAI {};
         bystander.run_now(&self.ecs);
 
