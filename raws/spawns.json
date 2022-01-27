@@ -473,7 +473,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "movement": "static",
+            "movement": "random_waypoint",
             "quips" : [ "Stand and deliver!", "Alright, hand it over" ],
             "attributes" : {},
             "equipped": [ "Shortsword", "Shield", "Leather Armor", "Leather Boots" ],
@@ -492,7 +492,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "movement": "static",
+            "movement": "random_waypoint",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Lovely day, eh?", "Nice weather", "Hello" ]
         },
@@ -509,7 +509,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "movement": "static",
+            "movement": "random_waypoint",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "They're biting today!", "I caught something, but it wasn't a fish!", "Looks like rain" ]
         },
@@ -526,7 +526,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "movement": "static",
+            "movement": "random_waypoint",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Arrr", "Grog!", "Booze!" ]
         },
@@ -828,7 +828,7 @@
             "bg" : "#000000"
          },
          "vision_range" : 4,
-         "movement": "static",
+         "movement": "random_waypoint",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true
       }

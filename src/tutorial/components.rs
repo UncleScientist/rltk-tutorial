@@ -91,6 +91,7 @@ pub struct Pools {
 pub enum Movement {
     Static,
     Random,
+    RandomWaypoint { path: Option<Vec<usize>> },
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]

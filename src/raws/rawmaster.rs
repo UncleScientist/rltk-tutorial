@@ -366,6 +366,9 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             "random" => eb.with(MoveMode {
                 mode: Movement::Random,
             }),
+            "random_waypoint" => eb.with(MoveMode {
+                mode: Movement::RandomWaypoint { path: None },
+            }),
             _ => eb.with(MoveMode {
                 mode: Movement::Static,
             }),
