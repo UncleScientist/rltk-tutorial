@@ -12,6 +12,16 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct WantsToApproach {
+    pub idx: i32,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct WantsToFlee {
+    pub indices: Vec<usize>,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Faction {
     pub name: String,
 }

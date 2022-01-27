@@ -280,6 +280,15 @@ impl State {
         let mut adjacent = ai::AdjacentAI {};
         adjacent.run_now(&self.ecs);
 
+        let mut visible = ai::VisibleAI {};
+        visible.run_now(&self.ecs);
+
+        let mut approach = ai::ApproachAI {};
+        approach.run_now(&self.ecs);
+
+        let mut flee = ai::FleeAI {};
+        flee.run_now(&self.ecs);
+
         let mut mob = MonsterAI {};
         mob.run_now(&self.ecs);
 

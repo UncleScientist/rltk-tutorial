@@ -69,7 +69,9 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SufferDamage>();
     gs.ecs.register::<Vendor>();
     gs.ecs.register::<Viewshed>();
+    gs.ecs.register::<WantsToApproach>();
     gs.ecs.register::<WantsToDropItem>();
+    gs.ecs.register::<WantsToFlee>();
     gs.ecs.register::<WantsToMelee>();
     gs.ecs.register::<WantsToPickupItem>();
     gs.ecs.register::<WantsToRemoveItem>();

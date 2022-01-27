@@ -2,7 +2,7 @@
     "faction_table" : [
         { "name" : "Player", "responses": { }},
         { "name" : "Mindless", "responses": { "Default" : "attack" } },
-        { "name" : "Townsfolk", "responses" : { "Default" : "ignore" } },
+        { "name" : "Townsfolk", "responses" : { "Default" : "flee", "Player": "ignore", "Townsfolk": "ignore" } },
         { "name" : "Bandits", "responses" : { "Default" : "attack", "Bandits": "ignore" } },
         { "name" : "Cave Goblins", "responses" : { "Default" : "attack", "Cave Goblins": "ignore" } },
         { "name" : "Carnivores", "responses" : { "Default" : "attack", "Carnivores": "ignore" } },
