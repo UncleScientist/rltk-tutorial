@@ -49,6 +49,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<MagicMapper>();
     gs.ecs.register::<MeleeWeapon>();
     gs.ecs.register::<Monster>();
+    gs.ecs.register::<MoveMode>();
     gs.ecs.register::<MyTurn>();
     gs.ecs.register::<Name>();
     gs.ecs.register::<NaturalAttackDefense>();

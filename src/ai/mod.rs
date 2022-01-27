@@ -4,8 +4,8 @@ pub use adjacent_ai_system::AdjacentAI;
 pub mod approach_ai_system;
 pub use approach_ai_system::ApproachAI;
 
-pub mod bystander_ai_system;
-pub use bystander_ai_system::BystanderAI;
+pub mod default_move_system;
+pub use default_move_system::DefaultMoveAI;
 
 pub mod flee_ai_system;
 pub use flee_ai_system::FleeAI;

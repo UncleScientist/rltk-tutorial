@@ -397,7 +397,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 6,
-            "ai" : "herbivore",
+            "movement": "random",
             "attributes" : {
                 "Might" : 3,
                 "Fitness" : 3
@@ -427,7 +427,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 6,
-            "ai" : "carnivore",
+            "movement": "static",
             "natural" : {
                 "armor_class" : 12,
                 "attacks" : [
@@ -449,7 +449,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "carnivore",
+            "movement": "static",
             "natural" : {
                 "armor_class" : 12,
                 "attacks" : [
@@ -473,7 +473,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "melee",
+            "movement": "static",
             "quips" : [ "Stand and deliver!", "Alright, hand it over" ],
             "attributes" : {},
             "equipped": [ "Shortsword", "Shield", "Leather Armor", "Leather Boots" ],
@@ -492,7 +492,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "bystander",
+            "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Lovely day, eh?", "Nice weather", "Hello" ]
         },
@@ -509,7 +509,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "bystander",
+            "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "They're biting today!", "I caught something, but it wasn't a fish!", "Looks like rain" ]
         },
@@ -526,7 +526,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "bystander",
+            "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Arrr", "Grog!", "Booze!" ]
         },
@@ -543,7 +543,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 4,
-            "ai" : "bystander",
+            "movement": "random",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
             "quips" : [ "Hic", "Need... more... booze!", "Spare a copper?" ]
         },
@@ -560,7 +560,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "herbivore",
+            "movement": "random",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {
@@ -582,7 +582,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "melee",
+            "movement": "static",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {
@@ -605,7 +605,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "carnivore",
+            "movement": "static",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {
@@ -627,7 +627,7 @@
             },
             "blocks_tile" : true,
             "vision_range" : 8,
-            "ai" : "melee",
+            "movement": "static",
             "attributes": { "Might": 3, "Fitness": 3 },
             "skills": { "Melee": -1, "Defense": -1 },
             "natural": {
@@ -648,7 +648,7 @@
          },
          "name" : "Shady Salesman",
          "faction": "Townsfolk",
-         "ai" : "vendor",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
@@ -663,7 +663,7 @@
          },
          "name" : "Patron",
          "faction": "Townsfolk",
-         "ai" : "bystander",
+         "movement": "random",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4,
@@ -681,14 +681,14 @@
          "name" : "Barkeep",
          "faction": "Townsfolk",
          "blocks_tile" : true,
-         "ai" : "vendor",
+         "movement": "static",
          "vision_range" : 4,
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ]
       },
       {
          "vision_range" : 8,
          "blocks_tile" : true,
-         "ai" : "melee",
+         "movement": "static",
          "name" : "Orc",
          "faction": "Mindless",
          "attributes" : {},
@@ -701,7 +701,7 @@
       },
       {
          "blocks_tile" : true,
-         "ai" : "melee",
+         "movement": "static",
          "vision_range" : 8,
          "attributes" : {},
          "renderable" : {
@@ -723,7 +723,7 @@
          },
          "name" : "Kobold",
          "faction": "Mindless",
-         "ai" : "melee",
+         "movement": "static",
          "blocks_tile" : true,
          "vision_range" : 4
       },
@@ -737,13 +737,13 @@
          },
          "name" : "Priest",
          "faction": "Townsfolk",
-         "ai" : "bystander",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
       },
       {
-         "ai" : "bystander",
+          "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4,
@@ -767,7 +767,7 @@
          },
          "name" : "Blacksmith",
          "faction": "Townsfolk",
-         "ai" : "vendor",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
@@ -782,7 +782,7 @@
          },
          "name" : "Clothier",
          "faction": "Townsfolk",
-         "ai" : "vendor",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
@@ -798,7 +798,7 @@
             "fg" : "#EE82EE"
          },
          "vision_range" : 4,
-         "ai" : "vendor",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true
       },
@@ -812,7 +812,7 @@
          },
          "name" : "Mom",
          "faction": "Townsfolk",
-         "ai" : "bystander",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true,
          "vision_range" : 4
@@ -828,7 +828,7 @@
             "bg" : "#000000"
          },
          "vision_range" : 4,
-         "ai" : "bystander",
+         "movement": "static",
          "equipped": [ "Cudgel", "Cloth Tunic", "Cloth Pants", "Slippers" ],
          "blocks_tile" : true
       }

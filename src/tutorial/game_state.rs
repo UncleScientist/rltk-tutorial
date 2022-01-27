@@ -289,8 +289,8 @@ impl State {
         let mut flee = ai::FleeAI {};
         flee.run_now(&self.ecs);
 
-        let mut bystander = ai::bystander_ai_system::BystanderAI {};
-        bystander.run_now(&self.ecs);
+        let mut defaultmove = ai::DefaultMoveAI {};
+        defaultmove.run_now(&self.ecs);
 
         let mut triggers = TriggerSystem {};
         triggers.run_now(&self.ecs);

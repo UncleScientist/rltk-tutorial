@@ -361,6 +361,17 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
         eb = eb.with(Name {
             name: mob_template.name.clone(),
         });
+
+        eb = match mob_template.movement.as_ref() {
+            "random" => eb.with(MoveMode {
+                mode: Movement::Random,
+            }),
+            _ => eb.with(MoveMode {
+                mode: Movement::Static,
+            }),
+        };
+
+        /*
         eb = match mob_template.ai.as_ref() {
             "melee" => eb.with(Monster {}),
             "bystander" => eb.with(Bystander {}),
@@ -369,6 +380,7 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             "herbivore" => eb.with(Herbivore {}),
             _ => eb,
         };
+        */
 
         if mob_template.blocks_tile {
             eb = eb.with(BlocksTile {});
