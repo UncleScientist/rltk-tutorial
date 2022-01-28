@@ -42,7 +42,7 @@ impl<'a> System<'a> for ApproachAI {
             let path = rltk::a_star_search(
                 map.xy_idx(pos.x, pos.y) as i32,
                 map.xy_idx(approach.idx % map.width, approach.idx / map.width) as i32,
-                &mut *map,
+                &*map,
             );
             if path.success && path.steps.len() > 1 {
                 let mut idx = map.xy_idx(pos.x, pos.y);

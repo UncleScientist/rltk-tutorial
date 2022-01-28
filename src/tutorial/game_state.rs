@@ -289,6 +289,9 @@ impl State {
         let mut flee = ai::FleeAI {};
         flee.run_now(&self.ecs);
 
+        let mut chasing = ai::ChaseAI {};
+        chasing.run_now(&self.ecs);
+
         let mut defaultmove = ai::DefaultMoveAI {};
         defaultmove.run_now(&self.ecs);
 

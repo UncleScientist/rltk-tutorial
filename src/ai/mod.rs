@@ -4,6 +4,9 @@ pub use adjacent_ai_system::AdjacentAI;
 pub mod approach_ai_system;
 pub use approach_ai_system::ApproachAI;
 
+pub mod chase_ai_system;
+pub use chase_ai_system::ChaseAI;
+
 pub mod default_move_system;
 pub use default_move_system::DefaultMoveAI;
 
