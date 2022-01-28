@@ -388,7 +388,7 @@
    "mobs" : [
            {
             "name" : "Bat",
-            "faction": "Herbivore",
+            "faction": "Herbivores",
             "renderable": {
                 "glyph" : "b",
                 "fg" : "#995555",
@@ -416,7 +416,7 @@
 
         {
             "name" : "Large Spider",
-            "faction": "Carnivore",
+            "faction": "Carnivores",
             "level" : 2,
             "attributes" : {},
             "renderable": {
@@ -464,7 +464,7 @@
 
         {
             "name" : "Bandit",
-            "faction": "Bandit",
+            "faction": "Bandits",
             "renderable": {
                 "glyph" : "☻",
                 "fg" : "#FF0000",
@@ -550,7 +550,7 @@
 
         {
             "name" : "Deer",
-            "faction": "Herbivore",
+            "faction": "Herbivores",
             "loot_table": "Animal",
             "renderable": {
                 "glyph" : "d",
@@ -595,7 +595,7 @@
 
         {
             "name" : "Mangy Wolf",
-            "faction": "Carnivore",
+            "faction": "Carnivores",
             "loot_table": "Animal",
             "renderable": {
                 "glyph" : "w",
@@ -710,7 +710,7 @@
             "fg" : "#FF0000",
             "bg" : "#000000"
          },
-         "faction": "Mindless",
+         "faction": "Cave Goblins",
          "name" : "Goblin"
       },
       {

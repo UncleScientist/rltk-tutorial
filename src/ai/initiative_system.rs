@@ -1,5 +1,5 @@
 use crate::{Attributes, Initiative, MyTurn, Position, RunState};
-use rltk::RandomNumberGenerator;
+use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 
 pub struct InitiativeSystem {}
@@ -13,6 +13,7 @@ type InitiativeData<'a> = (
     ReadStorage<'a, Attributes>,
     WriteExpect<'a, RunState>,
     ReadExpect<'a, Entity>,
+    ReadExpect<'a, Point>,
 );
 
 impl<'a> System<'a> for InitiativeSystem {
@@ -28,6 +29,7 @@ impl<'a> System<'a> for InitiativeSystem {
             attributes,
             mut runstate,
             player,
+            player_pos,
         ) = data;
 
         if *runstate != RunState::Ticking {
@@ -38,13 +40,10 @@ impl<'a> System<'a> for InitiativeSystem {
         turns.clear();
 
         // Roll initiative
-        for (entity, initiative, _pos) in (&entities, &mut initiatives, &positions).join() {
+        for (entity, initiative, pos) in (&entities, &mut initiatives, &positions).join() {
             initiative.current -= 1;
             if initiative.current < 1 {
-                // It's my turn!
-                turns
-                    .insert(entity, MyTurn {})
-                    .expect("Unable to insert turn");
+                let mut myturn = true;
 
                 // Re-roll
                 initiative.current = 6 + rng.roll_dice(1, 6);
@@ -59,6 +58,18 @@ impl<'a> System<'a> for InitiativeSystem {
                 // If its the player, we want to go to an AwatingInput state
                 if entity == *player {
                     *runstate = RunState::AwaitingInput;
+                } else {
+                    let distance = rltk::DistanceAlg::Pythagoras
+                        .distance2d(*player_pos, Point::new(pos.x, pos.y));
+                    if distance > 20.0 {
+                        myturn = false;
+                    }
+                }
+                // It's my turn!
+                if myturn {
+                    turns
+                        .insert(entity, MyTurn {})
+                        .expect("Unable to insert turn");
                 }
             }
         }

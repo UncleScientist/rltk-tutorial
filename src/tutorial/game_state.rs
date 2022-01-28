@@ -129,13 +129,15 @@ impl GameState for State {
                 newrunstate = player_input(self, ctx);
             }
             RunState::Ticking => {
-                self.run_systems();
-                match *self.ecs.fetch::<RunState>() {
-                    RunState::AwaitingInput => newrunstate = RunState::AwaitingInput,
-                    RunState::MagicMapReveal { .. } => {
-                        newrunstate = RunState::MagicMapReveal { row: 0 }
+                while newrunstate == RunState::Ticking {
+                    self.run_systems();
+                    match *self.ecs.fetch::<RunState>() {
+                        RunState::AwaitingInput => newrunstate = RunState::AwaitingInput,
+                        RunState::MagicMapReveal { .. } => {
+                            newrunstate = RunState::MagicMapReveal { row: 0 }
+                        }
+                        _ => newrunstate = RunState::Ticking,
                     }
-                    _ => newrunstate = RunState::Ticking,
                 }
             }
             RunState::ShowInventory => {
