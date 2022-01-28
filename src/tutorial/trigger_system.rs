@@ -45,15 +45,15 @@ impl<'a> System<'a> for TriggerSystem {
         for (entity, mut _entity_moved, pos) in (&entities, &mut entity_moved, &position).join() {
             let idx = map.xy_idx(pos.x, pos.y);
 
-            for entity_id in map.tile_content[idx].iter() {
-                if entity != *entity_id && entry_trigger.get(*entity_id).is_some() {
-                    if let Some(name) = names.get(*entity_id) {
+            crate::spatial::for_each_tile_content(idx, |entity_id| {
+                if entity != entity_id && entry_trigger.get(entity_id).is_some() {
+                    if let Some(name) = names.get(entity_id) {
                         log.entries.push(format!("{} triggers!", &name.name));
                     }
 
-                    hidden.remove(*entity_id);
+                    hidden.remove(entity_id);
 
-                    if let Some(damage) = inflicts_damage.get(*entity_id) {
+                    if let Some(damage) = inflicts_damage.get(entity_id) {
                         particle_builder.request(
                             pos.x,
                             pos.y,
@@ -65,11 +65,11 @@ impl<'a> System<'a> for TriggerSystem {
                         SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage, false);
                     }
 
-                    if single_activation.get(*entity_id).is_some() {
-                        remove_entities.push(*entity_id);
+                    if single_activation.get(entity_id).is_some() {
+                        remove_entities.push(entity_id);
                     }
                 }
-            }
+            });
         }
 
         for trap in remove_entities.iter() {

@@ -24,30 +24,24 @@ pub struct Map {
     pub height: i32,
     pub revealed_tiles: Vec<bool>,
     pub visible_tiles: Vec<bool>,
-    pub blocked: Vec<bool>,
     pub depth: i32,
     pub bloodstains: HashSet<usize>,
     pub view_blocked: HashSet<usize>,
     pub name: String,
     pub outdoors: bool,
     pub light: Vec<RGB>,
-
-    #[serde(skip_serializing)]
-    #[serde(skip_deserializing)]
-    pub tile_content: Vec<Vec<Entity>>,
 }
 
 impl Map {
     pub fn new<S: ToString>(new_depth: i32, width: i32, height: i32, name: S) -> Map {
         let map_tile_count = (width * height) as usize;
+        crate::spatial::set_size(map_tile_count);
         Map {
             tiles: vec![TileType::Wall; map_tile_count],
             width,
             height,
             revealed_tiles: vec![false; map_tile_count],
             visible_tiles: vec![false; map_tile_count],
-            blocked: vec![false; map_tile_count],
-            tile_content: vec![Vec::new(); map_tile_count],
             depth: new_depth,
             name: name.to_string(),
             outdoors: true,
@@ -65,19 +59,15 @@ impl Map {
             return false;
         }
         let idx = self.xy_idx(x, y);
-        !self.blocked[idx]
+        !crate::spatial::is_blocked(idx)
     }
 
-    pub fn populate_blocked(&mut self) {
-        for (i, tile) in self.tiles.iter_mut().enumerate() {
-            self.blocked[i] = !tile_walkable(*tile)
-        }
+    pub fn populate_blocked(&self) {
+        crate::spatial::populate_blocked_from_map(self);
     }
 
-    pub fn clear_content_index(&mut self) {
-        for content in self.tile_content.iter_mut() {
-            content.clear();
-        }
+    pub fn clear_content_index(&self) {
+        crate::spatial::clear();
     }
 }
 

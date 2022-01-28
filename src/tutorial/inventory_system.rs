@@ -113,9 +113,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     });
                     for tile_xy in blast_tiles.iter() {
                         let idx = map.xy_idx(tile_xy.x, tile_xy.y);
-                        for mob in map.tile_content[idx].iter() {
-                            targets.push(*mob);
-                        }
+                        crate::spatial::for_each_tile_content(idx, |mob| targets.push(mob));
                         particle_builder.request(
                             tile_xy.x,
                             tile_xy.y,
@@ -127,9 +125,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     }
                 } else {
                     let idx = map.xy_idx(target.x, target.y);
-                    for mob in map.tile_content[idx].iter() {
-                        targets.push(*mob);
-                    }
+                    crate::spatial::for_each_tile_content(idx, |mob| targets.push(mob));
                 }
             } else {
                 targets.push(*player_entity);

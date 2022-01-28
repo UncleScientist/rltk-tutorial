@@ -29,16 +29,15 @@ impl<'a> System<'a> for AdjacentAI {
                 let h = map.height;
 
                 if pos.x > 0 {
-                    evaluate(idx - 1, &map, &factions, &my_faction.name, &mut reactions);
+                    evaluate(idx - 1, &factions, &my_faction.name, &mut reactions);
                 }
                 if pos.x < w - 1 {
-                    evaluate(idx + 1, &map, &factions, &my_faction.name, &mut reactions);
+                    evaluate(idx + 1, &factions, &my_faction.name, &mut reactions);
                 }
 
                 if pos.y > 0 {
                     evaluate(
                         idx - w as usize,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -47,7 +46,6 @@ impl<'a> System<'a> for AdjacentAI {
                 if pos.y < h - 1 {
                     evaluate(
                         idx + w as usize,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -57,7 +55,6 @@ impl<'a> System<'a> for AdjacentAI {
                 if pos.y > 0 && pos.x > 0 {
                     evaluate(
                         idx - w as usize - 1,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -66,7 +63,6 @@ impl<'a> System<'a> for AdjacentAI {
                 if pos.y > 0 && pos.x < w - 1 {
                     evaluate(
                         idx - w as usize + 1,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -76,7 +72,6 @@ impl<'a> System<'a> for AdjacentAI {
                 if pos.y < h - 1 && pos.x > 0 {
                     evaluate(
                         idx + w as usize - 1,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -85,7 +80,6 @@ impl<'a> System<'a> for AdjacentAI {
                 if pos.y < h - 1 && pos.x < w - 1 {
                     evaluate(
                         idx + w as usize + 1,
-                        &map,
                         &factions,
                         &my_faction.name,
                         &mut reactions,
@@ -117,15 +111,14 @@ impl<'a> System<'a> for AdjacentAI {
 
 fn evaluate(
     idx: usize,
-    map: &Map,
     factions: &ReadStorage<Faction>,
     my_faction: &str,
     reactions: &mut Vec<(Entity, Reaction)>,
 ) {
-    for other_entity in map.tile_content[idx].iter() {
-        if let Some(faction) = factions.get(*other_entity) {
+    crate::spatial::for_each_tile_content(idx, |other_entity| {
+        if let Some(faction) = factions.get(other_entity) {
             reactions.push((
-                *other_entity,
+                other_entity,
                 crate::raws::faction_reaction(
                     my_faction,
                     &faction.name,
@@ -133,5 +126,5 @@ fn evaluate(
                 ),
             ));
         }
-    }
+    });
 }

@@ -61,14 +61,14 @@ impl<'a> System<'a> for VisibilitySystem {
                         map.visible_tiles[idx] = true;
 
                         // Chance to reveal hidden things
-                        for e in map.tile_content[idx].iter() {
-                            if hidden.get(*e).is_some() && rng.roll_dice(1, 24) == 1 {
-                                if let Some(name) = names.get(*e) {
+                        crate::spatial::for_each_tile_content(idx, |e| {
+                            if hidden.get(e).is_some() && rng.roll_dice(1, 24) == 1 {
+                                if let Some(name) = names.get(e) {
                                     log.entries.push(format!("You spotted a {}.", &name.name));
                                 }
-                                hidden.remove(*e);
+                                hidden.remove(e);
                             }
-                        }
+                        });
                     }
                 }
             }

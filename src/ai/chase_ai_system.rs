@@ -8,7 +8,7 @@ type ChaseData<'a> = (
     WriteStorage<'a, MyTurn>,
     WriteStorage<'a, Chasing>,
     WriteStorage<'a, Position>,
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     WriteStorage<'a, Viewshed>,
     WriteStorage<'a, EntityMoved>,
     Entities<'a>,
@@ -18,15 +18,8 @@ impl<'a> System<'a> for ChaseAI {
     type SystemData = ChaseData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            mut turns,
-            mut chasing,
-            mut positions,
-            mut map,
-            mut viewsheds,
-            mut entity_moved,
-            entities,
-        ) = data;
+        let (mut turns, mut chasing, mut positions, map, mut viewsheds, mut entity_moved, entities) =
+            data;
 
         let mut targets = HashMap::new();
         let mut end_chase = Vec::new();
@@ -56,15 +49,14 @@ impl<'a> System<'a> for ChaseAI {
                 &*map,
             );
             if path.success && path.steps.len() > 1 && path.steps.len() < 15 {
-                let mut idx = map.xy_idx(pos.x, pos.y);
-                map.blocked[idx] = false;
+                let idx = map.xy_idx(pos.x, pos.y);
                 pos.x = path.steps[1] as i32 % map.width;
                 pos.y = path.steps[1] as i32 / map.height;
                 entity_moved
                     .insert(entity, EntityMoved {})
                     .expect("Unable to insert marker");
-                idx = map.xy_idx(pos.x, pos.y);
-                map.blocked[idx] = true;
+                let new_idx = map.xy_idx(pos.x, pos.y);
+                crate::spatial::move_entity(entity, idx, new_idx);
                 viewshed.dirty = true;
                 turn_done.push(entity);
             } else {

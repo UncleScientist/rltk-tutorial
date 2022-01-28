@@ -7,7 +7,7 @@ type ApproachData<'a> = (
     WriteStorage<'a, MyTurn>,
     WriteStorage<'a, WantsToApproach>,
     WriteStorage<'a, Position>,
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     WriteStorage<'a, Viewshed>,
     WriteStorage<'a, EntityMoved>,
     Entities<'a>,
@@ -21,7 +21,7 @@ impl<'a> System<'a> for ApproachAI {
             mut turns,
             mut want_approach,
             mut positions,
-            mut map,
+            map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -45,16 +45,14 @@ impl<'a> System<'a> for ApproachAI {
                 &*map,
             );
             if path.success && path.steps.len() > 1 {
-                let mut idx = map.xy_idx(pos.x, pos.y);
-                map.blocked[idx] = false;
+                let idx = map.xy_idx(pos.x, pos.y);
                 pos.x = path.steps[1] as i32 % map.width;
                 pos.y = path.steps[1] as i32 / map.width;
                 entity_moved
                     .insert(entity, EntityMoved {})
                     .expect("Unable to insert marker");
-                idx = map.xy_idx(pos.x, pos.y);
-                assert!(!map.blocked[idx]);
-                map.blocked[idx] = true;
+                let new_idx = map.xy_idx(pos.x, pos.y);
+                crate::spatial::move_entity(entity, idx, new_idx);
                 viewshed.dirty = true;
             }
         }

@@ -7,7 +7,7 @@ type FleeData<'a> = (
     WriteStorage<'a, MyTurn>,
     WriteStorage<'a, WantsToFlee>,
     WriteStorage<'a, Position>,
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     WriteStorage<'a, Viewshed>,
     WriteStorage<'a, EntityMoved>,
     Entities<'a>,
@@ -21,7 +21,7 @@ impl<'a> System<'a> for FleeAI {
             mut turns,
             mut want_flee,
             mut positions,
-            mut map,
+            map,
             mut viewsheds,
             mut entity_moved,
             entities,
@@ -50,9 +50,8 @@ impl<'a> System<'a> for FleeAI {
             );
             let flee_target = rltk::DijkstraMap::find_highest_exit(&flee_map, my_idx, &*map);
             if let Some(flee_target) = flee_target {
-                if !map.blocked[flee_target as usize] {
-                    map.blocked[my_idx] = false;
-                    map.blocked[flee_target as usize] = true;
+                if !crate::spatial::is_blocked(flee_target as usize) {
+                    crate::spatial::move_entity(entity, my_idx, flee_target);
                     viewshed.dirty = true;
                     pos.x = flee_target as i32 % map.width;
                     pos.y = flee_target as i32 / map.width;

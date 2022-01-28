@@ -1,27 +1,26 @@
 use super::{BlocksTile, Position};
-use crate::Map;
+use crate::{spatial::*, Map};
 use specs::prelude::*;
 
 pub struct MapIndexingSystem {}
 
 impl<'a> System<'a> for MapIndexingSystem {
     type SystemData = (
-        WriteExpect<'a, Map>,
+        ReadExpect<'a, Map>,
         ReadStorage<'a, Position>,
         ReadStorage<'a, BlocksTile>,
         Entities<'a>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut map, positions, blockers, entities) = data;
+        let (map, positions, blockers, entities) = data;
 
-        map.populate_blocked();
-        map.clear_content_index();
+        clear();
+        populate_blocked_from_map(&*map);
 
         for (entity, position) in (&entities, &positions).join() {
             let idx = map.xy_idx(position.x, position.y);
-            map.blocked[idx] = blockers.get(entity).is_some();
-            map.tile_content[idx].push(entity);
+            index_entity(entity, idx, blockers.get(entity).is_some());
         }
     }
 }
