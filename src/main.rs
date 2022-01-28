@@ -26,8 +26,6 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Attributes>();
     gs.ecs.register::<BlocksTile>();
     gs.ecs.register::<BlocksVisibility>();
-    gs.ecs.register::<Bystander>();
-    gs.ecs.register::<Carnivore>();
     gs.ecs.register::<Chasing>();
     gs.ecs.register::<Confusion>();
     gs.ecs.register::<Consumable>();
@@ -38,7 +36,6 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Equippable>();
     gs.ecs.register::<Equipped>();
     gs.ecs.register::<Faction>();
-    gs.ecs.register::<Herbivore>();
     gs.ecs.register::<Hidden>();
     gs.ecs.register::<HungerClock>();
     gs.ecs.register::<InBackpack>();
@@ -49,7 +46,6 @@ fn main() -> rltk::BError {
     gs.ecs.register::<LootTable>();
     gs.ecs.register::<MagicMapper>();
     gs.ecs.register::<MeleeWeapon>();
-    gs.ecs.register::<Monster>();
     gs.ecs.register::<MoveMode>();
     gs.ecs.register::<MyTurn>();
     gs.ecs.register::<Name>();
@@ -69,7 +65,6 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SingleActivation>();
     gs.ecs.register::<Skills>();
     gs.ecs.register::<SufferDamage>();
-    gs.ecs.register::<Vendor>();
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<WantsToApproach>();
     gs.ecs.register::<WantsToDropItem>();

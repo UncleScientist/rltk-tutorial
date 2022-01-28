@@ -53,12 +53,6 @@ pub struct OtherLevelPosition {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Carnivore {}
-
-#[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Herbivore {}
-
-#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct LootTable {
     pub table: String,
 }
@@ -155,9 +149,6 @@ pub struct Attributes {
 pub struct Quips {
     pub available: Vec<String>,
 }
-
-#[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Vendor {}
 
 #[derive(Component, Serialize, Deserialize, Clone)]
 pub struct BlocksVisibility {}
@@ -389,9 +380,3 @@ pub struct Viewshed {
     pub range: i32,
     pub dirty: bool,
 }
-
-#[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Bystander {}
-
-#[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Monster {}
