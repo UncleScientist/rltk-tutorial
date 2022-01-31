@@ -44,13 +44,18 @@ impl<'a> System<'a> for DamageSystem {
         for (entity, mut stats, damage) in (&entities, &mut stats, &damage).join() {
             for dmg in damage.amount.iter() {
                 stats.hit_points.current -= dmg.0;
-                if let Some(pos) = positions.get(entity) {
+                let pos = positions.get(entity);
+                if let Some(pos) = pos {
                     let idx = map.xy_idx(pos.x, pos.y);
                     map.bloodstains.insert(idx);
                 }
 
                 if stats.hit_points.current < 1 && dmg.1 {
                     xp_gain += stats.level * 100;
+                    if let Some(pos) = pos {
+                        let idx = map.xy_idx(pos.x, pos.y);
+                        crate::spatial::remove_entity(entity, idx);
+                    }
                 }
             }
         }

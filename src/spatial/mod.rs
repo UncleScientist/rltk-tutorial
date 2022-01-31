@@ -110,6 +110,18 @@ pub fn move_entity(entity: Entity, moving_from: usize, moving_to: usize) {
     lock.blocked[moving_to].1 = to_blocked;
 }
 
+pub fn remove_entity(entity: Entity, idx: usize) {
+    let mut lock = SPATIAL_MAP.lock().unwrap();
+    lock.tile_content[idx].retain(|(e, _)| *e != entity);
+    let mut from_blocked = false;
+    lock.tile_content[idx].iter().for_each(|(_, blocks)| {
+        if *blocks {
+            from_blocked = true;
+        }
+    });
+    lock.blocked[idx].1 = from_blocked;
+}
+
 lazy_static! {
     static ref SPATIAL_MAP: Mutex<SpatialMap> = Mutex::new(SpatialMap::new());
 }
