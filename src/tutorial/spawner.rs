@@ -147,7 +147,10 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             },
             xp: 0,
             level: 1,
+            total_weight: 0.0,
+            total_initiative_penalty: 0.0,
         })
+        .with(EquipmentChanged {})
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 
@@ -194,28 +197,14 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         "Confusion Scroll",
         SpawnType::Carried { by: player },
     );
+    spawn_named_entity(
+        &RAWS.lock().unwrap(),
+        ecs,
+        "Magic Mapping Scroll",
+        SpawnType::Carried { by: player },
+    );
 
     player
-}
-
-// TODO: remove after removing from main()
-pub fn magic_mapping_scroll(ecs: &mut World, x: i32, y: i32) {
-    ecs.create_entity()
-        .with(Position { x, y })
-        .with(Renderable {
-            glyph: to_cp437(')'),
-            fg: RGB::named(rltk::CYAN3),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 2,
-        })
-        .with(Name {
-            name: "Scroll of Magic Mapping".to_string(),
-        })
-        .with(Item {})
-        .with(MagicMapper {})
-        .with(Consumable {})
-        .marked::<SimpleMarker<SerializeMe>>()
-        .build();
 }
 
 fn room_table(map_depth: i32) -> RandomTable {

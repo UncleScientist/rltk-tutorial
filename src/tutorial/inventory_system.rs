@@ -1,10 +1,10 @@
 use specs::prelude::*;
 
 use crate::{
-    AreaOfEffect, Confusion, Consumable, Equippable, Equipped, GameLog, HungerClock, HungerState,
-    InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder, Pools, Position,
-    ProvidesFood, ProvidesHealing, RunState, SufferDamage, WantsToDropItem, WantsToPickupItem,
-    WantsToRemoveItem, WantsToUseItem,
+    AreaOfEffect, Confusion, Consumable, EquipmentChanged, Equippable, Equipped, GameLog,
+    HungerClock, HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder,
+    Pools, Position, ProvidesFood, ProvidesHealing, RunState, SufferDamage, WantsToDropItem,
+    WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -16,14 +16,22 @@ type ItemCollectionData<'a> = (
     WriteStorage<'a, Position>,
     ReadStorage<'a, Name>,
     WriteStorage<'a, InBackpack>,
+    WriteStorage<'a, EquipmentChanged>,
 );
 
 impl<'a> System<'a> for ItemCollectionSystem {
     type SystemData = ItemCollectionData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (player_entity, mut gamelog, mut wants_pickup, mut positions, names, mut backpack) =
-            data;
+        let (
+            player_entity,
+            mut gamelog,
+            mut wants_pickup,
+            mut positions,
+            names,
+            mut backpack,
+            mut dirty,
+        ) = data;
 
         for pickup in wants_pickup.join() {
             positions.remove(pickup.item);
@@ -35,6 +43,9 @@ impl<'a> System<'a> for ItemCollectionSystem {
                     },
                 )
                 .expect("Unable to insert backpack entry");
+            dirty
+                .insert(pickup.collected_by, EquipmentChanged {})
+                .expect("Unable to insert");
             if pickup.collected_by == *player_entity {
                 gamelog.entries.push(format!(
                     "You pick up the {}.",
@@ -72,6 +83,7 @@ type ItemUseData<'a> = (
     WriteStorage<'a, HungerClock>,
     ReadStorage<'a, MagicMapper>,
     WriteExpect<'a, RunState>,
+    WriteStorage<'a, EquipmentChanged>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -101,9 +113,13 @@ impl<'a> System<'a> for ItemUseSystem {
             mut hunger_clocks,
             magic_mapper,
             mut runstate,
+            mut dirty,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
+            dirty
+                .insert(entity, EquipmentChanged {})
+                .expect("Unable to insert marker");
             let mut targets: Vec<Entity> = Vec::new();
             if let Some(target) = useitem.target {
                 if let Some(area_effect) = aoe.get(useitem.item) {
@@ -298,6 +314,7 @@ type ItemDropData<'a> = (
     ReadStorage<'a, Name>,
     WriteStorage<'a, Position>,
     WriteStorage<'a, InBackpack>,
+    WriteStorage<'a, EquipmentChanged>,
 );
 
 impl<'a> System<'a> for ItemDropSystem {
@@ -312,6 +329,7 @@ impl<'a> System<'a> for ItemDropSystem {
             names,
             mut positions,
             mut backpack,
+            mut dirty,
         ) = data;
 
         for (entity, to_drop) in (&entities, &wants_drop).join() {
@@ -327,6 +345,9 @@ impl<'a> System<'a> for ItemDropSystem {
                 .insert(to_drop.item, dropper_pos)
                 .expect("Unable to insert position");
             backpack.remove(to_drop.item);
+            dirty
+                .insert(entity, EquipmentChanged {})
+                .expect("Unable to insert");
 
             if entity == *player_entity {
                 gamelog.entries.push(format!(
@@ -350,6 +371,7 @@ type ItemRemoveData<'a> = (
     WriteStorage<'a, Equipped>,
     WriteStorage<'a, InBackpack>,
     ReadStorage<'a, Name>,
+    WriteStorage<'a, EquipmentChanged>,
 );
 
 impl<'a> System<'a> for ItemRemoveSystem {
@@ -364,6 +386,7 @@ impl<'a> System<'a> for ItemRemoveSystem {
             mut equipped,
             mut backpack,
             names,
+            mut dirty,
         ) = data;
 
         for (entity, to_remove) in (&entities, &wants_remove).join() {
@@ -371,6 +394,9 @@ impl<'a> System<'a> for ItemRemoveSystem {
             backpack
                 .insert(to_remove.item, InBackpack { owner: entity })
                 .expect("Unable to insert into backpack");
+            dirty
+                .insert(entity, EquipmentChanged {})
+                .expect("Unable to insert");
             if entity == *player_entity {
                 gamelog.entries.push(format!(
                     "You remove the {}.",

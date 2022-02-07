@@ -1,4 +1,4 @@
-use crate::{Attributes, Initiative, MyTurn, Position, RunState};
+use crate::{Attributes, Initiative, MyTurn, Pools, Position, RunState};
 use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
 
@@ -14,6 +14,7 @@ type InitiativeData<'a> = (
     WriteExpect<'a, RunState>,
     ReadExpect<'a, Entity>,
     ReadExpect<'a, Point>,
+    ReadStorage<'a, Pools>,
 );
 
 impl<'a> System<'a> for InitiativeSystem {
@@ -30,6 +31,7 @@ impl<'a> System<'a> for InitiativeSystem {
             mut runstate,
             player,
             player_pos,
+            pools,
         ) = data;
 
         if *runstate != RunState::Ticking {
@@ -53,7 +55,12 @@ impl<'a> System<'a> for InitiativeSystem {
                     initiative.current -= attr.quickness.bonus;
                 }
 
-                // TODO: More initiatie granting boosts/penalties will go here later
+                // Apply pool penalty
+                if let Some(pools) = pools.get(entity) {
+                    initiative.current += f32::floor(pools.total_initiative_penalty) as i32;
+                }
+
+                // TODO: More initiative granting boosts/penalties will go here later
 
                 // If its the player, we want to go to an AwatingInput state
                 if entity == *player {

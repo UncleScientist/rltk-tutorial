@@ -10,6 +10,9 @@ pub use chase_ai_system::ChaseAI;
 pub mod default_move_system;
 pub use default_move_system::DefaultMoveAI;
 
+pub mod encumbrance_system;
+pub use encumbrance_system::EncumbranceSystem;
+
 pub mod flee_ai_system;
 pub use flee_ai_system::FleeAI;
 

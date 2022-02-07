@@ -35,6 +35,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<EntryTrigger>();
     gs.ecs.register::<Equippable>();
     gs.ecs.register::<Equipped>();
+    gs.ecs.register::<EquipmentChanged>();
     gs.ecs.register::<Faction>();
     gs.ecs.register::<Hidden>();
     gs.ecs.register::<HungerClock>();
@@ -97,13 +98,6 @@ fn main() -> rltk::BError {
     gs.ecs.insert(particle_system::ParticleBuilder::new());
 
     gs.generate_world_map(1, 0);
-
-    // cheat: to help test with mapping
-    let (x, y) = {
-        let loc = gs.ecs.fetch::<Point>();
-        (loc.x, loc.y)
-    };
-    spawner::magic_mapping_scroll(&mut gs.ecs, x, y);
 
     rltk::main_loop(context, gs)
 }

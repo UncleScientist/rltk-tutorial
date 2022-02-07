@@ -79,11 +79,16 @@ pub struct Pool {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct EquipmentChanged {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Pools {
     pub hit_points: Pool,
     pub mana: Pool,
     pub xp: i32,
     pub level: i32,
+    pub total_weight: f32,
+    pub total_initiative_penalty: f32,
 }
 
 #[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
@@ -314,7 +319,11 @@ pub struct WantsToUseItem {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Item {}
+pub struct Item {
+    pub initiative_penalty: f32,
+    pub weight_lbs: f32,
+    pub base_value: f32,
+}
 
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct ProvidesHealing {

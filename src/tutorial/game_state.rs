@@ -270,6 +270,9 @@ impl State {
         let mut vis = VisibilitySystem {};
         vis.run_now(&self.ecs);
 
+        let mut encumbrance = ai::EncumbranceSystem {};
+        encumbrance.run_now(&self.ecs);
+
         let mut initiative = ai::InitiativeSystem {};
         initiative.run_now(&self.ecs);
 
