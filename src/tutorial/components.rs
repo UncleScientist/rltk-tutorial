@@ -12,6 +12,11 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, ConvertSaveload, Clone)]
+pub struct Vendor {
+    pub categories: Vec<String>,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
 pub struct Chasing {
     pub target: Entity,
 }

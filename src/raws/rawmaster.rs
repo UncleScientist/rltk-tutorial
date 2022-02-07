@@ -134,6 +134,20 @@ pub fn get_item_drop(
     None
 }
 
+pub fn get_vendor_items(categories: &[String], raws: &RawMaster) -> Vec<(String, f32)> {
+    let mut result = Vec::new();
+
+    for item in raws.raws.items.iter() {
+        if let Some(cat) = &item.vendor_category {
+            if categories.contains(cat) && item.base_value.is_some() {
+                result.push((item.name.clone(), item.base_value.unwrap()));
+            }
+        }
+    }
+
+    result
+}
+
 pub fn spawn_named_entity(
     raws: &RawMaster,
     ecs: &mut World,
@@ -312,6 +326,12 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             mob_int = intelligence;
         }
         eb = eb.with(attr);
+
+        if let Some(vendor) = &mob_template.vendor {
+            eb = eb.with(Vendor {
+                categories: vendor.clone(),
+            });
+        }
 
         let mob_level = mob_template.level.unwrap_or(1);
         let mob_hp = npc_hp(mob_fitness, mob_level);
