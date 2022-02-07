@@ -89,6 +89,7 @@ pub struct Pools {
     pub level: i32,
     pub total_weight: f32,
     pub total_initiative_penalty: f32,
+    pub gold: f32,
 }
 
 #[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]

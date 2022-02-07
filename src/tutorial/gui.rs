@@ -193,6 +193,15 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
         ),
     );
 
+    // Money
+    ctx.print_color(
+        50,
+        11,
+        rltk::RGB::named(rltk::GOLD),
+        black,
+        &format!("Gold: {:.1}", player_pools.gold),
+    );
+
     // Equipped
     let mut y = 13;
     let equipped = ecs.read_storage::<Equipped>();
