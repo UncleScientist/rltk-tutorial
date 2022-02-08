@@ -15,6 +15,8 @@ pub enum CheatMenuResult {
     Cancel,
     TeleportToExit,
     Heal,
+    Reveal,
+    GodMode,
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -190,7 +192,7 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
         white,
         black,
         &format!(
-            "Initiative Penalty: {:0.}",
+            "Initiative Penalty: {:.0}",
             player_pools.total_initiative_penalty,
         ),
     );
@@ -365,7 +367,7 @@ pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
     let white = RGB::named(WHITE);
     let black = RGB::named(BLACK);
     let yellow = RGB::named(YELLOW);
-    let count = 2;
+    let count = 4;
     let mut y = (25 - (count / 2)) as i32;
     ctx.draw_box(15, y - 2, 31, (count + 3) as i32, white, black);
     ctx.print_color(18, y - 2, yellow, black, "Cheating!");
@@ -382,10 +384,24 @@ pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
     ctx.set(19, y, white, black, rltk::to_cp437(')'));
     ctx.print(21, y, "Heal all wounds");
 
+    y += 1;
+    ctx.set(17, y, white, black, rltk::to_cp437('('));
+    ctx.set(18, y, white, black, rltk::to_cp437('R'));
+    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.print(21, y, "Reveal the map");
+
+    y += 1;
+    ctx.set(17, y, white, black, rltk::to_cp437('('));
+    ctx.set(18, y, white, black, rltk::to_cp437('G'));
+    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.print(21, y, "God Mode (no death)");
+
     match ctx.key {
         None => CheatMenuResult::NoResponse,
         Some(key) => match key {
+            VirtualKeyCode::G => CheatMenuResult::GodMode,
             VirtualKeyCode::H => CheatMenuResult::Heal,
+            VirtualKeyCode::R => CheatMenuResult::Reveal,
             VirtualKeyCode::T => CheatMenuResult::TeleportToExit,
             VirtualKeyCode::Escape => CheatMenuResult::Cancel,
             _ => CheatMenuResult::NoResponse,

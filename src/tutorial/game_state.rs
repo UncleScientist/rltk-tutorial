@@ -53,6 +53,31 @@ impl GameState for State {
         cull_dead_particles(&mut self.ecs, ctx);
 
         match newrunstate {
+            RunState::MainMenu { .. } => {}
+            RunState::GameOver { .. } => {}
+
+            _ => {
+                camera::render_camera(&self.ecs, ctx);
+                gui::draw_ui(&self.ecs, ctx);
+            }
+        }
+
+        match newrunstate {
+            RunState::MapGeneration => {
+                if !SHOW_MAPGEN_VISUALIZER {
+                    newrunstate = self.mapgen_next_state.unwrap();
+                } else if self.mapgen_index < self.mapgen_history.len() {
+                    camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);
+                    self.mapgen_timer += ctx.frame_time_ms;
+                    if self.mapgen_timer > 300.0 {
+                        self.mapgen_timer = 0.0;
+                        self.mapgen_index += 1;
+                        if self.mapgen_index >= self.mapgen_history.len() {
+                            newrunstate = self.mapgen_next_state.unwrap();
+                        }
+                    }
+                }
+            }
             RunState::ShowCheatMenu => {
                 let result = gui::show_cheat_mode(self, ctx);
                 match result {
@@ -70,7 +95,41 @@ impl GameState for State {
                         player_pools.hit_points.current = player_pools.hit_points.max;
                         newrunstate = RunState::AwaitingInput;
                     }
+                    gui::CheatMenuResult::Reveal => {
+                        let mut map = self.ecs.fetch_mut::<Map>();
+                        for v in map.revealed_tiles.iter_mut() {
+                            *v = true;
+                        }
+                        newrunstate = RunState::AwaitingInput;
+                    }
+                    gui::CheatMenuResult::GodMode => {
+                        let player = self.ecs.fetch::<Entity>();
+                        let mut pools = self.ecs.write_storage::<Pools>();
+                        let mut player_pools = pools.get_mut(*player).unwrap();
+                        player_pools.god_mode = true;
+                        newrunstate = RunState::AwaitingInput;
+                    }
                 }
+            }
+            RunState::PreviousLevel => {
+                self.goto_level(-1);
+                self.mapgen_next_state = Some(RunState::PreRun);
+                newrunstate = RunState::PreRun;
+            }
+            RunState::NextLevel => {
+                self.goto_level(1);
+                self.mapgen_next_state = Some(RunState::PreRun);
+                newrunstate = RunState::PreRun;
+            }
+            RunState::SaveGame => {
+                saveload_system::save_game(&mut self.ecs);
+                newrunstate = RunState::MainMenu {
+                    menu_selection: if saveload_system::does_save_exist() {
+                        gui::MainMenuSelection::LoadGame
+                    } else {
+                        gui::MainMenuSelection::NewGame
+                    },
+                };
             }
 
             RunState::MainMenu { .. } => {
@@ -94,50 +153,6 @@ impl GameState for State {
                     },
                 }
             }
-            RunState::GameOver => {}
-            RunState::MapGeneration => {
-                if !SHOW_MAPGEN_VISUALIZER {
-                    newrunstate = self.mapgen_next_state.unwrap();
-                } else if self.mapgen_index < self.mapgen_history.len() {
-                    camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);
-                    self.mapgen_timer += ctx.frame_time_ms;
-                    if self.mapgen_timer > 300.0 {
-                        self.mapgen_timer = 0.0;
-                        self.mapgen_index += 1;
-                        if self.mapgen_index >= self.mapgen_history.len() {
-                            newrunstate = self.mapgen_next_state.unwrap();
-                        }
-                    }
-                }
-            }
-            _ => {
-                camera::render_camera(&self.ecs, ctx);
-                gui::draw_ui(&self.ecs, ctx);
-            }
-        }
-
-        match newrunstate {
-            RunState::PreviousLevel => {
-                self.goto_level(-1);
-                self.mapgen_next_state = Some(RunState::PreRun);
-                newrunstate = RunState::PreRun;
-            }
-            RunState::NextLevel => {
-                self.goto_level(1);
-                self.mapgen_next_state = Some(RunState::PreRun);
-                newrunstate = RunState::PreRun;
-            }
-            RunState::SaveGame => {
-                saveload_system::save_game(&mut self.ecs);
-                newrunstate = RunState::MainMenu {
-                    menu_selection: if saveload_system::does_save_exist() {
-                        gui::MainMenuSelection::LoadGame
-                    } else {
-                        gui::MainMenuSelection::NewGame
-                    },
-                };
-            }
-            RunState::MainMenu { .. } => {}
             RunState::PreRun => {
                 self.run_systems();
                 newrunstate = RunState::AwaitingInput;
@@ -321,7 +336,6 @@ impl GameState for State {
                     newrunstate = RunState::MagicMapReveal { row: row + 1 }
                 }
             }
-            RunState::MapGeneration | RunState::ShowCheatMenu => {}
         }
 
         {

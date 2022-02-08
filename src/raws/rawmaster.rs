@@ -357,6 +357,7 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             } else {
                 0.0
             },
+            god_mode: false,
         };
         eb = eb.with(pools);
         eb = eb.with(EquipmentChanged {});
