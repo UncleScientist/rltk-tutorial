@@ -15,7 +15,7 @@ mod forest;
 use forest::forest_builder;
 
 mod limestone_cavern;
-use limestone_cavern::limestone_cavern_builder;
+use limestone_cavern::{limestone_cavern_builder, limestone_deep_cavern_builder};
 
 mod simple_map;
 use simple_map::SimpleMapBuilder;
@@ -33,7 +33,7 @@ mod drunkard;
 use drunkard::DrunkardsWalkBuilder;
 
 mod prefab_builders;
-use prefab_builders::PrefabBuilder;
+use prefab_builders::*;
 
 mod maze;
 use maze::MazeBuilder;
@@ -209,11 +209,11 @@ pub fn level_builder(
     width: i32,
     height: i32,
 ) -> BuilderChain {
-    rltk::console::log(format!("Depth: {}", new_depth));
     match new_depth {
         1 => town_builder(new_depth, width, height),
         2 => forest_builder(new_depth, rng, width, height),
         3 => limestone_cavern_builder(new_depth, rng, width, height),
+        4 => limestone_deep_cavern_builder(new_depth, rng, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }

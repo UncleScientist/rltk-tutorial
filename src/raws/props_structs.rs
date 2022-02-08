@@ -11,6 +11,7 @@ pub struct Prop {
     pub blocks_visibility: Option<bool>,
     pub door_open: Option<bool>,
     pub entry_trigger: Option<EntryTrigger>,
+    pub light: Option<super::mob_structs::MobLight>,
 }
 
 #[derive(Deserialize, Debug)]

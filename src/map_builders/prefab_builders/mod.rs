@@ -124,7 +124,16 @@ impl PrefabBuilder {
     }
 
     fn char_to_map(&mut self, ch: char, idx: usize, build_data: &mut BuilderMap) {
-        match (ch as u8) as char {
+        match ch {
+            '≈' => build_data.map.tiles[idx] = TileType::DeepWater,
+            'O' => {
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Orc Leader".to_string()));
+            }
+            '☼' => {
+                build_data.map.tiles[idx] = TileType::Floor;
+                build_data.spawn_list.push((idx, "Watch Fire".to_string()));
+            }
             ' ' => build_data.map.tiles[idx] = TileType::Floor,
             '#' => build_data.map.tiles[idx] = TileType::Wall,
             '@' => {
@@ -177,13 +186,13 @@ impl PrefabBuilder {
         // Place the new section
         let chunk_x = match section.placement.0 {
             //HorizontalPlacement::Left => 0,
-            //HorizontalPlacement::Center => (build_data.map.width / 2) - (section.width as i32 / 2),
+            HorizontalPlacement::Center => (build_data.map.width / 2) - (section.width as i32 / 2),
             HorizontalPlacement::Right => (build_data.map.width - 1) - section.width as i32,
         };
 
         let chunk_y = match section.placement.1 {
             VerticalPlacement::Top => 0,
-            //VerticalPlacement::Center => (build_data.map.height / 2) - (section.height as i32 / 2),
+            VerticalPlacement::Center => (build_data.map.height / 2) - (section.height as i32 / 2),
             //VerticalPlacement::Bottom => (build_data.map.height - 1) - section.height as i32,
         };
 

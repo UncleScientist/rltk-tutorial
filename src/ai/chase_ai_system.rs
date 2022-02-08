@@ -51,7 +51,7 @@ impl<'a> System<'a> for ChaseAI {
             if path.success && path.steps.len() > 1 && path.steps.len() < 15 {
                 let idx = map.xy_idx(pos.x, pos.y);
                 pos.x = path.steps[1] as i32 % map.width;
-                pos.y = path.steps[1] as i32 / map.height;
+                pos.y = path.steps[1] as i32 / map.width;
                 entity_moved
                     .insert(entity, EntityMoved {})
                     .expect("Unable to insert marker");
