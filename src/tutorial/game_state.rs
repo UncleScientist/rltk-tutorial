@@ -63,6 +63,13 @@ impl GameState for State {
                         self.mapgen_next_state = Some(RunState::PreRun);
                         newrunstate = RunState::MapGeneration;
                     }
+                    gui::CheatMenuResult::Heal => {
+                        let player = self.ecs.fetch::<Entity>();
+                        let mut pools = self.ecs.write_storage::<Pools>();
+                        let mut player_pools = pools.get_mut(*player).unwrap();
+                        player_pools.hit_points.current = player_pools.hit_points.max;
+                        newrunstate = RunState::AwaitingInput;
+                    }
                 }
             }
 
