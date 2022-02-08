@@ -743,7 +743,7 @@ pub fn vendor_buy_menu(
     match ctx.key {
         None => (VendorResult::NoResponse, None, None, None),
         Some(key) => match key {
-            VirtualKeyCode::Space => (VendorResult::BuyMode, None, None, None),
+            VirtualKeyCode::Space => (VendorResult::SellMode, None, None, None),
             VirtualKeyCode::Escape => (VendorResult::Cancel, None, None, None),
             _ => {
                 let selection = rltk::letter_to_option(key);
