@@ -113,7 +113,7 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let x_pos = (22 - (name_length / 2)) as i32;
     ctx.set(x_pos, 0, box_grey, black, to_cp437('┤'));
     ctx.set(
-        x_pos + name_length as i32,
+        x_pos + name_length as i32 - 1,
         0,
         box_grey,
         black,
