@@ -1,8 +1,30 @@
 use super::{
-    AreaStartingPosition, BuilderChain, BuilderMap, CullUnreachable, DLABuilder, DistantExit,
-    DrunkardsWalkBuilder, MetaMapBuilder, PrefabBuilder, TileType, VoronoiSpawning, XStart, YStart,
+    AreaEndingPosition, AreaStartingPosition, BspDungeonBuilder, BuilderChain, BuilderMap,
+    CellularAutomataBuilder, CullUnreachable, DLABuilder, DistantExit, DrunkardsWalkBuilder,
+    MetaMapBuilder, NearestCorridors, PrefabBuilder, RoomBasedSpawner, RoomDrawer, RoomExploder,
+    RoomSort, RoomSorter, TileType, VoronoiSpawning, XEnd, XStart, YEnd, YStart,
 };
 use rltk::RandomNumberGenerator;
+
+pub fn limestone_transition_builder(
+    new_depth: i32,
+    _rng: &mut RandomNumberGenerator,
+    width: i32,
+    height: i32,
+) -> BuilderChain {
+    let mut chain = BuilderChain::new(new_depth, width, height, "Dwarf Fort - Upper Reaches");
+    chain.start_with(CellularAutomataBuilder::new());
+    chain.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
+    chain.with(CullUnreachable::new());
+    chain.with(AreaStartingPosition::new(XStart::Left, YStart::Center));
+    chain.with(VoronoiSpawning::new());
+    chain.with(CaveDecorator::new());
+    chain.with(CaveTransition::new());
+    chain.with(AreaStartingPosition::new(XStart::Left, YStart::Center));
+    chain.with(CullUnreachable::new());
+    chain.with(AreaEndingPosition::new(XEnd::Right, YEnd::Center));
+    chain
+}
 
 pub fn limestone_cavern_builder(
     new_depth: i32,
@@ -42,6 +64,8 @@ pub fn limestone_deep_cavern_builder(
 
     chain
 }
+
+// --------------------------------------------------------------------------------
 
 pub struct CaveDecorator {}
 
@@ -96,5 +120,66 @@ impl CaveDecorator {
         }
         build_data.take_snapshot();
         build_data.map.outdoors = false;
+    }
+}
+
+// --------------------------------------------------------------------------------
+
+pub struct CaveTransition {}
+
+impl MetaMapBuilder for CaveTransition {
+    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
+    }
+}
+
+impl CaveTransition {
+    pub fn new() -> Box<CaveTransition> {
+        Box::new(CaveTransition {})
+    }
+
+    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+        build_data.map.depth = 5;
+        build_data.take_snapshot();
+
+        // Build a BSP-based dungeon
+        let mut builder = BuilderChain::new(5, build_data.width, build_data.height, "New Map");
+        builder.start_with(BspDungeonBuilder::new());
+        builder.with(RoomDrawer::new());
+        builder.with(RoomSorter::new(RoomSort::Rightmost));
+        builder.with(NearestCorridors::new());
+        builder.with(RoomExploder::new());
+        builder.with(RoomBasedSpawner::new());
+        builder.build_map(rng);
+
+        // Add the history to our history
+        for h in builder.build_data.history.iter() {
+            build_data.history.push(h.clone());
+        }
+        build_data.take_snapshot();
+
+        // Copy the right half of the BSP map into our map
+        for x in build_data.map.width / 2..build_data.map.width {
+            for y in 0..build_data.map.height {
+                let idx = build_data.map.xy_idx(x, y);
+                build_data.map.tiles[idx] = builder.build_data.map.tiles[idx];
+            }
+        }
+        build_data.take_snapshot();
+
+        // Keep Voronoi spawn data from the left half of the map
+        let w = build_data.map.width;
+        build_data.spawn_list.retain(|s| {
+            let x = s.0 as i32 / w;
+            x < w / 2
+        });
+
+        // Keep room spawn data from the right half of the map
+        for s in builder.build_data.spawn_list.iter() {
+            let x = s.0 as i32 / w;
+            if x > w / 2 {
+                build_data.spawn_list.push(s.clone());
+            }
+        }
     }
 }

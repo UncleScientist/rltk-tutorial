@@ -3,6 +3,14 @@ use rltk::{FontCharType, RGB};
 
 pub fn tile_glyph(idx: usize, map: &Map) -> RenderTile {
     let RenderTile(glyph, mut fg, mut bg) = match map.depth {
+        5 => {
+            let x = idx as i32 % map.width;
+            if x < map.width / 2 {
+                get_limestone_cavern_glyph(idx, map)
+            } else {
+                get_tile_glyph_default(idx, map)
+            }
+        }
         3 | 4 => get_limestone_cavern_glyph(idx, map),
         2 => get_forest_glyph(idx, map),
         _ => get_tile_glyph_default(idx, map),
