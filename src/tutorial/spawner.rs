@@ -149,7 +149,7 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             level: 1,
             total_weight: 0.0,
             total_initiative_penalty: 0.0,
-            gold: 100.0,
+            gold: 0.0,
             god_mode: false,
         })
         .with(EquipmentChanged {})
@@ -192,18 +192,6 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         ecs,
         "Old Boots",
         SpawnType::Equipped { by: player },
-    );
-    spawn_named_entity(
-        &RAWS.lock().unwrap(),
-        ecs,
-        "Confusion Scroll",
-        SpawnType::Carried { by: player },
-    );
-    spawn_named_entity(
-        &RAWS.lock().unwrap(),
-        ecs,
-        "Magic Mapping Scroll",
-        SpawnType::Carried { by: player },
     );
 
     player

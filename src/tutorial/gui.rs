@@ -16,6 +16,7 @@ pub enum CheatMenuResult {
     TeleportToExit,
     Heal,
     Reveal,
+    Money,
     GodMode,
 }
 
@@ -367,7 +368,7 @@ pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
     let white = RGB::named(WHITE);
     let black = RGB::named(BLACK);
     let yellow = RGB::named(YELLOW);
-    let count = 4;
+    let count = 5;
     let mut y = (25 - (count / 2)) as i32;
     ctx.draw_box(15, y - 2, 31, (count + 3) as i32, white, black);
     ctx.print_color(18, y - 2, yellow, black, "Cheating!");
@@ -396,11 +397,18 @@ pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
     ctx.set(19, y, white, black, rltk::to_cp437(')'));
     ctx.print(21, y, "God Mode (no death)");
 
+    y += 1;
+    ctx.set(17, y, white, black, rltk::to_cp437('('));
+    ctx.set(18, y, white, black, rltk::to_cp437('M'));
+    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.print(21, y, "Make some Money");
+
     match ctx.key {
         None => CheatMenuResult::NoResponse,
         Some(key) => match key {
             VirtualKeyCode::G => CheatMenuResult::GodMode,
             VirtualKeyCode::H => CheatMenuResult::Heal,
+            VirtualKeyCode::M => CheatMenuResult::Money,
             VirtualKeyCode::R => CheatMenuResult::Reveal,
             VirtualKeyCode::T => CheatMenuResult::TeleportToExit,
             VirtualKeyCode::Escape => CheatMenuResult::Cancel,
