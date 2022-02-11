@@ -1,4 +1,4 @@
-use crate::{Chasing, EntityMoved, Map, MyTurn, Position, Viewshed};
+use crate::{ApplyMove, Chasing, Map, MyTurn, Position};
 use specs::prelude::*;
 use std::collections::HashMap;
 
@@ -7,19 +7,17 @@ pub struct ChaseAI {}
 type ChaseData<'a> = (
     WriteStorage<'a, MyTurn>,
     WriteStorage<'a, Chasing>,
-    WriteStorage<'a, Position>,
+    ReadStorage<'a, Position>,
     ReadExpect<'a, Map>,
-    WriteStorage<'a, Viewshed>,
-    WriteStorage<'a, EntityMoved>,
     Entities<'a>,
+    WriteStorage<'a, ApplyMove>,
 );
 
 impl<'a> System<'a> for ChaseAI {
     type SystemData = ChaseData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut turns, mut chasing, mut positions, map, mut viewsheds, mut entity_moved, entities) =
-            data;
+        let (mut turns, mut chasing, positions, map, entities, mut apply_move) = data;
 
         let mut targets = HashMap::new();
         let mut end_chase = Vec::new();
@@ -38,9 +36,7 @@ impl<'a> System<'a> for ChaseAI {
         end_chase.clear();
 
         let mut turn_done = Vec::new();
-        for (entity, mut pos, _chase, mut viewshed, _myturn) in
-            (&entities, &mut positions, &chasing, &mut viewsheds, &turns).join()
-        {
+        for (entity, pos, _chase, _myturn) in (&entities, &positions, &chasing, &turns).join() {
             turn_done.push(entity);
             let target_pos = targets[&entity];
             let path = rltk::a_star_search(
@@ -49,15 +45,14 @@ impl<'a> System<'a> for ChaseAI {
                 &*map,
             );
             if path.success && path.steps.len() > 1 && path.steps.len() < 15 {
-                let idx = map.xy_idx(pos.x, pos.y);
-                pos.x = path.steps[1] as i32 % map.width;
-                pos.y = path.steps[1] as i32 / map.width;
-                entity_moved
-                    .insert(entity, EntityMoved {})
-                    .expect("Unable to insert marker");
-                let new_idx = map.xy_idx(pos.x, pos.y);
-                crate::spatial::move_entity(entity, idx, new_idx);
-                viewshed.dirty = true;
+                apply_move
+                    .insert(
+                        entity,
+                        ApplyMove {
+                            dest_idx: path.steps[1],
+                        },
+                    )
+                    .expect("Unable to insert");
                 turn_done.push(entity);
             } else {
                 end_chase.push(entity);

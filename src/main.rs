@@ -22,6 +22,8 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<ApplyMove>();
+    gs.ecs.register::<ApplyTeleport>();
     gs.ecs.register::<AreaOfEffect>();
     gs.ecs.register::<Attributes>();
     gs.ecs.register::<BlocksTile>();

@@ -60,3 +60,6 @@ pub use camera::*;
 
 pub mod gamesystem;
 pub use gamesystem::*;
+
+pub mod movement_system;
+pub use movement_system::*;
