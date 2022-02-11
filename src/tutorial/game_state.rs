@@ -1,5 +1,5 @@
 use crate::*;
-use rltk::{GameState, Rltk};
+use rltk::{GameState, Point, Rltk};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum VendorMode {
@@ -35,6 +35,11 @@ pub enum RunState {
     ShowVendor {
         vendor: Entity,
         mode: VendorMode,
+    },
+    TeleportingToOtherLevel {
+        x: i32,
+        y: i32,
+        depth: i32,
     },
 }
 
@@ -177,6 +182,9 @@ impl GameState for State {
                             newrunstate = RunState::MagicMapReveal { row: 0 }
                         }
                         RunState::TownPortal => newrunstate = RunState::TownPortal,
+                        RunState::TeleportingToOtherLevel { x, y, depth } => {
+                            newrunstate = RunState::TeleportingToOtherLevel { x, y, depth }
+                        }
                         _ => newrunstate = RunState::Ticking,
                     }
                 }
@@ -353,6 +361,20 @@ impl GameState for State {
                 let map_depth = self.ecs.fetch::<Map>().depth;
                 let destination_offset = 0 - (map_depth - 1);
                 self.goto_level(destination_offset);
+                self.mapgen_next_state = Some(RunState::PreRun);
+                newrunstate = RunState::MapGeneration;
+            }
+            RunState::TeleportingToOtherLevel { x, y, depth } => {
+                self.goto_level(depth - 1);
+                let player_entity = self.ecs.fetch::<Entity>();
+                if let Some(pos) = self.ecs.write_storage::<Position>().get_mut(*player_entity) {
+                    pos.x = x;
+                    pos.y = y;
+                }
+
+                let mut ppos = self.ecs.fetch_mut::<Point>();
+                ppos.x = x;
+                ppos.y = y;
                 self.mapgen_next_state = Some(RunState::PreRun);
                 newrunstate = RunState::MapGeneration;
             }

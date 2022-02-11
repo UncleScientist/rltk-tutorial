@@ -1,14 +1,13 @@
 use crate::{
-    ApplyMove, ApplyTeleport, BlocksTile, EntityMoved, Map, OtherLevelPosition, Position, Viewshed,
+    ApplyMove, ApplyTeleport, EntityMoved, Map, OtherLevelPosition, Position, RunState, Viewshed,
 };
 use specs::prelude::*;
 
 pub struct MovementSystem {}
 
 type MovementData<'a> = (
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     WriteStorage<'a, Position>,
-    ReadStorage<'a, BlocksTile>,
     Entities<'a>,
     WriteStorage<'a, ApplyMove>,
     WriteStorage<'a, ApplyTeleport>,
@@ -16,6 +15,7 @@ type MovementData<'a> = (
     WriteStorage<'a, EntityMoved>,
     WriteStorage<'a, Viewshed>,
     ReadExpect<'a, Entity>,
+    WriteExpect<'a, RunState>,
 );
 
 impl<'a> System<'a> for MovementSystem {
@@ -23,9 +23,8 @@ impl<'a> System<'a> for MovementSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let (
-            mut map,
+            map,
             mut position,
-            blockers,
             entities,
             mut apply_move,
             mut apply_teleport,
@@ -33,6 +32,7 @@ impl<'a> System<'a> for MovementSystem {
             mut moved,
             mut viewsheds,
             player_entity,
+            mut runstate,
         ) = data;
 
         // Apply teleports
@@ -47,7 +47,11 @@ impl<'a> System<'a> for MovementSystem {
                     )
                     .expect("Unable to insert");
             } else if entity == *player_entity {
-                rltk::console::log(format!("Not implemented yet"));
+                *runstate = RunState::TeleportingToOtherLevel {
+                    x: teleport.dest_x,
+                    y: teleport.dest_y,
+                    depth: teleport.dest_depth,
+                };
             } else if let Some(pos) = position.get(entity) {
                 let idx = map.xy_idx(pos.x, pos.y);
                 let dest_idx = map.xy_idx(teleport.dest_x, teleport.dest_y);

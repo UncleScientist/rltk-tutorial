@@ -1,6 +1,6 @@
 use super::{
-    gamelog::GameLog, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Name, ParticleBuilder,
-    Position, SingleActivation, SufferDamage,
+    gamelog::GameLog, ApplyTeleport, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Name,
+    ParticleBuilder, Position, SingleActivation, SufferDamage, TeleportTo,
 };
 use crate::Map;
 use specs::prelude::*;
@@ -20,6 +20,9 @@ type TriggerData<'a> = (
     Entities<'a>,
     WriteExpect<'a, GameLog>,
     ReadStorage<'a, SingleActivation>,
+    ReadStorage<'a, TeleportTo>,
+    WriteStorage<'a, ApplyTeleport>,
+    ReadExpect<'a, Entity>,
 );
 
 impl<'a> System<'a> for TriggerSystem {
@@ -39,6 +42,9 @@ impl<'a> System<'a> for TriggerSystem {
             entities,
             mut log,
             single_activation,
+            teleporters,
+            mut apply_teleport,
+            player_entity,
         ) = data;
 
         let mut remove_entities: Vec<Entity> = Vec::new();
@@ -63,6 +69,21 @@ impl<'a> System<'a> for TriggerSystem {
                             200.0,
                         );
                         SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage, false);
+                    }
+
+                    if let Some(teleport) = teleporters.get(entity_id) {
+                        if !teleport.player_only || entity == *player_entity {
+                            apply_teleport
+                                .insert(
+                                    entity,
+                                    ApplyTeleport {
+                                        dest_x: teleport.x,
+                                        dest_y: teleport.y,
+                                        dest_depth: teleport.depth,
+                                    },
+                                )
+                                .expect("Unable to insert");
+                        }
                     }
 
                     if single_activation.get(entity_id).is_some() {
