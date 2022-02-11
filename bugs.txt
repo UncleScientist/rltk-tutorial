@@ -1,0 +1,5 @@
+ - when going from level to level, the "revealed_tiles" are forgotten
+    (this is because we save the map only after it's newly generated, and on on
+    level change)
+
+ - with 100.0 gold, buying rations for 0.4 results in having 99.5 gold left
