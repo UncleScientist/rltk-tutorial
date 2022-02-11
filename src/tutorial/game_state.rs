@@ -25,6 +25,7 @@ pub enum RunState {
     SaveGame,
     NextLevel,
     PreviousLevel,
+    TownPortal,
     GameOver,
     MagicMapReveal {
         row: i32,
@@ -175,6 +176,7 @@ impl GameState for State {
                         RunState::MagicMapReveal { .. } => {
                             newrunstate = RunState::MagicMapReveal { row: 0 }
                         }
+                        RunState::TownPortal => newrunstate = RunState::TownPortal,
                         _ => newrunstate = RunState::Ticking,
                     }
                 }
@@ -342,6 +344,17 @@ impl GameState for State {
                 } else {
                     newrunstate = RunState::MagicMapReveal { row: row + 1 }
                 }
+            }
+            RunState::TownPortal => {
+                // Spawn the portal
+                spawner::spawn_town_portal(&mut self.ecs);
+
+                // Transition
+                let map_depth = self.ecs.fetch::<Map>().depth;
+                let destination_offset = 0 - (map_depth - 1);
+                self.goto_level(destination_offset);
+                self.mapgen_next_state = Some(RunState::PreRun);
+                newrunstate = RunState::MapGeneration;
             }
         }
 

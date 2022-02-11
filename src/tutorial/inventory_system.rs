@@ -3,8 +3,8 @@ use specs::prelude::*;
 use crate::{
     AreaOfEffect, Confusion, Consumable, EquipmentChanged, Equippable, Equipped, GameLog,
     HungerClock, HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder,
-    Pools, Position, ProvidesFood, ProvidesHealing, RunState, SufferDamage, WantsToDropItem,
-    WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
+    Pools, Position, ProvidesFood, ProvidesHealing, RunState, SufferDamage, TownPortal,
+    WantsToDropItem, WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -82,6 +82,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, ProvidesFood>,
     WriteStorage<'a, HungerClock>,
     ReadStorage<'a, MagicMapper>,
+    ReadStorage<'a, TownPortal>,
     WriteExpect<'a, RunState>,
     WriteStorage<'a, EquipmentChanged>,
 );
@@ -112,11 +113,14 @@ impl<'a> System<'a> for ItemUseSystem {
             provides_food,
             mut hunger_clocks,
             magic_mapper,
+            town_portal,
             mut runstate,
             mut dirty,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
+            let mut consume_item = true;
+
             dirty
                 .insert(entity, EquipmentChanged {})
                 .expect("Unable to insert marker");
@@ -222,6 +226,20 @@ impl<'a> System<'a> for ItemUseSystem {
                 *runstate = RunState::MagicMapReveal { row: 0 };
             }
 
+            if town_portal.get(useitem.item).is_some() {
+                if map.depth == 1 {
+                    gamelog
+                        .entries
+                        .push("You are already in town, so the scroll does nothing".to_string());
+                    consume_item = false;
+                } else {
+                    gamelog
+                        .entries
+                        .push("You are teleported back to town!".to_string());
+                    *runstate = RunState::TownPortal;
+                }
+            }
+
             if provides_food.get(useitem.item).is_some() {
                 let target = targets[0];
                 if let Some(hc) = hunger_clocks.get_mut(target) {
@@ -295,7 +313,7 @@ impl<'a> System<'a> for ItemUseSystem {
                     .expect("Unable to insert status");
             }
 
-            if consumables.get(useitem.item).is_some() {
+            if consume_item && consumables.get(useitem.item).is_some() {
                 entities.delete(useitem.item).expect("Delete failed");
             }
         }

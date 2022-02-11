@@ -249,6 +249,7 @@ fn spawn_named_item(
                             turns: str_to_i32(effect.1),
                         })
                     }
+                    "town_portal" => eb = eb.with(TownPortal {}),
                     "magic_mapping" => eb = eb.with(MagicMapper {}),
                     "food" => eb = eb.with(ProvidesFood {}),
                     _ => {

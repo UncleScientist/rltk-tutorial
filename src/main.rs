@@ -33,9 +33,9 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Door>();
     gs.ecs.register::<EntityMoved>();
     gs.ecs.register::<EntryTrigger>();
+    gs.ecs.register::<EquipmentChanged>();
     gs.ecs.register::<Equippable>();
     gs.ecs.register::<Equipped>();
-    gs.ecs.register::<EquipmentChanged>();
     gs.ecs.register::<Faction>();
     gs.ecs.register::<Hidden>();
     gs.ecs.register::<HungerClock>();
@@ -66,6 +66,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SingleActivation>();
     gs.ecs.register::<Skills>();
     gs.ecs.register::<SufferDamage>();
+    gs.ecs.register::<TeleportTo>();
+    gs.ecs.register::<TownPortal>();
     gs.ecs.register::<Vendor>();
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<WantsToApproach>();

@@ -11,6 +11,17 @@ use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
 
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct TownPortal {}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct TeleportTo {
+    pub x: i32,
+    pub y: i32,
+    pub depth: i32,
+    pub player_only: bool,
+}
+
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct Vendor {
     pub categories: Vec<String>,

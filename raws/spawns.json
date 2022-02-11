@@ -34,7 +34,9 @@
     { "name" : "Landmine", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Breastplate", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "War Axe", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
-    { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 }
+    { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
+    { "name" : "Town Portal Scroll", "weight" : 4, "min_depth" : 0, "max_depth" : 100 }
+
 ],
 
 "loot_tables" : [
@@ -61,6 +63,24 @@
 ],
 
 "items" : [
+    {
+        "name" : "Town Portal Scroll",
+        "renderable": {
+            "glyph" : ")",
+            "fg" : "#AAAAFF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : {
+                "town_portal" : ""
+            }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 20.0,
+        "vendor_category" : "alchemy"
+    },
+
     {
         "name" : "Breastplate",
         "renderable": {
