@@ -79,7 +79,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 20.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {
@@ -200,7 +200,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 50.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {
@@ -220,7 +220,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 50.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {
@@ -241,7 +241,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 100.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {
@@ -261,7 +261,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 75.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {
@@ -280,7 +280,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 50.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common" }
+        "magic": { "class": "common", "naming": "scroll" }
     },
 
     {

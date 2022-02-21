@@ -1,7 +1,7 @@
 use crate::{
     camera, Attribute, Attributes, Consumable, Equipped, GameLog, Hidden, HungerClock, HungerState,
-    InBackpack, Item, MagicItem, MagicItemClass, Map, Name, Owned, Pools, Position, RexAssets,
-    RunState, State, Vendor, VendorMode, Viewshed,
+    InBackpack, Item, MagicItem, MagicItemClass, Map, Name, ObfuscatedName, Owned, Pools, Position,
+    RexAssets, RunState, State, Vendor, VendorMode, Viewshed,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -211,10 +211,15 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let mut y = 13;
     let entities = ecs.entities();
     let equipped = ecs.read_storage::<Equipped>();
-    let name = ecs.read_storage::<Name>();
-    for (entity, equipped_by, item_name) in (&entities, &equipped, &name).join() {
+    for (entity, equipped_by) in (&entities, &equipped).join() {
         if equipped_by.owner == *player_entity {
-            ctx.print_color(50, y, get_item_color(ecs, entity), black, &item_name.name);
+            ctx.print_color(
+                50,
+                y,
+                get_item_color(ecs, entity),
+                black,
+                &get_item_display_name(ecs, entity),
+            );
             y += 1;
         }
     }
@@ -224,10 +229,16 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let consumables = ecs.read_storage::<Consumable>();
     let backpack = ecs.read_storage::<InBackpack>();
     let mut index = 1;
-    for (entity, carried_by, _, item_name) in (&entities, &backpack, &consumables, &name).join() {
+    for (entity, carried_by, _) in (&entities, &backpack, &consumables).join() {
         if carried_by.owner == *player_entity && index < 10 {
             ctx.print_color(50, y, yellow, black, &format!("↑{}", index));
-            ctx.print_color(53, y, get_item_color(ecs, entity), black, &item_name.name);
+            ctx.print_color(
+                53,
+                y,
+                get_item_color(ecs, entity),
+                black,
+                &get_item_display_name(ecs, entity),
+            );
             y += 1;
             index += 1;
         }
@@ -437,16 +448,15 @@ fn show_menu<T: Owned + Component>(
     heading: &str,
 ) -> (ItemMenuResult, Option<Entity>) {
     let player_entity = gs.ecs.fetch::<Entity>();
-    let names = gs.ecs.read_storage::<Name>();
     let backpack = gs.ecs.read_storage::<T>();
     let entities = gs.ecs.entities();
     let white = RGB::named(WHITE);
     let yellow = RGB::named(YELLOW);
     let black = RGB::named(BLACK);
 
-    let inventory = (&backpack, &names)
+    let inventory = backpack
         .join()
-        .filter(|item| item.0.owned_by() == *player_entity);
+        .filter(|item| item.owned_by() == *player_entity);
     let count = inventory.count();
 
     // TODO: remove hardcoded 25
@@ -462,10 +472,10 @@ fn show_menu<T: Owned + Component>(
     );
 
     let mut equippable: Vec<Entity> = Vec::new();
-    let inventory = (&entities, &backpack, &names)
+    let inventory = (&entities, &backpack)
         .join()
         .filter(|item| item.1.owned_by() == *player_entity);
-    for (j, (entity, _, name)) in inventory.enumerate() {
+    for (j, (entity, _)) in inventory.enumerate() {
         ctx.set(17, y, white, black, rltk::to_cp437('('));
         ctx.set(18, y, white, black, 97 + j as rltk::FontCharType);
         ctx.set(19, y, white, black, rltk::to_cp437(')'));
@@ -475,7 +485,7 @@ fn show_menu<T: Owned + Component>(
             y,
             get_item_color(&gs.ecs, entity),
             RGB::from_f32(0., 0., 0.),
-            &name.name.to_string(),
+            &get_item_display_name(&gs.ecs, entity),
         );
         equippable.push(entity);
         y += 1;
@@ -494,6 +504,25 @@ fn show_menu<T: Owned + Component>(
             }
             (ItemMenuResult::NoResponse, None)
         }
+    }
+}
+
+pub fn get_item_display_name(ecs: &World, item: Entity) -> String {
+    if let Some(name) = ecs.read_storage::<Name>().get(item) {
+        if ecs.read_storage::<MagicItem>().get(item).is_some() {
+            let dm = ecs.fetch::<crate::map::MasterDungeonMap>();
+            if dm.identified_items.contains(&name.name) {
+                name.name.clone()
+            } else if let Some(obfuscated) = ecs.read_storage::<ObfuscatedName>().get(item) {
+                obfuscated.name.clone()
+            } else {
+                "Unidentified magic item".to_string()
+            }
+        } else {
+            name.name.clone()
+        }
+    } else {
+        "Nameless item (bug)".to_string()
     }
 }
 
@@ -591,14 +620,13 @@ pub fn vendor_sell_menu(
     _mode: VendorMode,
 ) -> (VendorResult, Option<Entity>, Option<String>, Option<f32>) {
     let player_entity = gs.ecs.fetch::<Entity>();
-    let names = gs.ecs.read_storage::<Name>();
     let backpack = gs.ecs.read_storage::<InBackpack>();
     let items = gs.ecs.read_storage::<Item>();
     let entities = gs.ecs.entities();
 
-    let inventory = (&backpack, &names)
+    let inventory = (&backpack)
         .join()
-        .filter(|item| item.0.owner == *player_entity);
+        .filter(|item| item.owner == *player_entity);
     let count = inventory.count();
 
     let mut y = (25 - (count / 2)) as i32;
@@ -626,7 +654,7 @@ pub fn vendor_sell_menu(
     );
 
     let mut equippable = Vec::new();
-    for (j, (entity, _pack, name, item)) in (&entities, &backpack, &names, &items)
+    for (j, (entity, _pack, item)) in (&entities, &backpack, &items)
         .join()
         .filter(|item| item.1.owner == *player_entity)
         .enumerate()
@@ -658,7 +686,7 @@ pub fn vendor_sell_menu(
             y,
             get_item_color(&gs.ecs, entity),
             RGB::named(rltk::BLACK),
-            &name.name.to_string(),
+            &get_item_display_name(&gs.ecs, entity),
         );
         ctx.print(50, y, &format!("{:.1} gp", item.base_value * 0.8));
         equippable.push(entity);

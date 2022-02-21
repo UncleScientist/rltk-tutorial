@@ -26,6 +26,7 @@ pub struct Renderable {
 #[derive(Deserialize, Debug)]
 pub struct MagicItem {
     pub class: String,
+    pub naming: String,
 }
 
 #[derive(Deserialize, Debug)]

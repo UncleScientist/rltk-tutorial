@@ -117,6 +117,21 @@ pub fn faction_reaction(my_faction: &str, their_faction: &str, raws: &RawMaster)
     Reaction::Ignore
 }
 
+pub fn get_scroll_tags() -> Vec<String> {
+    let raws = &super::RAWS.lock().unwrap();
+    let mut result = Vec::new();
+
+    for item in raws.raws.items.iter() {
+        if let Some(magic) = &item.magic {
+            if &magic.naming == "scroll" {
+                result.push(item.name.clone());
+            }
+        }
+    }
+
+    result
+}
+
 pub fn get_item_drop(
     raws: &RawMaster,
     rng: &mut RandomNumberGenerator,
@@ -173,6 +188,10 @@ fn spawn_named_item(
 ) -> Option<Entity> {
     if raws.item_index.contains_key(key) {
         let item_template = &raws.raws.items[raws.item_index[key]];
+        let scroll_names = ecs
+            .fetch::<crate::map::MasterDungeonMap>()
+            .scroll_mappings
+            .clone();
 
         let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
         eb = spawn_position(pos, eb, key, raws);
@@ -207,6 +226,16 @@ fn spawn_named_item(
                 _ => MagicItemClass::Common,
             };
             eb = eb.with(MagicItem { class });
+
+            #[allow(clippy::single_match)]
+            match magic.naming.as_str() {
+                "scroll" => {
+                    eb = eb.with(ObfuscatedName {
+                        name: scroll_names[&item_template.name].clone(),
+                    });
+                }
+                _ => {}
+            }
         }
 
         if let Some(wearable) = &item_template.wearable {

@@ -133,6 +133,11 @@ pub struct MagicItem {
     pub class: MagicItemClass,
 }
 
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct ObfuscatedName {
+    pub name: String,
+}
+
 #[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub enum Movement {
     Static,

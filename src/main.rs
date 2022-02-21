@@ -54,6 +54,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<MyTurn>();
     gs.ecs.register::<Name>();
     gs.ecs.register::<NaturalAttackDefense>();
+    gs.ecs.register::<ObfuscatedName>();
     gs.ecs.register::<OtherLevelPosition>();
     gs.ecs.register::<ParticleLifetime>();
     gs.ecs.register::<Player>();
