@@ -265,7 +265,11 @@ fn spawn_named_item(
                             name: potion_names[&item_template.name].clone(),
                         });
                     }
-                    _ => {}
+                    _ => {
+                        eb = eb.with(ObfuscatedName {
+                            name: magic.naming.clone(),
+                        });
+                    }
                 }
             }
         }
