@@ -47,6 +47,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Item>();
     gs.ecs.register::<LightSource>();
     gs.ecs.register::<LootTable>();
+    gs.ecs.register::<MagicItem>();
     gs.ecs.register::<MagicMapper>();
     gs.ecs.register::<MeleeWeapon>();
     gs.ecs.register::<MoveMode>();

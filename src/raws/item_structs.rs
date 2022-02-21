@@ -12,6 +12,7 @@ pub struct Item {
     pub weight_lbs: Option<f32>,
     pub base_value: Option<f32>,
     pub vendor_category: Option<String>,
+    pub magic: Option<MagicItem>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -20,6 +21,11 @@ pub struct Renderable {
     pub fg: String,
     pub bg: String,
     pub order: i32,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct MagicItem {
+    pub class: String,
 }
 
 #[derive(Deserialize, Debug)]

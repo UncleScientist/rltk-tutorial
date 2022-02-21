@@ -1,7 +1,7 @@
 use crate::{
     camera, Attribute, Attributes, Consumable, Equipped, GameLog, Hidden, HungerClock, HungerState,
-    InBackpack, Item, Map, Name, Owned, Pools, Position, RexAssets, RunState, State, Vendor,
-    VendorMode, Viewshed,
+    InBackpack, Item, MagicItem, MagicItemClass, Map, Name, Owned, Pools, Position, RexAssets,
+    RunState, State, Vendor, VendorMode, Viewshed,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -209,23 +209,25 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
 
     // Equipped
     let mut y = 13;
+    let entities = ecs.entities();
     let equipped = ecs.read_storage::<Equipped>();
     let name = ecs.read_storage::<Name>();
-    for (equipped_by, item_name) in (&equipped, &name).join() {
+    for (entity, equipped_by, item_name) in (&entities, &equipped, &name).join() {
         if equipped_by.owner == *player_entity {
-            ctx.print_color(50, y, white, black, &item_name.name);
+            ctx.print_color(50, y, get_item_color(ecs, entity), black, &item_name.name);
             y += 1;
         }
     }
 
+    // Consumables
     y += 1;
     let consumables = ecs.read_storage::<Consumable>();
     let backpack = ecs.read_storage::<InBackpack>();
     let mut index = 1;
-    for (carried_by, _, item_name) in (&backpack, &consumables, &name).join() {
+    for (entity, carried_by, _, item_name) in (&entities, &backpack, &consumables, &name).join() {
         if carried_by.owner == *player_entity && index < 10 {
             ctx.print_color(50, y, yellow, black, &format!("↑{}", index));
-            ctx.print_color(53, y, green, black, &item_name.name);
+            ctx.print_color(53, y, get_item_color(ecs, entity), black, &item_name.name);
             y += 1;
             index += 1;
         }
@@ -468,7 +470,13 @@ fn show_menu<T: Owned + Component>(
         ctx.set(18, y, white, black, 97 + j as rltk::FontCharType);
         ctx.set(19, y, white, black, rltk::to_cp437(')'));
 
-        ctx.print(21, y, &name.name.to_string());
+        ctx.print_color(
+            21,
+            y,
+            get_item_color(&gs.ecs, entity),
+            RGB::from_f32(0., 0., 0.),
+            &name.name.to_string(),
+        );
         equippable.push(entity);
         y += 1;
     }
@@ -645,7 +653,13 @@ pub fn vendor_sell_menu(
             rltk::to_cp437(')'),
         );
 
-        ctx.print(21, y, &name.name.to_string());
+        ctx.print_color(
+            21,
+            y,
+            get_item_color(&gs.ecs, entity),
+            RGB::named(rltk::BLACK),
+            &name.name.to_string(),
+        );
         ctx.print(50, y, &format!("{:.1} gp", item.base_value * 0.8));
         equippable.push(entity);
         y += 1;
@@ -757,6 +771,17 @@ pub fn vendor_buy_menu(
             }
         },
     }
+}
+
+pub fn get_item_color(ecs: &World, item: Entity) -> RGB {
+    if let Some(magic) = ecs.read_storage::<MagicItem>().get(item) {
+        match magic.class {
+            MagicItemClass::Common => return RGB::from_f32(0.5, 1.0, 0.5),
+            MagicItemClass::Rare => return RGB::from_f32(0.0, 1.0, 1.0),
+            MagicItemClass::Legendary => return RGB::from_f32(0.71, 0.15, 0.93),
+        }
+    }
+    RGB::from_f32(1.0, 1.0, 1.0)
 }
 
 pub fn main_menu(gs: &mut State, ctx: &mut Rltk) -> MainMenuResult {

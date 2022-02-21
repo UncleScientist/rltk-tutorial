@@ -122,6 +122,18 @@ pub struct Pools {
 }
 
 #[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
+pub enum MagicItemClass {
+    Common,
+    Rare,
+    Legendary,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct MagicItem {
+    pub class: MagicItemClass,
+}
+
+#[derive(Serialize, Deserialize, Clone, Eq, PartialEq, Hash)]
 pub enum Movement {
     Static,
     Random,

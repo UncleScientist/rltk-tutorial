@@ -200,6 +200,15 @@ fn spawn_named_item(
             eb = eb.with(wpn);
         }
 
+        if let Some(magic) = &item_template.magic {
+            let class = match magic.class.as_str() {
+                "rare" => MagicItemClass::Rare,
+                "legendary" => MagicItemClass::Legendary,
+                _ => MagicItemClass::Common,
+            };
+            eb = eb.with(MagicItem { class });
+        }
+
         if let Some(wearable) = &item_template.wearable {
             let slot = string_to_slot(&wearable.slot);
             eb = eb.with(Equippable { slot });
