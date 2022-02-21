@@ -200,7 +200,7 @@
         "weight_lbs" : 0.5,
         "base_value" : 50.0,
         "vendor_category" : "alchemy",
-        "magic": { "class": "common", "naming": "scroll" }
+        "magic": { "class": "common", "naming": "potion" }
     },
 
     {

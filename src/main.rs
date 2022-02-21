@@ -41,6 +41,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Faction>();
     gs.ecs.register::<Hidden>();
     gs.ecs.register::<HungerClock>();
+    gs.ecs.register::<IdentifiedItem>();
     gs.ecs.register::<InBackpack>();
     gs.ecs.register::<InflictsDamage>();
     gs.ecs.register::<Initiative>();

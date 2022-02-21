@@ -129,6 +129,11 @@ pub enum MagicItemClass {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct IdentifiedItem {
+    pub name: String,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct MagicItem {
     pub class: MagicItemClass,
 }

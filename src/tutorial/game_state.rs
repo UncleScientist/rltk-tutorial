@@ -301,7 +301,16 @@ impl GameState for State {
                         let tag = result.2.unwrap();
                         let price = result.3.unwrap();
                         let mut pools = self.ecs.write_storage::<Pools>();
-                        let player_pools = pools.get_mut(*self.ecs.fetch::<Entity>()).unwrap();
+                        let player_entity = self.ecs.fetch::<Entity>();
+                        let mut identified = self.ecs.write_storage::<IdentifiedItem>();
+
+                        identified
+                            .insert(*player_entity, IdentifiedItem { name: tag.clone() })
+                            .expect("Unable to insert");
+                        std::mem::drop(identified);
+
+                        let player_pools = pools.get_mut(*player_entity).unwrap();
+                        std::mem::drop(player_entity);
 
                         if player_pools.gold >= price {
                             player_pools.gold -= price;
@@ -450,6 +459,9 @@ impl State {
 
         let mut remove_items = ItemRemoveSystem {};
         remove_items.run_now(&self.ecs);
+
+        let mut item_id = ItemIdentificationSystem {};
+        item_id.run_now(&self.ecs);
 
         let mut hunger = hunger_system::HungerSystem {};
         hunger.run_now(&self.ecs);

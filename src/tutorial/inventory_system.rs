@@ -2,9 +2,10 @@ use specs::prelude::*;
 
 use crate::{
     AreaOfEffect, Confusion, Consumable, EquipmentChanged, Equippable, Equipped, GameLog,
-    HungerClock, HungerState, InBackpack, InflictsDamage, MagicMapper, Map, Name, ParticleBuilder,
-    Pools, Position, ProvidesFood, ProvidesHealing, RunState, SufferDamage, TownPortal,
-    WantsToDropItem, WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
+    HungerClock, HungerState, IdentifiedItem, InBackpack, InflictsDamage, Item, MagicMapper, Map,
+    MasterDungeonMap, Name, ObfuscatedName, ParticleBuilder, Player, Pools, Position, ProvidesFood,
+    ProvidesHealing, RunState, SufferDamage, TownPortal, WantsToDropItem, WantsToPickupItem,
+    WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -85,6 +86,7 @@ type ItemUseData<'a> = (
     ReadStorage<'a, TownPortal>,
     WriteExpect<'a, RunState>,
     WriteStorage<'a, EquipmentChanged>,
+    WriteStorage<'a, IdentifiedItem>,
 );
 
 impl<'a> System<'a> for ItemUseSystem {
@@ -116,6 +118,7 @@ impl<'a> System<'a> for ItemUseSystem {
             town_portal,
             mut runstate,
             mut dirty,
+            mut identified_item,
         ) = data;
 
         for (entity, useitem) in (&entities, &use_items).join() {
@@ -149,6 +152,18 @@ impl<'a> System<'a> for ItemUseSystem {
                 }
             } else {
                 targets.push(*player_entity);
+            }
+
+            // Identify
+            if entity == *player_entity {
+                identified_item
+                    .insert(
+                        entity,
+                        IdentifiedItem {
+                            name: names.get(useitem.item).unwrap().name.clone(),
+                        },
+                    )
+                    .expect("Unable to insert");
             }
 
             if let Some(can_equip) = equippable.get(useitem.item) {
@@ -424,5 +439,40 @@ impl<'a> System<'a> for ItemRemoveSystem {
         }
 
         wants_remove.clear();
+    }
+}
+
+pub struct ItemIdentificationSystem {}
+
+type ItemIdentificationData<'a> = (
+    ReadStorage<'a, Player>,
+    WriteStorage<'a, IdentifiedItem>,
+    WriteExpect<'a, MasterDungeonMap>,
+    ReadStorage<'a, Item>,
+    ReadStorage<'a, Name>,
+    WriteStorage<'a, ObfuscatedName>,
+    Entities<'a>,
+);
+
+impl<'a> System<'a> for ItemIdentificationSystem {
+    type SystemData = ItemIdentificationData<'a>;
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (player, mut identified, mut dm, items, names, mut obfuscated_names, entities) = data;
+
+        for (_p, id) in (&player, &identified).join() {
+            if !dm.identified_items.contains(&id.name) && crate::raws::is_tag_magic(&id.name) {
+                dm.identified_items.insert(id.name.clone());
+
+                for (entity, _item, name) in (&entities, &items, &names).join() {
+                    if name.name == id.name {
+                        obfuscated_names.remove(entity);
+                    }
+                }
+            }
+        }
+
+        // Clean up
+        identified.clear();
     }
 }

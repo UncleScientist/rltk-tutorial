@@ -163,6 +163,16 @@ pub fn get_vendor_items(categories: &[String], raws: &RawMaster) -> Vec<(String,
     result
 }
 
+pub fn is_tag_magic(tag: &str) -> bool {
+    let raws = &super::RAWS.lock().unwrap();
+    if raws.item_index.contains_key(tag) {
+        let item_template = &raws.raws.items[raws.item_index[tag]];
+        item_template.magic.is_some()
+    } else {
+        false
+    }
+}
+
 pub fn spawn_named_entity(
     raws: &RawMaster,
     ecs: &mut World,
@@ -188,10 +198,10 @@ fn spawn_named_item(
 ) -> Option<Entity> {
     if raws.item_index.contains_key(key) {
         let item_template = &raws.raws.items[raws.item_index[key]];
-        let scroll_names = ecs
-            .fetch::<crate::map::MasterDungeonMap>()
-            .scroll_mappings
-            .clone();
+        let dm = ecs.fetch::<crate::map::MasterDungeonMap>();
+        let scroll_names = dm.scroll_mappings.clone();
+        let identified = dm.identified_items.clone();
+        std::mem::drop(dm);
 
         let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
         eb = spawn_position(pos, eb, key, raws);
@@ -227,14 +237,16 @@ fn spawn_named_item(
             };
             eb = eb.with(MagicItem { class });
 
-            #[allow(clippy::single_match)]
-            match magic.naming.as_str() {
-                "scroll" => {
-                    eb = eb.with(ObfuscatedName {
-                        name: scroll_names[&item_template.name].clone(),
-                    });
+            if !identified.contains(&item_template.name) {
+                #[allow(clippy::single_match)]
+                match magic.naming.as_str() {
+                    "scroll" => {
+                        eb = eb.with(ObfuscatedName {
+                            name: scroll_names[&item_template.name].clone(),
+                        });
+                    }
+                    _ => {}
                 }
-                _ => {}
             }
         }
 
