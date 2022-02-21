@@ -269,7 +269,6 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
 fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     let (min_x, _, min_y, _) = camera::get_screen_bounds(ecs, ctx);
     let map = ecs.fetch::<Map>();
-    let names = ecs.read_storage::<Name>();
     let positions = ecs.read_storage::<Position>();
     let hidden = ecs.read_storage::<Hidden>();
     let attributes = ecs.read_storage::<Attributes>();
@@ -293,10 +292,10 @@ fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     }
 
     let mut tip_boxes: Vec<Tooltip> = Vec::new();
-    for (entity, name, position, _) in (&entities, &names, &positions, !&hidden).join() {
+    for (entity, position, _) in (&entities, &positions, !&hidden).join() {
         if position.x == mouse_map_pos.0 && position.y == mouse_map_pos.1 {
             let mut tip = Tooltip::new();
-            tip.add(name.name.to_string());
+            tip.add(get_item_display_name(ecs, entity));
 
             if let Some(attr) = attributes.get(entity) {
                 let mut s = "".to_string(); // String::new()

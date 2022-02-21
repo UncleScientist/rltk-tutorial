@@ -2,10 +2,10 @@ use specs::prelude::*;
 
 use crate::{
     AreaOfEffect, Confusion, Consumable, EquipmentChanged, Equippable, Equipped, GameLog,
-    HungerClock, HungerState, IdentifiedItem, InBackpack, InflictsDamage, Item, MagicMapper, Map,
-    MasterDungeonMap, Name, ObfuscatedName, ParticleBuilder, Player, Pools, Position, ProvidesFood,
-    ProvidesHealing, RunState, SufferDamage, TownPortal, WantsToDropItem, WantsToPickupItem,
-    WantsToRemoveItem, WantsToUseItem,
+    HungerClock, HungerState, IdentifiedItem, InBackpack, InflictsDamage, Item, MagicItem,
+    MagicMapper, Map, MasterDungeonMap, Name, ObfuscatedName, ParticleBuilder, Player, Pools,
+    Position, ProvidesFood, ProvidesHealing, RunState, SufferDamage, TownPortal, WantsToDropItem,
+    WantsToPickupItem, WantsToRemoveItem, WantsToUseItem,
 };
 
 pub struct ItemCollectionSystem {}
@@ -18,6 +18,9 @@ type ItemCollectionData<'a> = (
     ReadStorage<'a, Name>,
     WriteStorage<'a, InBackpack>,
     WriteStorage<'a, EquipmentChanged>,
+    ReadStorage<'a, MagicItem>,
+    ReadStorage<'a, ObfuscatedName>,
+    ReadExpect<'a, MasterDungeonMap>,
 );
 
 impl<'a> System<'a> for ItemCollectionSystem {
@@ -32,6 +35,9 @@ impl<'a> System<'a> for ItemCollectionSystem {
             names,
             mut backpack,
             mut dirty,
+            magic_items,
+            obfuscated_names,
+            dm,
         ) = data;
 
         for pickup in wants_pickup.join() {
@@ -50,7 +56,7 @@ impl<'a> System<'a> for ItemCollectionSystem {
             if pickup.collected_by == *player_entity {
                 gamelog.entries.push(format!(
                     "You pick up the {}.",
-                    names.get(pickup.item).unwrap().name
+                    obfuscate_name(pickup.item, &names, &magic_items, &obfuscated_names, &dm)
                 ));
             }
         }
@@ -348,6 +354,9 @@ type ItemDropData<'a> = (
     WriteStorage<'a, Position>,
     WriteStorage<'a, InBackpack>,
     WriteStorage<'a, EquipmentChanged>,
+    ReadStorage<'a, MagicItem>,
+    ReadStorage<'a, ObfuscatedName>,
+    ReadExpect<'a, MasterDungeonMap>,
 );
 
 impl<'a> System<'a> for ItemDropSystem {
@@ -363,6 +372,9 @@ impl<'a> System<'a> for ItemDropSystem {
             mut positions,
             mut backpack,
             mut dirty,
+            magic_items,
+            obfuscated_names,
+            dm,
         ) = data;
 
         for (entity, to_drop) in (&entities, &wants_drop).join() {
@@ -385,7 +397,7 @@ impl<'a> System<'a> for ItemDropSystem {
             if entity == *player_entity {
                 gamelog.entries.push(format!(
                     "You drop the {}.",
-                    names.get(to_drop.item).unwrap().name
+                    obfuscate_name(to_drop.item, &names, &magic_items, &obfuscated_names, &dm)
                 ));
             }
         }
@@ -474,5 +486,29 @@ impl<'a> System<'a> for ItemIdentificationSystem {
 
         // Clean up
         identified.clear();
+    }
+}
+
+fn obfuscate_name(
+    item: Entity,
+    names: &ReadStorage<Name>,
+    magic_items: &ReadStorage<MagicItem>,
+    obfuscated_names: &ReadStorage<ObfuscatedName>,
+    dm: &MasterDungeonMap,
+) -> String {
+    if let Some(name) = names.get(item) {
+        if magic_items.get(item).is_some() {
+            if dm.identified_items.contains(&name.name) {
+                name.name.clone()
+            } else if let Some(obfuscated) = obfuscated_names.get(item) {
+                obfuscated.name.clone()
+            } else {
+                "Unidentified magic item".to_string()
+            }
+        } else {
+            name.name.clone()
+        }
+    } else {
+        "Nameless item (bug)".to_string()
     }
 }
