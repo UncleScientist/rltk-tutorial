@@ -1,7 +1,7 @@
 use crate::{
-    skill_bonus, Attributes, EquipmentSlot, Equipped, GameLog, HungerClock, HungerState,
-    MeleeWeapon, Name, NaturalAttackDefense, ParticleBuilder, Pools, Position, Skill, Skills,
-    SufferDamage, WantsToMelee, WeaponAttribute, Wearable,
+    effects::*, skill_bonus, Attributes, EquipmentSlot, Equipped, GameLog, HungerClock,
+    HungerState, MeleeWeapon, Name, NaturalAttackDefense, ParticleBuilder, Pools, Position, Skill,
+    Skills, WantsToMelee, WeaponAttribute, Wearable,
 };
 
 use rltk::RandomNumberGenerator;
@@ -16,7 +16,6 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, Name>,
     ReadStorage<'a, Attributes>,
     ReadStorage<'a, Skills>,
-    WriteStorage<'a, SufferDamage>,
     WriteExpect<'a, ParticleBuilder>,
     ReadStorage<'a, Position>,
     WriteStorage<'a, HungerClock>,
@@ -26,7 +25,6 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, MeleeWeapon>,
     ReadStorage<'a, Wearable>,
     ReadStorage<'a, NaturalAttackDefense>,
-    ReadExpect<'a, Entity>,
 );
 
 impl<'a> System<'a> for MeleeCombatSystem {
@@ -40,7 +38,6 @@ impl<'a> System<'a> for MeleeCombatSystem {
             names,
             attributes,
             skills,
-            mut inflict_damage,
             mut particle_builder,
             positions,
             hunger_clock,
@@ -50,7 +47,6 @@ impl<'a> System<'a> for MeleeCombatSystem {
             meleeweapons,
             wearables,
             natural,
-            player_entity,
         ) = data;
 
         for (entity, wants_melee, name, attacker_attributes, attacker_skills, attacker_pools) in (
@@ -148,11 +144,12 @@ impl<'a> System<'a> for MeleeCombatSystem {
                             + skill_damage_bonus
                             + weapon_damage_bonus,
                     );
-                    SufferDamage::new_damage(
-                        &mut inflict_damage,
-                        wants_melee.target,
-                        damage,
-                        entity == *player_entity,
+                    add_effect(
+                        Some(entity),
+                        EffectType::Damage { amount: damage },
+                        Targets::Single {
+                            target: wants_melee.target,
+                        },
                     );
                     log.entries.push(format!(
                         "{} hits {}, for {} hp",

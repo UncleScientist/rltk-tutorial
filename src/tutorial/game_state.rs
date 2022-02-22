@@ -466,6 +466,8 @@ impl State {
         let mut hunger = hunger_system::HungerSystem {};
         hunger.run_now(&self.ecs);
 
+        effects::run_effects_queue(&mut self.ecs);
+
         let mut particles = ParticleSpawnSystem {};
         particles.run_now(&self.ecs);
 

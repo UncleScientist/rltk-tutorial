@@ -1,8 +1,7 @@
-use super::{
-    gamelog::GameLog, ApplyTeleport, EntityMoved, EntryTrigger, Hidden, InflictsDamage, Name,
-    ParticleBuilder, Position, SingleActivation, SufferDamage, TeleportTo,
+use crate::{
+    effects::*, gamelog::GameLog, ApplyTeleport, EntityMoved, EntryTrigger, Hidden, InflictsDamage,
+    Map, Name, ParticleBuilder, Position, SingleActivation, TeleportTo,
 };
-use crate::Map;
 use specs::prelude::*;
 
 pub struct TriggerSystem;
@@ -15,7 +14,6 @@ type TriggerData<'a> = (
     WriteStorage<'a, Hidden>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, InflictsDamage>,
-    WriteStorage<'a, SufferDamage>,
     WriteExpect<'a, ParticleBuilder>,
     Entities<'a>,
     WriteExpect<'a, GameLog>,
@@ -37,7 +35,6 @@ impl<'a> System<'a> for TriggerSystem {
             mut hidden,
             names,
             inflicts_damage,
-            mut inflict_damage,
             mut particle_builder,
             entities,
             mut log,
@@ -68,7 +65,13 @@ impl<'a> System<'a> for TriggerSystem {
                             rltk::to_cp437('‼'),
                             200.0,
                         );
-                        SufferDamage::new_damage(&mut inflict_damage, entity, damage.damage, false);
+                        add_effect(
+                            None,
+                            EffectType::Damage {
+                                amount: damage.damage,
+                            },
+                            Targets::Single { target: entity },
+                        );
                     }
 
                     if let Some(teleport) = teleporters.get(entity_id) {
