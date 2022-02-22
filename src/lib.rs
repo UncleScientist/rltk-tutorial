@@ -19,3 +19,6 @@ pub use spatial::*;
 
 pub mod tutorial;
 pub use tutorial::*;
+
+pub mod inventory_system;
+pub use inventory_system::*;
