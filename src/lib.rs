@@ -22,3 +22,6 @@ pub use tutorial::*;
 
 pub mod inventory_system;
 pub use inventory_system::*;
+
+pub mod effects;
+pub use effects::*;
