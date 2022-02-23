@@ -29,6 +29,7 @@ pub enum EffectType {
         bg: rltk::RGB,
         lifespan: f32,
     },
+    EntityDeath,
 }
 
 #[derive(Clone)]
@@ -105,6 +106,7 @@ fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
 fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
     match &effect.effect_type {
         EffectType::Damage { .. } => damage::inflict_damage(ecs, effect, target),
+        EffectType::EntityDeath { .. } => damage::death(ecs, effect, target),
         EffectType::Bloodstain { .. } => {
             if let Some(pos) = entity_position(ecs, target) {
                 damage::bloodstain(ecs, pos)
