@@ -17,6 +17,9 @@ pub use remove_system::ItemRemoveSystem;
 mod identification_system;
 pub use identification_system::ItemIdentificationSystem;
 
+mod use_equip;
+pub use use_equip::*;
+
 fn obfuscate_name(
     item: Entity,
     names: &ReadStorage<Name>,

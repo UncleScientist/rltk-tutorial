@@ -451,6 +451,9 @@ impl State {
         let mut pickup = inventory_system::ItemCollectionSystem {};
         pickup.run_now(&self.ecs);
 
+        let mut itemequip = inventory_system::ItemEquipOnUse {};
+        itemequip.run_now(&self.ecs);
+
         let mut items = ItemUseSystem {};
         items.run_now(&self.ecs);
 
