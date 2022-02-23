@@ -14,6 +14,9 @@ pub use targetting::*;
 mod particles;
 pub use particles::*;
 
+mod triggers;
+pub use triggers::*;
+
 lazy_static! {
     pub static ref EFFECT_QUEUE: Mutex<VecDeque<EffectSpawner>> = Mutex::new(VecDeque::new());
 }
@@ -30,6 +33,9 @@ pub enum EffectType {
         lifespan: f32,
     },
     EntityDeath,
+    ItemUse {
+        item: Entity,
+    },
 }
 
 #[derive(Clone)]
@@ -73,15 +79,19 @@ pub fn run_effects_queue(ecs: &mut World) {
 }
 
 fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
-    match &effect.targets {
-        Targets::Tile { tile_idx } => affect_tile(ecs, effect, *tile_idx),
-        Targets::Tiles { tiles } => tiles
-            .iter()
-            .for_each(|tile_idx| affect_tile(ecs, effect, *tile_idx)),
-        Targets::Single { target } => affect_entity(ecs, effect, *target),
-        Targets::TargetList { targets } => targets
-            .iter()
-            .for_each(|entity| affect_entity(ecs, effect, *entity)),
+    if let EffectType::ItemUse { item } = effect.effect_type {
+        triggers::item_trigger(effect.creator, item, &effect.targets, ecs);
+    } else {
+        match &effect.targets {
+            Targets::Tile { tile_idx } => affect_tile(ecs, effect, *tile_idx),
+            Targets::Tiles { tiles } => tiles
+                .iter()
+                .for_each(|tile_idx| affect_tile(ecs, effect, *tile_idx)),
+            Targets::Single { target } => affect_entity(ecs, effect, *target),
+            Targets::TargetList { targets } => targets
+                .iter()
+                .for_each(|entity| affect_entity(ecs, effect, *entity)),
+        }
     }
 }
 
@@ -117,5 +127,6 @@ fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
                 particles::particle_to_tile(ecs, pos, effect)
             }
         }
+        _ => {}
     }
 }
