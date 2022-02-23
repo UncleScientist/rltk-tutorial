@@ -1,7 +1,7 @@
 use crate::{
     effects::*, skill_bonus, Attributes, EquipmentSlot, Equipped, GameLog, HungerClock,
-    HungerState, MeleeWeapon, Name, NaturalAttackDefense, ParticleBuilder, Pools, Position, Skill,
-    Skills, WantsToMelee, WeaponAttribute, Wearable,
+    HungerState, MeleeWeapon, Name, NaturalAttackDefense, Pools, Skill, Skills, WantsToMelee,
+    WeaponAttribute, Wearable,
 };
 
 use rltk::RandomNumberGenerator;
@@ -16,8 +16,6 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, Name>,
     ReadStorage<'a, Attributes>,
     ReadStorage<'a, Skills>,
-    WriteExpect<'a, ParticleBuilder>,
-    ReadStorage<'a, Position>,
     WriteStorage<'a, HungerClock>,
     ReadStorage<'a, Pools>,
     WriteExpect<'a, RandomNumberGenerator>,
@@ -38,8 +36,6 @@ impl<'a> System<'a> for MeleeCombatSystem {
             names,
             attributes,
             skills,
-            mut particle_builder,
-            positions,
             hunger_clock,
             pools,
             mut rng,
@@ -155,48 +151,42 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         "{} hits {}, for {} hp",
                         &name.name, &target_name.name, damage
                     ));
-                    if let Some(pos) = positions.get(wants_melee.target) {
-                        particle_builder.request(
-                            pos.x,
-                            pos.y,
-                            rltk::RGB::named(rltk::ORANGE),
-                            rltk::RGB::named(rltk::BLACK),
-                            rltk::to_cp437('‼'),
-                            200.0,
-                        );
-                    }
                 } else if natural_roll == 1 {
                     // Natural 1 miss
                     log.entries.push(format!(
                         "{} considers attacking {}, but misjudges the timing",
                         &name.name, &target_name.name
                     ));
-                    if let Some(pos) = positions.get(wants_melee.target) {
-                        particle_builder.request(
-                            pos.x,
-                            pos.y,
-                            rltk::RGB::named(rltk::BLUE),
-                            rltk::RGB::named(rltk::BLACK),
-                            rltk::to_cp437('‼'),
-                            200.0,
-                        );
-                    }
+                    add_effect(
+                        Some(entity),
+                        EffectType::Particle {
+                            glyph: rltk::to_cp437('‼'),
+                            fg: rltk::RGB::named(rltk::BLUE),
+                            bg: rltk::RGB::named(rltk::BLACK),
+                            lifespan: 200.0,
+                        },
+                        Targets::Single {
+                            target: wants_melee.target,
+                        },
+                    );
                 } else {
                     // Miss
                     log.entries.push(format!(
                         "{} attacks {}, but can't connect",
                         &name.name, &target_name.name
                     ));
-                    if let Some(pos) = positions.get(wants_melee.target) {
-                        particle_builder.request(
-                            pos.x,
-                            pos.y,
-                            rltk::RGB::named(rltk::CYAN),
-                            rltk::RGB::named(rltk::BLACK),
-                            rltk::to_cp437('‼'),
-                            200.0,
-                        );
-                    }
+                    add_effect(
+                        Some(entity),
+                        EffectType::Particle {
+                            glyph: rltk::to_cp437('‼'),
+                            fg: rltk::RGB::named(rltk::CYAN),
+                            bg: rltk::RGB::named(rltk::BLACK),
+                            lifespan: 200.0,
+                        },
+                        Targets::Single {
+                            target: wants_melee.target,
+                        },
+                    );
                 }
             }
         }

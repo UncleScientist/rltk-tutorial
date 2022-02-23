@@ -11,13 +11,24 @@ pub use damage::*;
 mod targetting;
 pub use targetting::*;
 
+mod particles;
+pub use particles::*;
+
 lazy_static! {
     pub static ref EFFECT_QUEUE: Mutex<VecDeque<EffectSpawner>> = Mutex::new(VecDeque::new());
 }
 
 pub enum EffectType {
-    Damage { amount: i32 },
+    Damage {
+        amount: i32,
+    },
     Bloodstain,
+    Particle {
+        glyph: rltk::FontCharType,
+        fg: rltk::RGB,
+        bg: rltk::RGB,
+        lifespan: f32,
+    },
 }
 
 #[derive(Clone)]
@@ -74,10 +85,7 @@ fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
 }
 
 fn tile_effect_hits_entities(effect: &EffectType) -> bool {
-    match effect {
-        EffectType::Damage { .. } => true,
-        _ => false,
-    }
+    matches!(effect, EffectType::Damage { .. })
 }
 
 fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
@@ -89,6 +97,7 @@ fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
 
     match &effect.effect_type {
         EffectType::Bloodstain => damage::bloodstain(ecs, tile_idx),
+        EffectType::Particle { .. } => particles::particle_to_tile(ecs, tile_idx, effect),
         _ => {}
     }
 }
@@ -96,6 +105,15 @@ fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
 fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
     match &effect.effect_type {
         EffectType::Damage { .. } => damage::inflict_damage(ecs, effect, target),
-        _ => {}
+        EffectType::Bloodstain { .. } => {
+            if let Some(pos) = entity_position(ecs, target) {
+                damage::bloodstain(ecs, pos)
+            }
+        }
+        EffectType::Particle { .. } => {
+            if let Some(pos) = entity_position(ecs, target) {
+                particles::particle_to_tile(ecs, pos, effect)
+            }
+        }
     }
 }
