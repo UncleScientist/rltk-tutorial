@@ -205,6 +205,49 @@ pub fn spawn_named_entity(
     }
 }
 
+macro_rules! apply_effects {
+    ( $effects:expr, $eb:expr ) => {
+        for effect in $effects.iter() {
+            let effect_name = effect.0.as_str();
+            match effect_name {
+                "provides_healing" => {
+                    $eb = $eb.with(ProvidesHealing {
+                        heal_amount: effect.1.parse::<i32>().unwrap(),
+                    })
+                }
+                "ranged" => {
+                    $eb = $eb.with(Ranged {
+                        range: effect.1.parse::<i32>().unwrap(),
+                    })
+                }
+                "damage" => {
+                    $eb = $eb.with(InflictsDamage {
+                        damage: effect.1.parse::<i32>().unwrap(),
+                    })
+                }
+                "area_of_effect" => {
+                    $eb = $eb.with(AreaOfEffect {
+                        radius: effect.1.parse::<i32>().unwrap(),
+                    })
+                }
+                "confusion" => {
+                    $eb = $eb.with(Confusion {
+                        turns: effect.1.parse::<i32>().unwrap(),
+                    })
+                }
+                "town_portal" => $eb = $eb.with(TownPortal {}),
+                "magic_mapping" => $eb = $eb.with(MagicMapper {}),
+                "food" => $eb = $eb.with(ProvidesFood {}),
+                "single_activation" => $eb = $eb.with(SingleActivation {}),
+                _ => rltk::console::log(format!(
+                    "Warning: consumable effect {} not implemented",
+                    effect_name
+                )),
+            }
+        }
+    };
+}
+
 fn spawn_named_item(
     raws: &RawMaster,
     ecs: &mut World,
@@ -295,45 +338,7 @@ fn spawn_named_item(
 
         if let Some(consumable) = &item_template.consumable {
             eb = eb.with(Consumable {});
-            for effect in consumable.effects.iter() {
-                let effect_name = effect.0.as_str();
-                match effect_name {
-                    "provides_healing" => {
-                        eb = eb.with(ProvidesHealing {
-                            heal_amount: str_to_i32(effect.1),
-                        })
-                    }
-                    "ranged" => {
-                        eb = eb.with(Ranged {
-                            range: str_to_i32(effect.1),
-                        })
-                    }
-                    "damage" => {
-                        eb = eb.with(InflictsDamage {
-                            damage: str_to_i32(effect.1),
-                        })
-                    }
-                    "area_of_effect" => {
-                        eb = eb.with(AreaOfEffect {
-                            radius: str_to_i32(effect.1),
-                        })
-                    }
-                    "confusion" => {
-                        eb = eb.with(Confusion {
-                            turns: str_to_i32(effect.1),
-                        })
-                    }
-                    "town_portal" => eb = eb.with(TownPortal {}),
-                    "magic_mapping" => eb = eb.with(MagicMapper {}),
-                    "food" => eb = eb.with(ProvidesFood {}),
-                    _ => {
-                        rltk::console::log(format!(
-                            "Warning: consumable effect {} not implemented",
-                            effect_name
-                        ));
-                    }
-                }
-            }
+            apply_effects!(consumable.effects, eb);
         }
 
         return Some(eb.build());
@@ -591,28 +596,12 @@ fn spawn_named_prop(
 
         if let Some(entry_trigger) = &prop_template.entry_trigger {
             eb = eb.with(EntryTrigger {});
-            for effect in entry_trigger.effects.iter() {
-                match effect.0.as_str() {
-                    "damage" => {
-                        eb = eb.with(InflictsDamage {
-                            damage: str_to_i32(effect.1),
-                        });
-                    }
-                    "single_activation" => {
-                        eb = eb.with(SingleActivation {});
-                    }
-                    _ => {}
-                }
-            }
+            apply_effects!(entry_trigger.effects, eb);
         }
 
         return Some(eb.build());
     }
     None
-}
-
-fn str_to_i32(s: &str) -> i32 {
-    s.parse::<i32>().unwrap()
 }
 
 fn spawn_position<'a>(
