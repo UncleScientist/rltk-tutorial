@@ -445,9 +445,6 @@ impl State {
         let mut melee_combat_system = MeleeCombatSystem {};
         melee_combat_system.run_now(&self.ecs);
 
-        let mut damage_system = DamageSystem {};
-        damage_system.run_now(&self.ecs);
-
         let mut pickup = inventory_system::ItemCollectionSystem {};
         pickup.run_now(&self.ecs);
 

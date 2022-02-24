@@ -2,15 +2,21 @@ use crate::*;
 
 pub fn item_trigger(creator: Option<Entity>, item: Entity, targets: &Targets, ecs: &mut World) {
     // Use the item via the generic system
-    event_trigger(creator, item, targets, ecs);
+    let did_something = event_trigger(creator, item, targets, ecs);
 
     // If it was a consumable, then it gets deleted
-    if ecs.read_storage::<Consumable>().get(item).is_some() {
+    if did_something && ecs.read_storage::<Consumable>().get(item).is_some() {
         ecs.entities().delete(item).expect("Delete failed");
     }
 }
 
-fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs: &mut World) {
+fn event_trigger(
+    creator: Option<Entity>,
+    entity: Entity,
+    targets: &Targets,
+    ecs: &mut World,
+) -> bool {
+    let mut did_something = false;
     let mut gamelog = ecs.fetch_mut::<GameLog>();
 
     // Providing food
@@ -20,6 +26,7 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
         gamelog
             .entries
             .push(format!("You eat the {}", names.get(entity).unwrap().name));
+        did_something = true;
     }
 
     // Magic mapper
@@ -29,6 +36,7 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
             .entries
             .push("The map is revealed to you!".to_string());
         *runstate = RunState::MagicMapReveal { row: 0 };
+        did_something = true;
     }
 
     // Town Portal
@@ -44,6 +52,7 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
                 .push("You are teleported back to town!".to_string());
             let mut runstate = ecs.fetch_mut::<RunState>();
             *runstate = RunState::TownPortal;
+            did_something = true;
         }
     }
 
@@ -56,6 +65,7 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
             },
             targets.clone(),
         );
+        did_something = true;
     }
 
     // Damage
@@ -66,7 +76,8 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
                 amount: damage.damage,
             },
             targets.clone(),
-        )
+        );
+        did_something = true;
     }
 
     // Confusion
@@ -77,7 +88,8 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
                 turns: confusion.turns,
             },
             targets.clone(),
-        )
+        );
+        did_something = true;
     }
 
     // Teleport
@@ -92,7 +104,10 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
             },
             targets.clone(),
         );
+        did_something = true;
     }
+
+    did_something
 }
 
 pub fn trigger(creator: Option<Entity>, trigger: Entity, targets: &Targets, ecs: &mut World) {
@@ -100,13 +115,14 @@ pub fn trigger(creator: Option<Entity>, trigger: Entity, targets: &Targets, ecs:
     ecs.write_storage::<Hidden>().remove(trigger);
 
     // Use the item via the generic system
-    event_trigger(creator, trigger, targets, ecs);
+    let did_something = event_trigger(creator, trigger, targets, ecs);
 
     // If it was a single activation, then it gets deleted
-    if ecs
-        .read_storage::<SingleActivation>()
-        .get(trigger)
-        .is_some()
+    if did_something
+        && ecs
+            .read_storage::<SingleActivation>()
+            .get(trigger)
+            .is_some()
     {
         ecs.entities().delete(trigger).expect("Delete failed");
     }
