@@ -57,4 +57,26 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
             targets.clone(),
         );
     }
+
+    // Damage
+    if let Some(damage) = ecs.read_storage::<InflictsDamage>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::Damage {
+                amount: damage.damage,
+            },
+            targets.clone(),
+        )
+    }
+
+    // Confusion
+    if let Some(confusion) = ecs.read_storage::<Confusion>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::Confusion {
+                turns: confusion.turns,
+            },
+            targets.clone(),
+        )
+    }
 }

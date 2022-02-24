@@ -43,6 +43,9 @@ pub enum EffectType {
     Healing {
         amount: i32,
     },
+    Confusion {
+        turns: i32,
+    },
 }
 
 #[derive(Clone)]
@@ -105,7 +108,10 @@ fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
 fn tile_effect_hits_entities(effect: &EffectType) -> bool {
     matches!(
         effect,
-        EffectType::Damage { .. } | EffectType::WellFed | EffectType::Healing { .. }
+        EffectType::Damage { .. }
+            | EffectType::WellFed
+            | EffectType::Healing { .. }
+            | EffectType::Confusion { .. }
     )
 }
 
@@ -139,6 +145,7 @@ fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
         }
         EffectType::WellFed => hunger::well_fed(ecs, effect, target),
         EffectType::Healing { .. } => damage::heal_damage(ecs, effect, target),
+        EffectType::Confusion { .. } => damage::add_confusion(ecs, effect, target),
         _ => {}
     }
 }
