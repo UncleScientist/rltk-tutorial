@@ -40,6 +40,9 @@ pub enum EffectType {
         item: Entity,
     },
     WellFed,
+    Healing {
+        amount: i32,
+    },
 }
 
 #[derive(Clone)]
@@ -100,7 +103,10 @@ fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
 }
 
 fn tile_effect_hits_entities(effect: &EffectType) -> bool {
-    matches!(effect, EffectType::Damage { .. } | EffectType::WellFed)
+    matches!(
+        effect,
+        EffectType::Damage { .. } | EffectType::WellFed | EffectType::Healing { .. }
+    )
 }
 
 fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
@@ -132,6 +138,7 @@ fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
             }
         }
         EffectType::WellFed => hunger::well_fed(ecs, effect, target),
+        EffectType::Healing { .. } => damage::heal_damage(ecs, effect, target),
         _ => {}
     }
 }
