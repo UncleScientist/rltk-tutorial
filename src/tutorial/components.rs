@@ -12,6 +12,20 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct SpawnParticleLine {
+    pub glyph: rltk::FontCharType,
+    pub color: RGB,
+    pub lifetime_ms: f32,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct SpawnParticleBurst {
+    pub glyph: rltk::FontCharType,
+    pub color: RGB,
+    pub lifetime_ms: f32,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct ApplyMove {
     pub dest_idx: usize,
 }

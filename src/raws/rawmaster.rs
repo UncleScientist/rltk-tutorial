@@ -205,6 +205,24 @@ pub fn spawn_named_entity(
     }
 }
 
+fn parse_particle_line(n: &str) -> SpawnParticleLine {
+    let tokens: Vec<_> = n.split(';').collect();
+    SpawnParticleLine {
+        glyph: rltk::to_cp437(tokens[0].chars().next().unwrap()),
+        color: rltk::RGB::from_hex(tokens[1]).expect("Bad RGB"),
+        lifetime_ms: tokens[2].parse::<f32>().unwrap(),
+    }
+}
+
+fn parse_particle(n: &str) -> SpawnParticleBurst {
+    let tokens: Vec<_> = n.split(';').collect();
+    SpawnParticleBurst {
+        glyph: rltk::to_cp437(tokens[0].chars().next().unwrap()),
+        color: rltk::RGB::from_hex(tokens[1]).expect("Bad RGB"),
+        lifetime_ms: tokens[2].parse::<f32>().unwrap(),
+    }
+}
+
 macro_rules! apply_effects {
     ( $effects:expr, $eb:expr ) => {
         for effect in $effects.iter() {
@@ -239,6 +257,8 @@ macro_rules! apply_effects {
                 "magic_mapping" => $eb = $eb.with(MagicMapper {}),
                 "food" => $eb = $eb.with(ProvidesFood {}),
                 "single_activation" => $eb = $eb.with(SingleActivation {}),
+                "particle_line" => $eb = $eb.with(parse_particle_line(&effect.1)),
+                "particle" => $eb = $eb.with(parse_particle(&effect.1)),
                 _ => rltk::console::log(format!(
                     "Warning: consumable effect {} not implemented",
                     effect_name

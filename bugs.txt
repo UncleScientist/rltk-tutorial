@@ -5,4 +5,4 @@
  - with 100.0 gold, buying rations for 0.4 results in having 99.5 gold left (due
    to stats? possibly?)
 
- - townsfolk can trigger the town portal, or at least consume it
+ - gamelog messages are missing for many of the effects

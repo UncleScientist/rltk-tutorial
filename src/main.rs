@@ -70,6 +70,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SimpleMarker<SerializeMe>>();
     gs.ecs.register::<SingleActivation>();
     gs.ecs.register::<Skills>();
+    gs.ecs.register::<SpawnParticleBurst>();
+    gs.ecs.register::<SpawnParticleLine>();
     gs.ecs.register::<TeleportTo>();
     gs.ecs.register::<TownPortal>();
     gs.ecs.register::<Vendor>();

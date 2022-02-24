@@ -215,7 +215,8 @@
         "consumable" : {
             "effects" : { 
                 "ranged" : "6",
-                "damage" : "20"
+                "damage" : "20",
+                "particle_line" : "*;#00FFFF;200.0"
             }
         },
         "weight_lbs" : 0.5,
@@ -236,7 +237,8 @@
             "effects" : { 
                 "ranged" : "6",
                 "damage" : "20",
-                "area_of_effect" : "3"
+                "area_of_effect" : "3",
+                "particle" : "*;#FFA500;200.0"
             }
         },
         "weight_lbs" : 0.5,

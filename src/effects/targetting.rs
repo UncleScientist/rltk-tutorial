@@ -1,4 +1,4 @@
-use crate::components::Position;
+use crate::components::{Equipped, InBackpack, Position};
 use crate::map::Map;
 use specs::prelude::*;
 
@@ -19,4 +19,29 @@ pub fn aoe_tiles(map: &Map, target: rltk::Point, radius: i32) -> Vec<i32> {
         .iter()
         .map(|t| map.xy_idx(t.x, t.y) as i32)
         .collect()
+}
+
+pub fn find_item_position(ecs: &World, target: Entity) -> Option<i32> {
+    let positions = ecs.read_storage::<Position>();
+    let map = ecs.fetch::<Map>();
+
+    // Easy - it as a position
+    if let Some(pos) = positions.get(target) {
+        return Some(map.xy_idx(pos.x, pos.y) as i32);
+    }
+
+    // Maybe it is carried?
+    if let Some(carried) = ecs.read_storage::<InBackpack>().get(target) {
+        if let Some(pos) = positions.get(carried.owner) {
+            return Some(map.xy_idx(pos.x, pos.y) as i32);
+        }
+    }
+    // Maybe it is equipped?
+    if let Some(equipped) = ecs.read_storage::<Equipped>().get(target) {
+        if let Some(pos) = positions.get(equipped.owner) {
+            return Some(map.xy_idx(pos.x, pos.y) as i32);
+        }
+    }
+
+    None
 }
