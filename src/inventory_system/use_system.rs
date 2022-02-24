@@ -9,7 +9,7 @@ pub struct ItemUseSystem;
 
 type ItemUseData<'a> = (
     ReadExpect<'a, Entity>,
-    WriteExpect<'a, Map>,
+    ReadExpect<'a, Map>,
     Entities<'a>,
     WriteStorage<'a, WantsToUseItem>,
     ReadStorage<'a, Name>,
@@ -24,7 +24,7 @@ impl<'a> System<'a> for ItemUseSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             player_entity,
-            mut map,
+            map,
             entities,
             mut use_items,
             names,

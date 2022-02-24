@@ -17,6 +17,9 @@ pub use particles::*;
 mod triggers;
 pub use triggers::*;
 
+mod hunger;
+pub use hunger::*;
+
 lazy_static! {
     pub static ref EFFECT_QUEUE: Mutex<VecDeque<EffectSpawner>> = Mutex::new(VecDeque::new());
 }
@@ -36,6 +39,7 @@ pub enum EffectType {
     ItemUse {
         item: Entity,
     },
+    WellFed,
 }
 
 #[derive(Clone)]
@@ -96,7 +100,7 @@ fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
 }
 
 fn tile_effect_hits_entities(effect: &EffectType) -> bool {
-    matches!(effect, EffectType::Damage { .. })
+    matches!(effect, EffectType::Damage { .. } | EffectType::WellFed)
 }
 
 fn affect_tile(ecs: &mut World, effect: &EffectSpawner, tile_idx: i32) {
@@ -127,6 +131,7 @@ fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
                 particles::particle_to_tile(ecs, pos, effect)
             }
         }
+        EffectType::WellFed => hunger::well_fed(ecs, effect, target),
         _ => {}
     }
 }
