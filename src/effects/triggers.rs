@@ -79,4 +79,35 @@ fn event_trigger(creator: Option<Entity>, entity: Entity, targets: &Targets, ecs
             targets.clone(),
         )
     }
+
+    // Teleport
+    if let Some(teleport) = ecs.read_storage::<TeleportTo>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::TeleportTo {
+                x: teleport.x,
+                y: teleport.y,
+                depth: teleport.depth,
+                player_only: teleport.player_only,
+            },
+            targets.clone(),
+        );
+    }
+}
+
+pub fn trigger(creator: Option<Entity>, trigger: Entity, targets: &Targets, ecs: &mut World) {
+    // The triggering item is no longer hidden
+    ecs.write_storage::<Hidden>().remove(trigger);
+
+    // Use the item via the generic system
+    event_trigger(creator, trigger, targets, ecs);
+
+    // If it was a single activation, then it gets deleted
+    if ecs
+        .read_storage::<SingleActivation>()
+        .get(trigger)
+        .is_some()
+    {
+        ecs.entities().delete(trigger).expect("Delete failed");
+    }
 }

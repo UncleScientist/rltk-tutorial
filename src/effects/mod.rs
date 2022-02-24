@@ -20,6 +20,9 @@ pub use triggers::*;
 mod hunger;
 pub use hunger::*;
 
+mod movement;
+pub use movement::*;
+
 lazy_static! {
     pub static ref EFFECT_QUEUE: Mutex<VecDeque<EffectSpawner>> = Mutex::new(VecDeque::new());
 }
@@ -45,6 +48,15 @@ pub enum EffectType {
     },
     Confusion {
         turns: i32,
+    },
+    TriggerFire {
+        trigger: Entity,
+    },
+    TeleportTo {
+        x: i32,
+        y: i32,
+        depth: i32,
+        player_only: bool,
     },
 }
 
@@ -91,6 +103,8 @@ pub fn run_effects_queue(ecs: &mut World) {
 fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
     if let EffectType::ItemUse { item } = effect.effect_type {
         triggers::item_trigger(effect.creator, item, &effect.targets, ecs);
+    } else if let EffectType::TriggerFire { trigger } = effect.effect_type {
+        triggers::trigger(effect.creator, trigger, &effect.targets, ecs);
     } else {
         match &effect.targets {
             Targets::Tile { tile_idx } => affect_tile(ecs, effect, *tile_idx),
@@ -112,6 +126,7 @@ fn tile_effect_hits_entities(effect: &EffectType) -> bool {
             | EffectType::WellFed
             | EffectType::Healing { .. }
             | EffectType::Confusion { .. }
+            | EffectType::TeleportTo { .. }
     )
 }
 
@@ -146,6 +161,7 @@ fn affect_entity(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
         EffectType::WellFed => hunger::well_fed(ecs, effect, target),
         EffectType::Healing { .. } => damage::heal_damage(ecs, effect, target),
         EffectType::Confusion { .. } => damage::add_confusion(ecs, effect, target),
+        EffectType::TeleportTo { .. } => movement::apply_teleport(ecs, effect, target),
         _ => {}
     }
 }
