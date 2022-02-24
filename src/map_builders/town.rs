@@ -382,6 +382,7 @@ impl TownBuilder {
     ) {
         let mut to_place = vec![
             "Priest",
+            "Altar",
             "Parishioner",
             "Parishioner",
             "Chair",
