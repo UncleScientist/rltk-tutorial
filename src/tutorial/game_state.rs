@@ -41,6 +41,7 @@ pub enum RunState {
         y: i32,
         depth: i32,
     },
+    ShowRemoveCurse,
 }
 
 pub struct State {
@@ -185,6 +186,7 @@ impl GameState for State {
                         RunState::TeleportingToOtherLevel { x, y, depth } => {
                             newrunstate = RunState::TeleportingToOtherLevel { x, y, depth }
                         }
+                        RunState::ShowRemoveCurse => newrunstate = RunState::ShowRemoveCurse,
                         _ => newrunstate = RunState::Ticking,
                     }
                 }
@@ -386,6 +388,18 @@ impl GameState for State {
                 ppos.y = y;
                 self.mapgen_next_state = Some(RunState::PreRun);
                 newrunstate = RunState::MapGeneration;
+            }
+            RunState::ShowRemoveCurse => {
+                let result = gui::remove_curse_menu(self, ctx);
+                match result.0 {
+                    gui::ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
+                    gui::ItemMenuResult::NoResponse => {}
+                    gui::ItemMenuResult::Selected => {
+                        let item_entity = result.1.unwrap();
+                        self.ecs.write_storage::<CursedItem>().remove(item_entity);
+                        newrunstate = RunState::Ticking;
+                    }
+                }
             }
         }
 
