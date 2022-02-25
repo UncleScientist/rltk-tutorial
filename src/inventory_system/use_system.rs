@@ -40,10 +40,6 @@ impl<'a> System<'a> for ItemUseSystem {
 
             // Identify
             if entity == *player_entity {
-                rltk::console::log(format!(
-                    "Identfying item {}",
-                    names.get(useitem.item).unwrap().name
-                ));
                 identified_item
                     .insert(
                         entity,

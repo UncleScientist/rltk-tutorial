@@ -74,10 +74,6 @@ impl<'a> System<'a> for ItemEquipOnUse {
 
                 // Identify
                 if target == *player_entity {
-                    rltk::console::log(format!(
-                        "Identfying item {}",
-                        names.get(useitem.item).unwrap().name
-                    ));
                     identified_item
                         .insert(
                             target,

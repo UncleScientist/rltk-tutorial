@@ -1,7 +1,7 @@
 use crate::{
-    camera, Attribute, Attributes, Consumable, Equipped, GameLog, Hidden, HungerClock, HungerState,
-    InBackpack, Item, MagicItem, MagicItemClass, Map, Name, ObfuscatedName, Owned, Pools, Position,
-    RexAssets, RunState, State, Vendor, VendorMode, Viewshed,
+    camera, Attribute, Attributes, Consumable, CursedItem, Equipped, GameLog, Hidden, HungerClock,
+    HungerState, InBackpack, Item, MagicItem, MagicItemClass, Map, Name, ObfuscatedName, Owned,
+    Pools, Position, RexAssets, RunState, State, Vendor, VendorMode, Viewshed,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -801,6 +801,15 @@ pub fn vendor_buy_menu(
 }
 
 pub fn get_item_color(ecs: &World, item: Entity) -> RGB {
+    let dm = ecs.fetch::<crate::map::MasterDungeonMap>();
+    if let Some(name) = ecs.read_storage::<Name>().get(item) {
+        if ecs.read_storage::<CursedItem>().get(item).is_some()
+            && dm.identified_items.contains(&name.name)
+        {
+            return RGB::from_f32(1.0, 0.0, 0.0);
+        }
+    }
+
     if let Some(magic) = ecs.read_storage::<MagicItem>().get(item) {
         match magic.class {
             MagicItemClass::Common => return RGB::from_f32(0.5, 1.0, 0.5),
