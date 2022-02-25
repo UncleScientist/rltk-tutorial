@@ -12,6 +12,9 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct ProvidesIdentification {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct ProvidesRemoveCurse {}
 
 #[derive(Component, Serialize, Deserialize, Clone)]

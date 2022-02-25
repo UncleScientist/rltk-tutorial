@@ -6,3 +6,10 @@
    to stats? possibly?)
 
  - gamelog messages are missing for many of the effects
+
+ - when buying scrolls from vendors, it takes 1 move to identify the items
+
+ - identify buildings with letters (or other means) when revealing the town map
+
+ - work out how to combine all the menu functions in gui.rs to remove duplicate
+   code

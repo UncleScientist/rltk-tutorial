@@ -78,6 +78,17 @@ fn event_trigger(
         did_something = true;
     }
 
+    // Identify item
+    if ecs
+        .read_storage::<ProvidesIdentification>()
+        .get(entity)
+        .is_some()
+    {
+        let mut runstate = ecs.fetch_mut::<RunState>();
+        *runstate = RunState::ShowIdentify;
+        did_something = true;
+    }
+
     // Remove Curse
     if ecs
         .read_storage::<ProvidesRemoveCurse>()

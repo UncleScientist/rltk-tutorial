@@ -11,7 +11,7 @@
     { "name" : "Shield", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Longsword", "weight" : 2, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Longsword +1", "weight" : 1, "min_depth" : 3, "max_depth" : 100 },
-    { "name" : "Longsword -1", "weight" : 100, "min_depth" : 1, "max_depth" : 100 },
+    { "name" : "Longsword -1", "weight" : 1, "min_depth" : 1, "max_depth" : 100 },
     { "name" : "Tower Shield", "weight" : 1, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Rations", "weight" : 10, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Magic Mapping Scroll", "weight" : 2, "min_depth" : 0, "max_depth" : 100 },
@@ -205,6 +205,26 @@
         "vendor_category" : "alchemy",
         "magic": { "class": "common", "naming": "potion" }
     },
+
+    {
+        "name" : "Identify Scroll",
+        "renderable": {
+            "glyph" : ")",
+            "fg" : "#FFAAAA",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : {
+                "identify" : ""
+            }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "scroll" }
+    },
+
 
     {
         "name" : "Remove Curse Scroll",
