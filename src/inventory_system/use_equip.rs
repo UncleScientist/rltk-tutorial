@@ -1,5 +1,6 @@
 use crate::{
-    gamelog::GameLog, EquipmentChanged, Equippable, Equipped, InBackpack, Name, WantsToUseItem,
+    gamelog::GameLog, EquipmentChanged, Equippable, Equipped, IdentifiedItem, InBackpack, Name,
+    WantsToUseItem,
 };
 use specs::prelude::*;
 
@@ -15,6 +16,7 @@ type OnUseData<'a> = (
     WriteStorage<'a, Equipped>,
     WriteStorage<'a, InBackpack>,
     WriteStorage<'a, EquipmentChanged>,
+    WriteStorage<'a, IdentifiedItem>,
 );
 
 impl<'a> System<'a> for ItemEquipOnUse {
@@ -31,6 +33,7 @@ impl<'a> System<'a> for ItemEquipOnUse {
             mut equipped,
             mut backpack,
             mut dirty,
+            mut identified_item,
         ) = data;
 
         let mut remove_use = Vec::new();
@@ -68,6 +71,23 @@ impl<'a> System<'a> for ItemEquipOnUse {
                         },
                     )
                     .expect("Unable to insert equipped component");
+
+                // Identify
+                if target == *player_entity {
+                    rltk::console::log(format!(
+                        "Identfying item {}",
+                        names.get(useitem.item).unwrap().name
+                    ));
+                    identified_item
+                        .insert(
+                            target,
+                            IdentifiedItem {
+                                name: names.get(useitem.item).unwrap().name.clone(),
+                            },
+                        )
+                        .expect("Unable to insert");
+                }
+
                 backpack.remove(useitem.item);
                 if target == *player_entity {
                     gamelog.entries.push(format!(

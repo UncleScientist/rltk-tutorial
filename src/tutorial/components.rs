@@ -12,6 +12,9 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct CursedItem {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct SpawnParticleLine {
     pub glyph: rltk::FontCharType,
     pub color: RGB,

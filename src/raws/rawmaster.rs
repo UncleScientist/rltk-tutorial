@@ -335,6 +335,12 @@ fn spawn_named_item(
                     }
                 }
             }
+
+            if let Some(cursed) = magic.cursed {
+                if cursed {
+                    eb = eb.with(CursedItem {});
+                }
+            }
         }
 
         if let Some(wearable) = &item_template.wearable {
