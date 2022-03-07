@@ -42,6 +42,7 @@ pub struct MagicItem {
 #[derive(Deserialize, Debug)]
 pub struct Consumable {
     pub effects: HashMap<String, String>,
+    pub charges: Option<i32>,
 }
 
 #[derive(Deserialize, Debug)]

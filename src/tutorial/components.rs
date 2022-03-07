@@ -368,7 +368,10 @@ pub struct InflictsDamage {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
-pub struct Consumable;
+pub struct Consumable {
+    pub max_charges: i32,
+    pub charges: i32,
+}
 
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct WantsToDropItem {

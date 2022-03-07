@@ -374,7 +374,11 @@ fn spawn_named_item(
         });
 
         if let Some(consumable) = &item_template.consumable {
-            eb = eb.with(Consumable {});
+            let max_charges = consumable.charges.unwrap_or(1);
+            eb = eb.with(Consumable {
+                max_charges,
+                charges: max_charges,
+            });
             apply_effects!(consumable.effects, eb);
         }
 
