@@ -161,15 +161,17 @@ fn event_trigger(
     }
 
     // Confusion
-    if let Some(confusion) = ecs.read_storage::<Confusion>().get(entity) {
-        add_effect(
-            creator,
-            EffectType::Confusion {
-                turns: confusion.turns,
-            },
-            targets.clone(),
-        );
-        did_something = true;
+    if ecs.read_storage::<Confusion>().get(entity).is_some() {
+        if let Some(duration) = ecs.read_storage::<Duration>().get(entity) {
+            add_effect(
+                creator,
+                EffectType::Confusion {
+                    turns: duration.turns,
+                },
+                targets.clone(),
+            );
+            did_something = true;
+        }
     }
 
     // Teleport

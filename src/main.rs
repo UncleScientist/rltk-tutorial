@@ -35,6 +35,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<CursedItem>();
     gs.ecs.register::<DMSerializationHelper>();
     gs.ecs.register::<Door>();
+    gs.ecs.register::<Duration>();
     gs.ecs.register::<EntityMoved>();
     gs.ecs.register::<EntryTrigger>();
     gs.ecs.register::<EquipmentChanged>();
@@ -76,6 +77,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Skills>();
     gs.ecs.register::<SpawnParticleBurst>();
     gs.ecs.register::<SpawnParticleLine>();
+    gs.ecs.register::<StatusEffect>();
     gs.ecs.register::<TeleportTo>();
     gs.ecs.register::<TownPortal>();
     gs.ecs.register::<Vendor>();

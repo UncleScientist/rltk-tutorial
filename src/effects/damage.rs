@@ -135,8 +135,13 @@ pub fn death(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
 
 pub fn add_confusion(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
     if let EffectType::Confusion { turns } = &effect.effect_type {
-        ecs.write_storage::<Confusion>()
-            .insert(target, Confusion { turns: *turns })
-            .expect("Unable to insert status");
+        ecs.create_entity()
+            .with(StatusEffect { target })
+            .with(Confusion {})
+            .with(Duration { turns: *turns })
+            .with(Name {
+                name: "Confusion".to_string(),
+            })
+            .build();
     }
 }

@@ -1,8 +1,8 @@
 use crate::{
-    camera, Attribute, Attributes, Consumable, CursedItem, Equipped, GameLog, Hidden, HungerClock,
-    HungerState, InBackpack, Item, MagicItem, MagicItemClass, Map, MasterDungeonMap, Name,
-    ObfuscatedName, Owned, Pools, Position, RexAssets, RunState, State, Vendor, VendorMode,
-    Viewshed,
+    camera, Attribute, Attributes, Consumable, CursedItem, Duration, Equipped, GameLog, Hidden,
+    HungerClock, HungerState, InBackpack, Item, MagicItem, MagicItemClass, Map, MasterDungeonMap,
+    Name, ObfuscatedName, Owned, Pools, Position, RexAssets, RunState, State, StatusEffect, Vendor,
+    VendorMode, Viewshed,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -245,13 +245,40 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
         }
     }
 
+    // Status
+    let mut y = 44;
     let hunger = ecs.read_storage::<HungerClock>();
     let hc = hunger.get(*player_entity).unwrap();
     match hc.state {
-        HungerState::WellFed => ctx.print_color(50, 44, green, black, "Well Fed"),
+        HungerState::WellFed => {
+            ctx.print_color(50, 44, green, black, "Well Fed");
+            y -= 1
+        }
+
         HungerState::Normal => {}
-        HungerState::Hungry => ctx.print_color(50, 44, orange, black, "Hungry"),
-        HungerState::Starving => ctx.print_color(50, 44, red, black, "Starving"),
+        HungerState::Hungry => {
+            ctx.print_color(50, 44, orange, black, "Hungry");
+            y -= 1
+        }
+        HungerState::Starving => {
+            ctx.print_color(50, 44, red, black, "Starving");
+            y -= 1
+        }
+    }
+    let statuses = ecs.read_storage::<StatusEffect>();
+    let durations = ecs.read_storage::<Duration>();
+    let names = ecs.read_storage::<Name>();
+    for (status, duration, name) in (&statuses, &durations, &names).join() {
+        if status.target == *player_entity {
+            ctx.print_color(
+                50,
+                y,
+                red,
+                black,
+                &format!("{} ({})", name.name, duration.turns),
+            );
+            y -= 1;
+        }
     }
 
     // Draw the log
