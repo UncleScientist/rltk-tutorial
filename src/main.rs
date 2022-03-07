@@ -25,6 +25,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<ApplyMove>();
     gs.ecs.register::<ApplyTeleport>();
     gs.ecs.register::<AreaOfEffect>();
+    gs.ecs.register::<AttributeBonus>();
     gs.ecs.register::<Attributes>();
     gs.ecs.register::<BlocksTile>();
     gs.ecs.register::<BlocksVisibility>();

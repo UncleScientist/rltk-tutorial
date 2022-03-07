@@ -354,6 +354,15 @@ fn spawn_named_item(
             });
         }
 
+        if let Some(ab) = &item_template.attributes {
+            eb = eb.with(AttributeBonus {
+                might: ab.might,
+                fitness: ab.fitness,
+                quickness: ab.quickness,
+                intelligence: ab.intelligence,
+            });
+        }
+
         eb = eb.with(Name {
             name: item_template.name.clone(),
         });
