@@ -246,6 +246,22 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         SpawnType::Equipped { by: player },
     );
 
+    // Starting hangover
+    ecs.create_entity()
+        .with(StatusEffect { target: player })
+        .with(Duration { turns: 10 })
+        .with(Name {
+            name: "Hanover".to_string(),
+        })
+        .with(AttributeBonus {
+            might: Some(-1),
+            fitness: None,
+            quickness: Some(-1),
+            intelligence: Some(-1),
+        })
+        .marked::<SimpleMarker<SerializeMe>>()
+        .build();
+
     player
 }
 
