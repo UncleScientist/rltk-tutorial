@@ -1,3 +1,5 @@
+use specs::saveload::{MarkedBuilder, SimpleMarker};
+
 use crate::map::Map;
 use crate::*;
 
@@ -143,5 +145,25 @@ pub fn add_confusion(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
                 name: "Confusion".to_string(),
             })
             .build();
+    }
+}
+
+pub fn attribute_effect(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
+    if let EffectType::AttributeEffect {
+        bonus,
+        name,
+        duration,
+    } = &effect.effect_type
+    {
+        ecs.create_entity()
+            .with(StatusEffect { target })
+            .with(bonus.clone())
+            .with(Duration { turns: *duration })
+            .with(Name { name: name.clone() })
+            .marked::<SimpleMarker<SerializeMe>>()
+            .build();
+        ecs.write_storage::<EquipmentChanged>()
+            .insert(target, EquipmentChanged {})
+            .expect("Unable to insert");
     }
 }

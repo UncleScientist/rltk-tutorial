@@ -251,7 +251,7 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         .with(StatusEffect { target: player })
         .with(Duration { turns: 10 })
         .with(Name {
-            name: "Hanover".to_string(),
+            name: "Hangover".to_string(),
         })
         .with(AttributeBonus {
             might: Some(-1),

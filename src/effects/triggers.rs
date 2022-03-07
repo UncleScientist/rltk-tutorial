@@ -189,6 +189,20 @@ fn event_trigger(
         did_something = true;
     }
 
+    // Attribute Modifiers
+    if let Some(attr) = ecs.read_storage::<AttributeBonus>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::AttributeEffect {
+                bonus: attr.clone(),
+                duration: 10,
+                name: ecs.read_storage::<Name>().get(entity).unwrap().name.clone(),
+            },
+            targets.clone(),
+        );
+        did_something = true;
+    }
+
     did_something
 }
 
