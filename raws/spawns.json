@@ -1,5 +1,6 @@
 {
 "spawn_table" : [
+    { "name" : "Beginner's Magic", "weight" : 5, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Rod of Fireballs", "weight" : 3, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Gauntlets of Ogre Power", "weight" : 1, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Goblin", "weight" : 10, "min_depth" : 3, "max_depth" : 4 },
@@ -82,6 +83,22 @@
 ],
 
 "items" : [
+    {
+        "name" : "Beginner's Magic",
+        "renderable": {
+            "glyph" : "¶",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "teach_spell" : "Zap" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy"
+    },
+
     {
         "name" : "Strength Potion",
         "renderable": {

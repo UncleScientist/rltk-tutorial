@@ -207,12 +207,7 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             god_mode: false,
         })
         .with(EquipmentChanged {})
-        .with(KnownSpells {
-            spells: vec![KnownSpell {
-                display_name: "Zap".to_string(),
-                mana_cost: 1,
-            }],
-        })
+        .with(KnownSpells { spells: Vec::new() })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 

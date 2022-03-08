@@ -160,6 +160,29 @@ fn event_trigger(
         did_something = true;
     }
 
+    // Learn spells
+    if let Some(spell) = ecs.read_storage::<TeachesSpell>().get(entity) {
+        if let Some(known) = ecs.write_storage::<KnownSpells>().get_mut(creator.unwrap()) {
+            if let Some(spell_entity) = crate::raws::find_spell_entity(ecs, &spell.spell) {
+                if let Some(spell_info) = ecs.read_storage::<SpellTemplate>().get(spell_entity) {
+                    let mut already_known = false;
+                    known.spells.iter().for_each(|s| {
+                        if s.display_name == spell.spell {
+                            already_known = true;
+                        }
+                    });
+                    if !already_known {
+                        known.spells.push(KnownSpell {
+                            display_name: spell.spell.clone(),
+                            mana_cost: spell_info.mana_cost,
+                        })
+                    }
+                }
+            }
+        }
+        did_something = true;
+    }
+
     // Damage
     if let Some(damage) = ecs.read_storage::<InflictsDamage>().get(entity) {
         add_effect(

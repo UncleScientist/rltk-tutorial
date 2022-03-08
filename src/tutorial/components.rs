@@ -12,6 +12,11 @@ use specs_derive::{Component, ConvertSaveload};
 pub struct SerializeMe;
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct TeachesSpell {
+    pub spell: String,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct ProvidesMana {
     pub mana_amount: i32,
 }

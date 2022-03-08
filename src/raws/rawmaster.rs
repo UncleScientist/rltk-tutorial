@@ -233,6 +233,11 @@ macro_rules! apply_effects {
         for effect in $effects.iter() {
             let effect_name = effect.0.as_str();
             match effect_name {
+                "teach_spell" => {
+                    $eb = $eb.with(TeachesSpell {
+                        spell: effect.1.to_string(),
+                    })
+                }
                 "provides_healing" => {
                     $eb = $eb.with(ProvidesHealing {
                         heal_amount: effect.1.parse::<i32>().unwrap(),
@@ -425,10 +430,10 @@ fn spawn_named_item(
         });
 
         if let Some(consumable) = &item_template.consumable {
-            let max_charges = consumable.charges.unwrap_or(1);
+            let max_charges = consumable.charges.unwrap_or(0);
             eb = eb.with(Consumable {
                 max_charges,
-                charges: max_charges,
+                charges: i32::max(1, max_charges),
             });
             apply_effects!(consumable.effects, eb);
         }
