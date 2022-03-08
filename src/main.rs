@@ -68,6 +68,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<ProvidesFood>();
     gs.ecs.register::<ProvidesHealing>();
     gs.ecs.register::<ProvidesIdentification>();
+    gs.ecs.register::<ProvidesMana>();
     gs.ecs.register::<ProvidesRemoveCurse>();
     gs.ecs.register::<Quips>();
     gs.ecs.register::<Ranged>();

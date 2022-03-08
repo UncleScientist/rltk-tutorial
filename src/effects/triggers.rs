@@ -148,6 +148,18 @@ fn event_trigger(
         did_something = true;
     }
 
+    // Mana
+    if let Some(mana) = ecs.read_storage::<ProvidesMana>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::Mana {
+                amount: mana.mana_amount,
+            },
+            targets.clone(),
+        );
+        did_something = true;
+    }
+
     // Damage
     if let Some(damage) = ecs.read_storage::<InflictsDamage>().get(entity) {
         add_effect(
