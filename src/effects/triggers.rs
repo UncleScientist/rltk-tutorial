@@ -55,7 +55,7 @@ fn event_trigger(
 
     // Line particle spawn
     if let Some(part) = ecs.read_storage::<SpawnParticleLine>().get(entity) {
-        if let Some(start_pos) = find_item_position(ecs, entity) {
+        if let Some(start_pos) = find_item_position(ecs, entity, creator) {
             match targets {
                 Targets::Tile { tile_idx } => spawn_line_particles(ecs, start_pos, *tile_idx, part),
                 Targets::Tiles { tiles } => tiles
@@ -243,4 +243,18 @@ fn spawn_line_particles(ecs: &World, start: i32, end: i32, part: &SpawnParticleL
             },
         );
     }
+}
+
+pub fn spell_trigger(creator: Option<Entity>, spell: Entity, targets: &Targets, ecs: &mut World) {
+    if let Some(template) = ecs.read_storage::<SpellTemplate>().get(spell) {
+        let mut pools = ecs.write_storage::<Pools>();
+        if let Some(caster) = creator {
+            if let Some(pool) = pools.get_mut(caster) {
+                if template.mana_cost <= pool.mana.current {
+                    pool.mana.current -= template.mana_cost;
+                }
+            }
+        }
+    }
+    event_trigger(creator, spell, targets, ecs);
 }

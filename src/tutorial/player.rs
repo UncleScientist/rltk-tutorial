@@ -187,6 +187,24 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             }
         }
 
+        if ctx.control {
+            let key: Option<i32> = match key {
+                Key1 => Some(1),
+                Key2 => Some(2),
+                Key3 => Some(3),
+                Key4 => Some(4),
+                Key5 => Some(5),
+                Key6 => Some(6),
+                Key7 => Some(7),
+                Key8 => Some(8),
+                Key9 => Some(9),
+                _ => None,
+            };
+            if let Some(key) = key {
+                return use_spell_hotkey(gs, key - 1);
+            }
+        }
+
         match key {
             Left | Numpad4 | H => try_move_player(-1, 0, &mut gs.ecs),
             Right | Numpad6 | L => try_move_player(1, 0, &mut gs.ecs),
@@ -225,6 +243,47 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
     } else {
         RunState::AwaitingInput
     }
+}
+
+fn use_spell_hotkey(gs: &mut State, key: i32) -> RunState {
+    let player_entity = gs.ecs.fetch::<Entity>();
+    let known_spells_storage = gs.ecs.read_storage::<KnownSpells>();
+    let known_spells = &known_spells_storage.get(*player_entity).unwrap().spells;
+
+    if (key as usize) < known_spells.len() {
+        let pools = gs.ecs.read_storage::<Pools>();
+        let player_pools = pools.get(*player_entity).unwrap();
+        if player_pools.mana.current >= known_spells[key as usize].mana_cost {
+            if let Some(spell_entity) =
+                find_spell_entity(&gs.ecs, &known_spells[key as usize].display_name)
+            {
+                if let Some(ranged) = gs.ecs.read_storage::<Ranged>().get(spell_entity) {
+                    return RunState::ShowTargeting {
+                        range: ranged.range,
+                        item: spell_entity,
+                    };
+                }
+                let mut intent = gs.ecs.write_storage::<WantsToCastSpell>();
+                intent
+                    .insert(
+                        *player_entity,
+                        WantsToCastSpell {
+                            spell: spell_entity,
+                            target: None,
+                        },
+                    )
+                    .expect("Unable to insert intent");
+                return RunState::Ticking;
+            }
+        } else {
+            let mut gamelog = gs.ecs.fetch_mut::<GameLog>();
+            gamelog
+                .entries
+                .push("You don't have enough mana to cast that!".to_string());
+        }
+    }
+
+    RunState::Ticking
 }
 
 fn use_consumable_hotkey(gs: &mut State, key: i32) -> RunState {

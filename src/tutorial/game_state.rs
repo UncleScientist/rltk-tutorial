@@ -229,16 +229,29 @@ impl GameState for State {
                     gui::ItemMenuResult::Cancel => newrunstate = RunState::AwaitingInput,
                     gui::ItemMenuResult::NoResponse => {}
                     gui::ItemMenuResult::Selected => {
-                        let mut intent = self.ecs.write_storage::<WantsToUseItem>();
-                        intent
-                            .insert(
-                                *self.ecs.fetch::<Entity>(),
-                                WantsToUseItem {
-                                    item,
-                                    target: result.1,
-                                },
-                            )
-                            .expect("Unable to insert intent");
+                        if self.ecs.read_storage::<SpellTemplate>().get(item).is_some() {
+                            let mut intent = self.ecs.write_storage::<WantsToCastSpell>();
+                            intent
+                                .insert(
+                                    *self.ecs.fetch::<Entity>(),
+                                    WantsToCastSpell {
+                                        spell: item,
+                                        target: result.1,
+                                    },
+                                )
+                                .expect("Unable to insert intent");
+                        } else {
+                            let mut intent = self.ecs.write_storage::<WantsToUseItem>();
+                            intent
+                                .insert(
+                                    *self.ecs.fetch::<Entity>(),
+                                    WantsToUseItem {
+                                        item,
+                                        target: result.1,
+                                    },
+                                )
+                                .expect("Unable to insert intent");
+                        }
                         newrunstate = RunState::Ticking;
                     }
                 }
@@ -484,6 +497,9 @@ impl State {
 
         let mut items = ItemUseSystem {};
         items.run_now(&self.ecs);
+
+        let mut spells = SpellUseSystem {};
+        spells.run_now(&self.ecs);
 
         let mut drop_items = ItemDropSystem {};
         drop_items.run_now(&self.ecs);

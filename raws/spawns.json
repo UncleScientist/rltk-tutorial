@@ -45,6 +45,18 @@
 
 ],
 
+"spells" : [
+    {
+        "name" : "Zap",
+        "mana_cost" : 1,
+        "effects" : { 
+            "ranged" : "6",
+            "damage" : "5",
+            "particle_line" : "▓;#00FFFF;200.0"
+        }
+    }
+],
+
 "loot_tables" : [
     { "name" : "Animal",
       "drops" : [

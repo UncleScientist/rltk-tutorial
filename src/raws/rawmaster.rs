@@ -22,6 +22,7 @@ pub struct RawMaster {
     prop_index: HashMap<String, usize>,
     loot_index: HashMap<String, usize>,
     faction_index: HashMap<String, HashMap<String, Reaction>>,
+    spell_index: HashMap<String, usize>,
 }
 
 impl RawMaster {
@@ -59,6 +60,10 @@ impl RawMaster {
                 self.mob_index.insert(mob.name.clone(), i);
                 used_names.insert(mob.name.clone());
             }
+        }
+
+        for (i, spell) in self.raws.spells.iter().enumerate() {
+            self.spell_index.insert(spell.name.clone(), i);
         }
 
         for (i, props) in self.raws.props.iter().enumerate() {
@@ -269,6 +274,46 @@ macro_rules! apply_effects {
             }
         }
     };
+}
+
+pub fn find_spell_entity(ecs: &World, name: &str) -> Option<Entity> {
+    let names = ecs.read_storage::<Name>();
+    let spell_templates = ecs.read_storage::<SpellTemplate>();
+    let entities = ecs.entities();
+
+    for (entity, sname, _template) in (&entities, &names, &spell_templates).join() {
+        if name == sname.name {
+            return Some(entity);
+        }
+    }
+
+    None
+}
+
+pub fn spawn_all_spells(ecs: &mut World) {
+    let raws = &super::RAWS.lock().unwrap();
+    for spell in raws.raws.spells.iter() {
+        spawn_named_spell(raws, ecs, &spell.name);
+    }
+}
+
+fn spawn_named_spell(raws: &RawMaster, ecs: &mut World, key: &str) -> Option<Entity> {
+    if raws.spell_index.contains_key(key) {
+        let spell_template = &raws.raws.spells[raws.spell_index[key]];
+
+        let mut eb = ecs.create_entity().marked::<SimpleMarker<SerializeMe>>();
+        eb = eb.with(SpellTemplate {
+            mana_cost: spell_template.mana_cost,
+        });
+        eb = eb.with(Name {
+            name: spell_template.name.clone(),
+        });
+        apply_effects!(spell_template.effects, eb);
+
+        return Some(eb.build());
+    }
+
+    None
 }
 
 fn spawn_named_item(

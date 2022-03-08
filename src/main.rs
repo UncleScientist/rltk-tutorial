@@ -49,6 +49,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<InflictsDamage>();
     gs.ecs.register::<Initiative>();
     gs.ecs.register::<Item>();
+    gs.ecs.register::<KnownSpells>();
     gs.ecs.register::<LightSource>();
     gs.ecs.register::<LootTable>();
     gs.ecs.register::<MagicItem>();
@@ -77,12 +78,14 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Skills>();
     gs.ecs.register::<SpawnParticleBurst>();
     gs.ecs.register::<SpawnParticleLine>();
+    gs.ecs.register::<SpellTemplate>();
     gs.ecs.register::<StatusEffect>();
     gs.ecs.register::<TeleportTo>();
     gs.ecs.register::<TownPortal>();
     gs.ecs.register::<Vendor>();
     gs.ecs.register::<Viewshed>();
     gs.ecs.register::<WantsToApproach>();
+    gs.ecs.register::<WantsToCastSpell>();
     gs.ecs.register::<WantsToDropItem>();
     gs.ecs.register::<WantsToFlee>();
     gs.ecs.register::<WantsToMelee>();

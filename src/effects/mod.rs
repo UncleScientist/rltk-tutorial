@@ -44,6 +44,9 @@ pub enum EffectType {
     ItemUse {
         item: Entity,
     },
+    SpellUse {
+        spell: Entity,
+    },
     WellFed,
     Healing {
         amount: i32,
@@ -110,6 +113,8 @@ pub fn run_effects_queue(ecs: &mut World) {
 fn target_applicator(ecs: &mut World, effect: &EffectSpawner) {
     if let EffectType::ItemUse { item } = effect.effect_type {
         triggers::item_trigger(effect.creator, item, &effect.targets, ecs);
+    } else if let EffectType::SpellUse { spell } = effect.effect_type {
+        triggers::spell_trigger(effect.creator, spell, &effect.targets, ecs);
     } else if let EffectType::TriggerFire { trigger } = effect.effect_type {
         triggers::trigger(effect.creator, trigger, &effect.targets, ecs);
     } else {

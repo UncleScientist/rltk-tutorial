@@ -1,8 +1,8 @@
 use crate::{
     camera, Attribute, Attributes, Consumable, CursedItem, Duration, Equipped, GameLog, Hidden,
-    HungerClock, HungerState, InBackpack, Item, MagicItem, MagicItemClass, Map, MasterDungeonMap,
-    Name, ObfuscatedName, Owned, Pools, Position, RexAssets, RunState, State, StatusEffect, Vendor,
-    VendorMode, Viewshed,
+    HungerClock, HungerState, InBackpack, Item, KnownSpells, MagicItem, MagicItemClass, Map,
+    MasterDungeonMap, Name, ObfuscatedName, Owned, Pools, Position, RexAssets, RunState, State,
+    StatusEffect, Vendor, VendorMode, Viewshed,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -90,6 +90,7 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let white: RGB = RGB::named(WHITE);
     let red: RGB = RGB::named(RED);
     let blue: RGB = RGB::named(BLUE);
+    let cyan: RGB = RGB::named(CYAN);
     let yellow: RGB = RGB::named(YELLOW);
     let green: RGB = RGB::from_f32(0., 1., 0.);
     let orange = RGB::named(ORANGE);
@@ -229,10 +230,10 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     y += 1;
     let consumables = ecs.read_storage::<Consumable>();
     let backpack = ecs.read_storage::<InBackpack>();
-    let mut index = 1;
-    for (entity, carried_by, _) in (&entities, &backpack, &consumables).join() {
+    for (index, (entity, carried_by, _)) in (&entities, &backpack, &consumables).join().enumerate()
+    {
         if carried_by.owner == *player_entity && index < 10 {
-            ctx.print_color(50, y, yellow, black, &format!("↑{}", index));
+            ctx.print_color(50, y, yellow, black, &format!("↑{}", index + 1));
             ctx.print_color(
                 53,
                 y,
@@ -241,8 +242,23 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
                 &get_item_display_name(ecs, entity),
             );
             y += 1;
-            index += 1;
         }
+    }
+
+    // Spells
+    y += 1;
+    let known_spells_storage = ecs.read_storage::<KnownSpells>();
+    let known_spells = &known_spells_storage.get(*player_entity).unwrap().spells;
+    for (index, spell) in known_spells.iter().enumerate() {
+        ctx.print_color(50, y, cyan, black, &format!("^{}", index + 1));
+        ctx.print_color(
+            53,
+            y,
+            cyan,
+            black,
+            &format!("{} ({})", spell.display_name, spell.mana_cost),
+        );
+        y += 1;
     }
 
     // Status

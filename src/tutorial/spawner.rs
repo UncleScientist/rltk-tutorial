@@ -144,6 +144,8 @@ pub fn spawn_town_portal(ecs: &mut World) {
 
 /// Spawns the player and returns his/her entity object
 pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
+    spawn_all_spells(ecs);
+
     let mut skills = Skills {
         skills: HashMap::new(),
     };
@@ -205,6 +207,12 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
             god_mode: false,
         })
         .with(EquipmentChanged {})
+        .with(KnownSpells {
+            spells: vec![KnownSpell {
+                display_name: "Zap".to_string(),
+                mana_cost: 1,
+            }],
+        })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
 

@@ -16,6 +16,9 @@ use props_structs::*;
 mod spawn_table_structs;
 use spawn_table_structs::*;
 
+mod spell_structs;
+use spell_structs::*;
+
 mod loot_structs;
 use loot_structs::*;
 
@@ -32,6 +35,7 @@ pub struct Raws {
     pub spawn_table: Vec<SpawnTableEntry>,
     pub loot_tables: Vec<LootTable>,
     pub faction_table: Vec<FactionInfo>,
+    pub spells: Vec<Spell>,
 }
 
 use lazy_static::lazy_static;

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::attr_bonus;
 use crate::{Map, MasterDungeonMap};
-use rltk::RGB;
+use rltk::{Point, RGB};
 use serde::{Deserialize, Serialize};
 use specs::error::NoError;
 use specs::prelude::*;
@@ -10,6 +10,28 @@ use specs::saveload::{ConvertSaveload, Marker};
 use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct KnownSpell {
+    pub display_name: String,
+    pub mana_cost: i32,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct KnownSpells {
+    pub spells: Vec<KnownSpell>,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct SpellTemplate {
+    pub mana_cost: i32,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct WantsToCastSpell {
+    pub spell: Entity,
+    pub target: Option<Point>,
+}
 
 #[derive(Component, Serialize, Deserialize, Clone)]
 pub struct AttributeBonus {
