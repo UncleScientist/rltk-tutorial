@@ -81,6 +81,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Slow>();
     gs.ecs.register::<SpawnParticleBurst>();
     gs.ecs.register::<SpawnParticleLine>();
+    gs.ecs.register::<SpecialAbilities>();
     gs.ecs.register::<SpellTemplate>();
     gs.ecs.register::<StatusEffect>();
     gs.ecs.register::<TeachesSpell>();

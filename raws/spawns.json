@@ -1,6 +1,6 @@
 {
 "spawn_table" : [
-    { "name" : "Dagger of Venom", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Dagger of Venom", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Arachnophilia 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Venom 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Poison Potion", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
@@ -1632,6 +1632,9 @@
                 { "name" : "bite", "hit_bonus" : 1, "damage" : "1d12" }
             ]   
         },
+        "abilities": [
+            { "spell": "Web", "chance": 0.2, "range": 6.0, "min_range": 3.0 }
+        ],
         "faction" : "Carnivores"
     },
 
