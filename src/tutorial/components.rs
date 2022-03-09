@@ -354,6 +354,8 @@ pub struct MeleeWeapon {
     pub damage_die_type: i32,
     pub damage_bonus: i32,
     pub hit_bonus: i32,
+    pub proc_chance: Option<f32>,
+    pub proc_target: Option<String>,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]

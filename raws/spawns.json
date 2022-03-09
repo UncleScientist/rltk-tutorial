@@ -1,5 +1,6 @@
 {
 "spawn_table" : [
+    { "name" : "Dagger of Venom", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Arachnophilia 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Venom 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Poison Potion", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
@@ -112,6 +113,30 @@
 ],
 
 "items" : [
+    {
+        "name" : "Dagger of Venom",
+        "renderable": {
+            "glyph" : "/",
+            "fg" : "#FFAAAA",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "weapon" : {
+            "range" : "melee",
+            "attribute" : "Quickness",
+            "base_damage" : "1d4+1",
+            "hit_bonus" : 1,
+            "proc_chance" : 0.5,
+            "proc_target" : "Target",
+            "proc_effects" : { "damage_over_time" : "2" }
+        },
+        "weight_lbs" : 1.0,
+        "base_value" : 2.0,
+        "initiative_penalty" : -1,
+        "vendor_category" : "weapon",
+        "magic" : { "class" : "common", "naming" : "Unidentified Dagger" }
+    },
+
     {
         "name" : "Arachnophilia 101",
         "renderable": {

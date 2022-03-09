@@ -371,9 +371,13 @@ fn spawn_named_item(
                 damage_die_type: die_type,
                 damage_bonus: bonus,
                 hit_bonus: weapon.hit_bonus,
+                proc_chance: weapon.proc_chance,
+                proc_target: weapon.proc_target.clone(),
             };
-
             eb = eb.with(wpn);
+            if let Some(proc_effects) = &weapon.proc_effects {
+                apply_effects!(proc_effects, eb);
+            }
         }
 
         if let Some(magic) = &item_template.magic {

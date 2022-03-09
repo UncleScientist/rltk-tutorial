@@ -65,6 +65,8 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 damage_n_dice: 1,
                 damage_die_type: 4,
                 damage_bonus: 0,
+                proc_chance: None,
+                proc_target: None,
             };
 
             if let Some(nat) = natural.get(entity) {
@@ -76,9 +78,12 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 }
             }
 
-            for (wielded, melee) in (&equipped_items, &meleeweapons).join() {
+            // Find the wielded weapon
+            let mut weapon_entity: Option<Entity> = None;
+            for (wielder, wielded, melee) in (&entities, &equipped_items, &meleeweapons).join() {
                 if wielded.owner == entity && wielded.slot == EquipmentSlot::Melee {
                     weapon_info = melee.clone();
+                    weapon_entity = Some(wielder);
                 }
             }
 
@@ -151,6 +156,26 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         "{} hits {}, for {} hp",
                         &name.name, &target_name.name, damage
                     ));
+
+                    // Proc effects
+                    if let Some(chance) = &weapon_info.proc_chance {
+                        if rng.roll_dice(1, 100) <= (chance * 100.0) as i32 {
+                            let effect_target = if weapon_info.proc_target.unwrap() == "Self" {
+                                Targets::Single { target: entity }
+                            } else {
+                                Targets::Single {
+                                    target: wants_melee.target,
+                                }
+                            };
+                            add_effect(
+                                Some(entity),
+                                EffectType::ItemUse {
+                                    item: weapon_entity.unwrap(),
+                                },
+                                effect_target,
+                            );
+                        }
+                    }
                 } else if natural_roll == 1 {
                     // Natural 1 miss
                     log.entries.push(format!(
