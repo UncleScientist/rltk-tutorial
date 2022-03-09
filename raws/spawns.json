@@ -1,8 +1,12 @@
 {
 "spawn_table" : [
-    { "name" : "Poison Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
-    { "name" : "Slow Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
-    { "name" : "Haste Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Arachnophilia 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Venom 101", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Poison Potion", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Slow Potion", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Haste Potion", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Web Scroll", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Rod of Venom", "weight" : 3, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Beginner's Magic", "weight" : 5, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Rod of Fireballs", "weight" : 3, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Gauntlets of Ogre Power", "weight" : 1, "min_depth" : 3, "max_depth" : 100 },
@@ -59,7 +63,29 @@
             "damage" : "5",
             "particle_line" : "▓;#00FFFF;200.0"
         }
+    },
+
+    {
+        "name" : "Web",
+        "mana_cost" : 2,
+        "effects" : { 
+            "ranged" : "6",
+            "slow" : "10",
+            "area_of_effect" : "3",
+            "particle_line" : "☼;#FFFFFF;400.0"
+        }
+    },
+
+    {
+        "name" : "Venom",
+        "mana_cost" : 2,
+        "effects" : { 
+            "ranged" : "6",
+            "damage_over_time" : "4",
+            "particle_line" : "▓;#00FF00;400.0"
+        }
     }
+
 ],
 
 "loot_tables" : [
@@ -86,6 +112,82 @@
 ],
 
 "items" : [
+    {
+        "name" : "Arachnophilia 101",
+        "renderable": {
+            "glyph" : "¶",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "teach_spell" : "Web" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy"
+    },
+
+    {
+        "name" : "Venom 101",
+        "renderable": {
+            "glyph" : "¶",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "teach_spell" : "Venom" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy"
+    },
+
+    {
+        "name" : "Web Scroll",
+        "renderable": {
+            "glyph" : ")",
+            "fg" : "#FFAAAA",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { 
+                "ranged" : "6",
+                "slow" : "10.0",
+                "area_of_effect" : "3",
+                "particle_line" : "☼;#FFFFFF;200.0"
+            }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 500.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "scroll" }
+    },
+
+    {
+        "name" : "Rod of Venom",
+        "renderable": {
+            "glyph" : "/",
+            "fg" : "#FFAAAA",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { 
+                "ranged" : "6",
+                "damage_over_time" : "1",
+                "particle_line" : "▓;#00FF00;200.0"
+            },
+            "charges" : 5
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 500.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "Unidentified Rod" }
+    },
+
     {
         "name" : "Poison Potion",
         "renderable": {
