@@ -209,6 +209,30 @@ fn event_trigger(
         }
     }
 
+    // Slow
+    if let Some(slow) = ecs.read_storage::<Slow>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::Slow {
+                initiative_penalty: slow.initiative_penalty,
+            },
+            targets.clone(),
+        );
+        did_something = true;
+    }
+
+    // Damage over Time
+    if let Some(damage) = ecs.read_storage::<DamageOverTime>().get(entity) {
+        add_effect(
+            creator,
+            EffectType::DamageOverTime {
+                damage: damage.damage,
+            },
+            targets.clone(),
+        );
+        did_something = true;
+    }
+
     // Teleport
     if let Some(teleport) = ecs.read_storage::<TeleportTo>().get(entity) {
         add_effect(

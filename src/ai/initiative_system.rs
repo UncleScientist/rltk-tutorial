@@ -1,6 +1,6 @@
 use crate::{
-    Attributes, Duration, EquipmentChanged, Initiative, MyTurn, Pools, Position, RunState,
-    StatusEffect,
+    Attributes, DamageOverTime, Duration, EquipmentChanged, Initiative, MyTurn, Pools, Position,
+    RunState, StatusEffect,
 };
 use rltk::{Point, RandomNumberGenerator};
 use specs::prelude::*;
@@ -21,6 +21,7 @@ type InitiativeData<'a> = (
     WriteStorage<'a, Duration>,
     WriteStorage<'a, EquipmentChanged>,
     ReadStorage<'a, StatusEffect>,
+    ReadStorage<'a, DamageOverTime>,
 );
 
 impl<'a> System<'a> for InitiativeSystem {
@@ -41,6 +42,7 @@ impl<'a> System<'a> for InitiativeSystem {
             mut durations,
             mut dirty,
             statuses,
+            dots,
         ) = data;
 
         if *runstate != RunState::Ticking {
@@ -92,13 +94,25 @@ impl<'a> System<'a> for InitiativeSystem {
 
         // Handle durations
         if *runstate == RunState::AwaitingInput {
+            use crate::effects::*;
             for (effect_entity, duration, status) in (&entities, &mut durations, &statuses).join() {
-                duration.turns -= 1;
-                if duration.turns < 1 {
-                    dirty
-                        .insert(status.target, EquipmentChanged {})
-                        .expect("Unable to insert");
-                    entities.delete(effect_entity).expect("Unable to delete");
+                if entities.is_alive(status.target) {
+                    duration.turns -= 1;
+                    if let Some(dot) = dots.get(effect_entity) {
+                        add_effect(
+                            None,
+                            EffectType::Damage { amount: dot.damage },
+                            Targets::Single {
+                                target: status.target,
+                            },
+                        );
+                    }
+                    if duration.turns < 1 {
+                        dirty
+                            .insert(status.target, EquipmentChanged {})
+                            .expect("Unable to insert");
+                        entities.delete(effect_entity).expect("Unable to delete");
+                    }
                 }
             }
         }

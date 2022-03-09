@@ -186,3 +186,37 @@ pub fn attribute_effect(ecs: &mut World, effect: &EffectSpawner, target: Entity)
             .expect("Unable to insert");
     }
 }
+
+pub fn slow(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
+    if let EffectType::Slow { initiative_penalty } = &effect.effect_type {
+        ecs.create_entity()
+            .with(StatusEffect { target })
+            .with(Slow {
+                initiative_penalty: *initiative_penalty,
+            })
+            .with(Duration { turns: 5 })
+            .with(Name {
+                name: if *initiative_penalty > 0.0 {
+                    "Slowed".to_string()
+                } else {
+                    "Hasted".to_string()
+                },
+            })
+            .marked::<SimpleMarker<SerializeMe>>()
+            .build();
+    }
+}
+
+pub fn damage_over_time(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
+    if let EffectType::DamageOverTime { damage } = &effect.effect_type {
+        ecs.create_entity()
+            .with(StatusEffect { target })
+            .with(DamageOverTime { damage: *damage })
+            .with(Duration { turns: 5 })
+            .with(Name {
+                name: "Damage Over Time".to_string(),
+            })
+            .marked::<SimpleMarker<SerializeMe>>()
+            .build();
+    }
+}

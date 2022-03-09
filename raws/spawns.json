@@ -1,5 +1,8 @@
 {
 "spawn_table" : [
+    { "name" : "Poison Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Slow Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Haste Potion", "weight" : 100, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Beginner's Magic", "weight" : 5, "min_depth" : 0, "max_depth" : 100 },
     { "name" : "Rod of Fireballs", "weight" : 3, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Gauntlets of Ogre Power", "weight" : 1, "min_depth" : 3, "max_depth" : 100 },
@@ -83,6 +86,56 @@
 ],
 
 "items" : [
+    {
+        "name" : "Poison Potion",
+        "renderable": {
+            "glyph" : "!",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "damage_over_time" : "2" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "potion" }
+    },
+
+    {
+        "name" : "Slow Potion",
+        "renderable": {
+            "glyph" : "!",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "slow" : "2.0" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 50.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "potion" }
+    },
+
+    {
+        "name" : "Haste Potion",
+        "renderable": {
+            "glyph" : "!",
+            "fg" : "#FF00FF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "consumable" : {
+            "effects" : { "slow" : "-2.0" }
+        },
+        "weight_lbs" : 0.5,
+        "base_value" : 100.0,
+        "vendor_category" : "alchemy",
+        "magic" : { "class" : "common", "naming" : "potion" }
+    },
     {
         "name" : "Beginner's Magic",
         "renderable": {

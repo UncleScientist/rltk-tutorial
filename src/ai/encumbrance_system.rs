@@ -1,6 +1,6 @@
 use crate::{
     attr_bonus, gamelog::GameLog, AttributeBonus, Attributes, EquipmentChanged, Equipped,
-    InBackpack, Item, Pools, StatusEffect,
+    InBackpack, Item, Pools, Slow, StatusEffect,
 };
 use specs::prelude::*;
 use std::collections::HashMap;
@@ -19,6 +19,7 @@ type EncumbranceData<'a> = (
     WriteExpect<'a, GameLog>,
     ReadStorage<'a, AttributeBonus>,
     ReadStorage<'a, StatusEffect>,
+    ReadStorage<'a, Slow>,
 );
 
 impl<'a> System<'a> for EncumbranceSystem {
@@ -37,6 +38,7 @@ impl<'a> System<'a> for EncumbranceSystem {
             mut gamelog,
             attrbonus,
             statuses,
+            slowed,
         ) = data;
 
         if equip_dirty.is_empty() {
@@ -91,6 +93,14 @@ impl<'a> System<'a> for EncumbranceSystem {
                 totals.fitness += attr.fitness.unwrap_or(0);
                 totals.quickness += attr.quickness.unwrap_or(0);
                 totals.intelligence += attr.intelligence.unwrap_or(0);
+            }
+        }
+
+        // Total up haste/slow
+        for (status, slow) in (&statuses, &slowed).join() {
+            if to_update.contains_key(&status.target) {
+                let totals = to_update.get_mut(&status.target).unwrap();
+                totals.initiative += slow.initiative_penalty;
             }
         }
 

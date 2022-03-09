@@ -34,6 +34,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Consumable>();
     gs.ecs.register::<CursedItem>();
     gs.ecs.register::<DMSerializationHelper>();
+    gs.ecs.register::<DamageOverTime>();
     gs.ecs.register::<Door>();
     gs.ecs.register::<Duration>();
     gs.ecs.register::<EntityMoved>();
@@ -77,6 +78,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SimpleMarker<SerializeMe>>();
     gs.ecs.register::<SingleActivation>();
     gs.ecs.register::<Skills>();
+    gs.ecs.register::<Slow>();
     gs.ecs.register::<SpawnParticleBurst>();
     gs.ecs.register::<SpawnParticleLine>();
     gs.ecs.register::<SpellTemplate>();
