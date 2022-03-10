@@ -86,6 +86,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<StatusEffect>();
     gs.ecs.register::<TeachesSpell>();
     gs.ecs.register::<TeleportTo>();
+    gs.ecs.register::<TileSize>();
     gs.ecs.register::<TownPortal>();
     gs.ecs.register::<Vendor>();
     gs.ecs.register::<Viewshed>();

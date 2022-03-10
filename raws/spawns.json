@@ -1062,7 +1062,9 @@
             "glyph" : "D",
             "fg" : "#FF0000",
             "bg" : "#000000",
-            "order" : 1
+            "order" : 1,
+            "x_size": 2,
+            "y_size": 2
         },
         "blocks_tile" : true,
         "vision_range" : 12,

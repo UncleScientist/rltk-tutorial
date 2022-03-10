@@ -61,6 +61,12 @@ pub struct SpellTemplate {
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
+pub struct TileSize {
+    pub x: i32,
+    pub y: i32,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
 pub struct WantsToCastSpell {
     pub spell: Entity,
     pub target: Option<Point>,

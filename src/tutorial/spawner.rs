@@ -69,6 +69,10 @@ pub fn spawn_region(
 }
 
 pub fn spawn_entity(ecs: &mut World, spawn: &(&usize, &String)) {
+    if spawn.1 == "None" {
+        return;
+    }
+
     let map = ecs.fetch::<Map>();
     let width = map.width as usize;
     let x = (*spawn.0 % width as usize) as i32;
