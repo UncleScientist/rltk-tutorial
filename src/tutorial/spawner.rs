@@ -57,9 +57,7 @@ pub fn spawn_region(
                 (rng.roll_dice(1, areas.len() as i32) - 1) as usize
             };
             let map_idx = areas[array_index];
-            if let Some(spawn) = spawn_table.roll(rng) {
-                spawn_points.insert(map_idx, spawn);
-            }
+            spawn_points.insert(map_idx, spawn_table.roll(rng));
             areas.remove(array_index);
         }
     }
@@ -268,6 +266,6 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
     player
 }
 
-fn room_table(map_depth: i32) -> RandomTable {
+fn room_table(map_depth: i32) -> MasterTable {
     get_spawn_table_for_depth(&RAWS.lock().unwrap(), map_depth)
 }

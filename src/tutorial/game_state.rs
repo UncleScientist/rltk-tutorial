@@ -72,7 +72,7 @@ impl GameState for State {
 
         match newrunstate {
             RunState::MapGeneration => {
-                if SHOW_MAPGEN_VISUALIZER >= 0 {
+                if SHOW_MAPGEN_VISUALIZER == -1 {
                     newrunstate = self.mapgen_next_state.unwrap();
                 } else if self.mapgen_index < self.mapgen_history.len() {
                     camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);

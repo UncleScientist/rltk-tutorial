@@ -1,12 +1,18 @@
 use rltk::RandomNumberGenerator;
 
 use crate::components::*;
-use crate::{mana_at_level, npc_hp, RandomTable};
+use crate::{mana_at_level, npc_hp, MasterTable, RandomTable};
 use specs::prelude::*;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 use std::collections::{HashMap, HashSet};
 
 use super::{parse_dice_string, Raws, Reaction};
+
+pub enum SpawnTableType {
+    Item,
+    Mob,
+    Prop,
+}
 
 pub enum SpawnType {
     AtPosition { x: i32, y: i32 },
@@ -161,9 +167,9 @@ pub fn get_item_drop(
         let mut rt = RandomTable::new();
         let available_options = &raws.raws.loot_tables[raws.loot_index[table]];
         for item in available_options.drops.iter() {
-            rt = rt.add(item.name.clone(), item.weight);
+            rt.add(item.name.clone(), item.weight);
         }
-        return rt.roll(rng);
+        return Some(rt.roll(rng));
     }
 
     None
@@ -331,6 +337,18 @@ pub fn spawn_all_spells(ecs: &mut World) {
         spawn_named_spell(raws, ecs, &spell.name);
     }
 }
+
+pub fn spawn_type_by_name(raws: &RawMaster, key: &str) -> SpawnTableType {
+    if raws.item_index.contains_key(key) {
+        SpawnTableType::Item
+    } else if raws.mob_index.contains_key(key) {
+        SpawnTableType::Mob
+    } else {
+        SpawnTableType::Prop
+    }
+}
+
+// ---------------------------------------------------------------------------------
 
 fn spawn_named_spell(raws: &RawMaster, ecs: &mut World, key: &str) -> Option<Entity> {
     if raws.spell_index.contains_key(key) {
@@ -777,7 +795,7 @@ fn get_renderable_component(
     }
 }
 
-pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> RandomTable {
+pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> MasterTable {
     use super::SpawnTableEntry;
 
     let available_options: Vec<&SpawnTableEntry> = raws
@@ -787,13 +805,13 @@ pub fn get_spawn_table_for_depth(raws: &RawMaster, depth: i32) -> RandomTable {
         .filter(|a| depth >= a.min_depth && depth <= a.max_depth)
         .collect();
 
-    let mut rt = RandomTable::new();
+    let mut rt = MasterTable::new();
     for e in available_options.iter() {
         let mut weight = e.weight;
         if e.add_map_depth_to_weight.is_some() {
             weight += depth;
         }
-        rt = rt.add(e.name.clone(), weight);
+        rt.add(e.name.clone(), weight, raws);
     }
 
     rt
