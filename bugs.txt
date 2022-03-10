@@ -13,3 +13,5 @@
 
  - work out how to combine all the menu functions in gui.rs to remove duplicate
    code
+
+ - particle effects affect tooltip tips
