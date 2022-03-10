@@ -11,7 +11,7 @@ pub enum XEnd {
 pub enum YEnd {
     // Top,
     Center,
-    // Right
+    Bottom,
 }
 
 pub struct AreaEndingPosition {
@@ -39,7 +39,7 @@ impl AreaEndingPosition {
         let seed_y = match self.y {
             // YEnd::Top => 1,
             YEnd::Center => build_data.map.height / 2,
-            // YEnd::Bottom => build_data.map.height - 2,
+            YEnd::Bottom => build_data.map.height - 2,
         };
 
         let mut available_floors = Vec::new();

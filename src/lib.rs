@@ -1,6 +1,6 @@
 use specs::prelude::*;
 
-pub const SHOW_MAPGEN_VISUALIZER: bool = false;
+pub const SHOW_MAPGEN_VISUALIZER: i32 = 6;
 
 pub mod ai;
 pub use ai::*;

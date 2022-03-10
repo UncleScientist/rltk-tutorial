@@ -8,6 +8,9 @@ use crate::SHOW_MAPGEN_VISUALIZER;
 mod common;
 use common::*;
 
+mod dwarf_fort;
+use dwarf_fort::*;
+
 mod town;
 use town::town_builder;
 
@@ -115,7 +118,7 @@ pub struct BuilderMap {
 
 impl BuilderMap {
     fn take_snapshot(&mut self) {
-        if SHOW_MAPGEN_VISUALIZER {
+        if SHOW_MAPGEN_VISUALIZER == self.map.depth {
             let mut snapshot = self.map.clone();
             for v in snapshot.revealed_tiles.iter_mut() {
                 *v = true;
@@ -218,6 +221,7 @@ pub fn level_builder(
         3 => limestone_cavern_builder(new_depth, rng, width, height),
         4 => limestone_deep_cavern_builder(new_depth, rng, width, height),
         5 => limestone_transition_builder(new_depth, rng, width, height),
+        6 => dwarf_fort_builder(new_depth, rng, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }
