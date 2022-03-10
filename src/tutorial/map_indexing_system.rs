@@ -4,15 +4,17 @@ use specs::prelude::*;
 
 pub struct MapIndexingSystem {}
 
+type MapIndexingData<'a> = (
+    ReadExpect<'a, Map>,
+    ReadStorage<'a, Position>,
+    ReadStorage<'a, BlocksTile>,
+    ReadStorage<'a, Pools>,
+    ReadStorage<'a, TileSize>,
+    Entities<'a>,
+);
+
 impl<'a> System<'a> for MapIndexingSystem {
-    type SystemData = (
-        ReadExpect<'a, Map>,
-        ReadStorage<'a, Position>,
-        ReadStorage<'a, BlocksTile>,
-        ReadStorage<'a, Pools>,
-        ReadStorage<'a, TileSize>,
-        Entities<'a>,
-    );
+    type SystemData = MapIndexingData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
         let (map, positions, blockers, pools, sizes, entities) = data;
