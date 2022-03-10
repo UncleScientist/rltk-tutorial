@@ -22,9 +22,12 @@ pub fn dwarf_fort_builder(
     chain.with(AreaEndingPosition::new(XEnd::Right, YEnd::Bottom));
     chain.with(VoronoiSpawning::new());
     chain.with(DistantExit::new());
+    chain.with(DragonSpawner::new());
 
     chain
 }
+
+// ---------------------------------------------------------------------------------
 
 pub struct DragonsLair {}
 
@@ -59,5 +62,66 @@ impl DragonsLair {
                 *tt = TileType::Floor;
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------------
+
+pub struct DragonSpawner {}
+
+impl MetaMapBuilder for DragonSpawner {
+    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+        self.build(rng, build_data);
+    }
+}
+
+impl DragonSpawner {
+    pub fn new() -> Box<DragonSpawner> {
+        Box::new(DragonSpawner {})
+    }
+
+    fn build(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+        // Find a central location that isn't occupied
+        let seed_x = build_data.map.width / 2;
+        let seed_y = build_data.map.height / 2;
+        let mut available_floors = Vec::new();
+        for (idx, tiletype) in build_data.map.tiles.iter().enumerate() {
+            if crate::map::tile_walkable(*tiletype) {
+                available_floors.push((
+                    idx,
+                    rltk::DistanceAlg::PythagorasSquared.distance2d(
+                        rltk::Point::new(
+                            idx as i32 % build_data.map.width,
+                            idx as i32 / build_data.map.width,
+                        ),
+                        rltk::Point::new(seed_x, seed_y),
+                    ),
+                ));
+            }
+        }
+
+        if available_floors.is_empty() {
+            panic!("No valid floors to start on");
+        }
+
+        available_floors.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+
+        let start_x = available_floors[0].0 as i32 % build_data.map.width;
+        let start_y = available_floors[0].0 as i32 / build_data.map.width;
+        let dragon_pt = rltk::Point::new(start_x, start_y);
+
+        // Remove all spawns within 25 tiles of the drake
+        let w = build_data.map.width as i32;
+        build_data.spawn_list.retain(|spawn| {
+            let spawn_pt = rltk::Point::new(spawn.0 as i32 % w, spawn.0 as i32 / w);
+            let distance = rltk::DistanceAlg::Pythagoras.distance2d(dragon_pt, spawn_pt);
+            distance > 25.0
+        });
+
+        // Add the dragon
+        let dragon_idx = build_data.map.xy_idx(start_x, start_y);
+        build_data
+            .spawn_list
+            .push((dragon_idx, "Black Dragon".to_string()));
     }
 }

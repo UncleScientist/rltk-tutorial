@@ -67,6 +67,17 @@
     },
 
     {
+        "name" : "Acid Breath",
+        "mana_cost" : 2,
+        "effects" : {
+            "ranged" : "6",
+            "damage" : "10",
+            "area_of_effect" : "3",
+            "particle" : "☼;#00FF00;400.0"
+        }
+    },
+
+    {
         "name" : "Web",
         "mana_cost" : 2,
         "effects" : { 
@@ -1045,6 +1056,42 @@
 ],
 
 "mobs" : [
+    {
+        "name" : "Black Dragon",
+        "renderable": {
+            "glyph" : "D",
+            "fg" : "#FF0000",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 12,
+        "movement" : "static",
+        "attributes" : {
+            "might" : 13,
+            "fitness" : 13
+        },
+        "skills" : {
+            "Melee" : 18,
+            "Defense" : 16
+        },
+        "natural" : {
+            "armor_class" : 17,
+            "attacks" : [
+                { "name" : "bite", "hit_bonus" : 4, "damage" : "1d10+2" },
+                { "name" : "left_claw", "hit_bonus" : 2, "damage" : "1d10" },
+                { "name" : "right_claw", "hit_bonus" : 2, "damage" : "1d10" }
+            ]
+        },
+        "loot_table" : "Wyrms",
+        "faction" : "Wyrm",
+        "level" : 6,
+        "gold" : "10d6",
+        "abilities" : [
+            { "spell" : "Acid Breath", "chance" : 0.2, "range" : 8.0, "min_range" : 2.0 }
+        ]
+    },
+
     {
         "name" : "Rock Golem",
         "renderable": {
