@@ -69,6 +69,31 @@ impl Map {
     pub fn clear_content_index(&self) {
         crate::spatial::clear();
     }
+
+    pub fn populate_blocked_multi(&mut self, width: i32, height: i32) {
+        self.populate_blocked();
+        for y in 1..self.height - 1 {
+            for x in 1..self.width - 1 {
+                let idx = self.xy_idx(x, y);
+                if !crate::spatial::is_blocked(idx) {
+                    for cy in 0..height {
+                        for cx in 0..width {
+                            let tx = x + cx;
+                            let ty = y + cy;
+                            if tx < self.width - 1 && ty < self.height - 1 {
+                                let tidx = self.xy_idx(tx, ty);
+                                if crate::spatial::is_blocked(tidx) {
+                                    crate::spatial::set_blocked(idx, true);
+                                }
+                            } else {
+                                crate::spatial::set_blocked(idx, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 impl Algorithm2D for Map {

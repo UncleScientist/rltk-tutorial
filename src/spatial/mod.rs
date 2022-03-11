@@ -5,6 +5,8 @@ use std::sync::Mutex;
 
 #[derive(Default)]
 struct SpatialMap {
+    // blocked.0 -> indicates whether the tile itself is walkable
+    // blocked.1 -> indicates whether a blocking mob is standing there
     blocked: Vec<(bool, bool)>,
     tile_content: Vec<Vec<(Entity, bool)>>,
 }
@@ -52,6 +54,11 @@ pub fn index_entity(entity: Entity, idx: usize, blocks_tile: bool) {
 pub fn is_blocked(idx: usize) -> bool {
     let lock = SPATIAL_MAP.lock().unwrap();
     lock.blocked[idx].0 || lock.blocked[idx].1
+}
+
+pub fn set_blocked(idx: usize, blocked: bool) {
+    let mut lock = SPATIAL_MAP.lock().unwrap();
+    lock.blocked[idx].1 = blocked;
 }
 
 pub fn for_each_tile_content<F>(idx: usize, mut f: F)
