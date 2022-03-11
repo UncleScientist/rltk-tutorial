@@ -1,5 +1,8 @@
 # rltk-tutorial
 
+My implementation of the [Rust Roguelike
+Tutorial](https://bfnightly.bracketproductions.com/chapter_67.html)
+
 ## To build for the web:
 
 $ `rustup target add wasm32-unknown-unknown`
