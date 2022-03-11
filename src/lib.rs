@@ -31,7 +31,7 @@ pub use effects::*;
 use rltk::VirtualKeyCode::*;
 use std::collections::HashMap;
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct Editor {
     text: String,
     keymap: HashMap<rltk::VirtualKeyCode, char>,
@@ -123,5 +123,11 @@ impl Editor {
 impl ToString for Editor {
     fn to_string(&self) -> String {
         self.text.clone()
+    }
+}
+
+impl Default for Editor {
+    fn default() -> Self {
+        Self::new()
     }
 }
