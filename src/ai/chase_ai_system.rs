@@ -46,7 +46,7 @@ impl<'a> System<'a> for ChaseAI {
                 rltk::a_star_search(
                     map_copy.xy_idx(pos.x, pos.y) as i32,
                     map_copy.xy_idx(target_pos.0, target_pos.1) as i32,
-                    &mut map_copy,
+                    &map_copy,
                 )
             } else {
                 rltk::a_star_search(
