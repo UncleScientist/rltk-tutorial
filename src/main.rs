@@ -4,6 +4,7 @@ use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
 use rt::map::*;
 use rt::tutorial::*;
+use rt::Editor;
 
 fn main() -> rltk::BError {
     use rltk::RltkBuilder;
@@ -109,6 +110,7 @@ fn main() -> rltk::BError {
     gs.ecs.insert(Map::new(1, 64, 64, "New Map"));
     gs.ecs.insert(Point::new(0, 0));
     gs.ecs.insert(RandomNumberGenerator::new());
+    gs.ecs.insert(Editor::new());
 
     let player_entity = player(&mut gs.ecs, 0, 0);
     gs.ecs.insert(player_entity);

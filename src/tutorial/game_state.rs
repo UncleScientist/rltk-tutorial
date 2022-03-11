@@ -43,6 +43,7 @@ pub enum RunState {
     },
     ShowRemoveCurse,
     ShowIdentify,
+    SummonItem,
 }
 
 pub struct State {
@@ -123,6 +124,9 @@ impl GameState for State {
                         let mut player_pools = pools.get_mut(*player).unwrap();
                         player_pools.god_mode = true;
                         newrunstate = RunState::AwaitingInput;
+                    }
+                    gui::CheatMenuResult::SummonItem => {
+                        newrunstate = RunState::SummonItem;
                     }
                 }
             }
@@ -427,6 +431,24 @@ impl GameState for State {
                             let mut dm = self.ecs.fetch_mut::<MasterDungeonMap>();
                             dm.identified_items.insert(name.name.clone());
                         }
+                        newrunstate = RunState::Ticking;
+                    }
+                }
+            }
+            RunState::SummonItem => {
+                let result = gui::summon_item(self, ctx);
+                match result.0 {
+                    gui::SummonItemResult::Cancel => newrunstate = RunState::AwaitingInput,
+                    gui::SummonItemResult::NoResponse => {}
+                    gui::SummonItemResult::Done => {
+                        rltk::console::log(format!("Trying to summon '{}'", result.1));
+                        let player = *self.ecs.fetch::<Entity>();
+                        spawn_named_entity(
+                            &RAWS.lock().unwrap(),
+                            &mut self.ecs,
+                            &result.1,
+                            SpawnType::Carried { by: player },
+                        );
                         newrunstate = RunState::Ticking;
                     }
                 }
