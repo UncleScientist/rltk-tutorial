@@ -25,6 +25,14 @@ pub struct SpecialAbilities {
 }
 
 #[derive(Component, Serialize, Deserialize, Clone)]
+pub struct AlwaysTargetsSelf {}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct OnDeath {
+    pub abilities: Vec<SpecialAbility>,
+}
+
+#[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Slow {
     pub initiative_penalty: f32,
 }

@@ -1,8 +1,10 @@
 use rltk::RandomNumberGenerator;
 
 use crate::{
+    effects::*,
     raws::{get_item_drop, spawn_named_entity, SpawnType, RAWS},
-    Equipped, GameLog, InBackpack, LootTable, Name, Player, Pools, Position, RunState,
+    AreaOfEffect, Equipped, GameLog, InBackpack, LootTable, Map, Name, OnDeath, Player, Pools,
+    Position, RunState,
 };
 use specs::prelude::*;
 
@@ -95,6 +97,41 @@ pub fn delete_the_dead(ecs: &mut World) {
                     y: drop.1.y,
                 },
             );
+        }
+    }
+
+    for victim in dead.iter() {
+        let death_effects = ecs.read_storage::<OnDeath>();
+        if let Some(death_effect) = death_effects.get(*victim) {
+            let mut rng = ecs.fetch_mut::<rltk::RandomNumberGenerator>();
+            for effect in death_effect.abilities.iter() {
+                if rng.roll_dice(1, 100) <= (effect.chance * 100.0) as i32 {
+                    let map = ecs.fetch::<Map>();
+                    if let Some(pos) = ecs.read_storage::<Position>().get(*victim) {
+                        let spell_entity =
+                            crate::raws::find_spell_entity(ecs, &effect.spell).unwrap();
+                        let tile_idx = map.xy_idx(pos.x, pos.y);
+                        let target = if let Some(aoe) =
+                            ecs.read_storage::<AreaOfEffect>().get(spell_entity)
+                        {
+                            Targets::Tiles {
+                                tiles: aoe_tiles(&map, rltk::Point::new(pos.x, pos.y), aoe.radius),
+                            }
+                        } else {
+                            Targets::Tile {
+                                tile_idx: tile_idx as i32,
+                            }
+                        };
+                        add_effect(
+                            None,
+                            EffectType::SpellUse {
+                                spell: spell_entity,
+                            },
+                            target,
+                        );
+                    }
+                }
+            }
         }
     }
 

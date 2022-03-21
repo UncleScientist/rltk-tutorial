@@ -23,6 +23,7 @@ fn main() -> rltk::BError {
         mapgen_timer: 0.0,
     };
 
+    gs.ecs.register::<AlwaysTargetsSelf>();
     gs.ecs.register::<ApplyMove>();
     gs.ecs.register::<ApplyTeleport>();
     gs.ecs.register::<AreaOfEffect>();
@@ -62,6 +63,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Name>();
     gs.ecs.register::<NaturalAttackDefense>();
     gs.ecs.register::<ObfuscatedName>();
+    gs.ecs.register::<OnDeath>();
     gs.ecs.register::<OtherLevelPosition>();
     gs.ecs.register::<ParticleLifetime>();
     gs.ecs.register::<Player>();

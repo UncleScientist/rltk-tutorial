@@ -42,7 +42,7 @@
     { "name" : "Leather Boots", "weight" : 1, "min_depth" : 2, "max_depth" : 100 },
     { "name" : "Chainmail Armor", "weight" : 1, "min_depth" : 4, "max_depth" : 100 },
     { "name" : "Chain Coif", "weight" : 1, "min_depth" : 4, "max_depth" : 100 },
-    { "name" : "Dragon Wyrmling", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
+    { "name" : "Dragon Wyrmling", "weight" : 1, "min_depth" : 5, "max_depth" : 6 },
     { "name" : "Lizardman", "weight" : 10, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Giant Lizard", "weight" : 4, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Rock Golem", "weight" : 4, "min_depth" : 5, "max_depth" : 7 },
@@ -51,11 +51,24 @@
     { "name" : "Breastplate", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "War Axe", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
-    { "name" : "Town Portal Scroll", "weight" : 4, "min_depth" : 0, "max_depth" : 100 }
-
+    { "name" : "Town Portal Scroll", "weight" : 4, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Firecap Mushroom", "weight" : 10, "min_depth" : 7, "max_depth" : 9 }
 ],
 
 "spells" : [
+    {
+        "name" : "Explode",
+        "mana_cost" : 1,
+        "effects" : {
+            "ranged" : "3",
+            "damage" : "20",
+            "area_of_effect" : "3",
+            "particle" : "▒;#FFAA50;400.0",
+            "single_activation" : "1",
+            "target_self" : "1"
+        }
+    },
+
     {
         "name" : "Zap",
         "mana_cost" : 1,
@@ -118,9 +131,9 @@
     { "name" : "Carnivores", "responses" : { "Default" : "attack", "Carnivores" : "ignore" } },
     { "name" : "Herbivores", "responses" : { "Default" : "flee", "Herbivores" : "ignore" } },
     { "name" : "Hungry Rodents", "responses": { "Default" : "attack", "Hungry Rodents" : "ignore" }},
-    { "name" : "Wyrm", "responses": { "Default" : "attack", "Wyrm" : "ignore" }},
-    { "name" : "Dwarven Remnant", "responses": { "Default" : "attack", "Player" : "ignore", "Dwarven Remnant" : "ignore" }}
-
+    { "name" : "Dwarven Remnant", "responses": { "Default" : "attack", "Player" : "ignore", "Dwarven Remnant" : "ignore" }},
+    { "name" : "Wyrm", "responses": { "Default" : "attack", "Wyrm" : "ignore", "Fungi" : "ignore" }},
+    { "name" : "Fungi", "responses": { "Default" : "attack", "Fungi" : "ignore", "Wyrm" : "ignore" }}
 ],
 
 "items" : [
@@ -1056,6 +1069,28 @@
 ],
 
 "mobs" : [
+    {
+        "name" : "Firecap Mushroom",
+        "renderable": {
+            "glyph" : "♠",
+            "fg" : "#FFAA50",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 3,
+        "movement" : "static",
+        "attributes" : {},
+        "faction" : "Fungi",
+        "level" : 1,
+        "abilities" : [
+            { "spell" : "Explode", "chance" : 1.0, "range" : 3.0, "min_range" : 0.0 }
+        ],
+        "on_death" : [
+            { "spell" : "Explode", "chance": 1.0, "range" : 0.0, "min_range" : 0.0 }
+        ]
+    },
+
     {
         "name" : "Black Dragon",
         "renderable": {

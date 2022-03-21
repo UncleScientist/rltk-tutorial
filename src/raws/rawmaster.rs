@@ -283,6 +283,7 @@ macro_rules! apply_effects {
                 "particle" => $eb = $eb.with(parse_particle(&effect.1)),
                 "remove_curse" => $eb = $eb.with(ProvidesRemoveCurse {}),
                 "identify" => $eb = $eb.with(ProvidesIdentification {}),
+                "target_self" => $eb = $eb.with(AlwaysTargetsSelf {}),
                 "slow" => {
                     $eb = $eb.with(Slow {
                         initiative_penalty: effect.1.parse::<f32>().unwrap(),
@@ -531,6 +532,21 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             eb = eb.with(Faction {
                 name: "Mindless".to_string(),
             });
+        }
+
+        if let Some(ability_list) = &mob_template.on_death {
+            let mut a = OnDeath {
+                abilities: Vec::new(),
+            };
+            for ability in ability_list.iter() {
+                a.abilities.push(SpecialAbility {
+                    chance: ability.chance,
+                    spell: ability.spell.clone(),
+                    range: ability.range,
+                    min_range: ability.min_range,
+                });
+            }
+            eb = eb.with(a);
         }
 
         if let Some(ability_list) = &mob_template.abilities {
