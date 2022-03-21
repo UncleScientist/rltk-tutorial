@@ -8,6 +8,9 @@ use crate::SHOW_MAPGEN_VISUALIZER;
 mod common;
 use common::*;
 
+mod mushroom_forest;
+use mushroom_forest::*;
+
 mod dwarf_fort;
 use dwarf_fort::*;
 
@@ -222,6 +225,7 @@ pub fn level_builder(
         4 => limestone_deep_cavern_builder(new_depth, rng, width, height),
         5 => limestone_transition_builder(new_depth, rng, width, height),
         6 => dwarf_fort_builder(new_depth, rng, width, height),
+        7 => mushroom_entrance(new_depth, rng, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }

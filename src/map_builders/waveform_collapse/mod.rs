@@ -33,7 +33,7 @@ impl WaveformCollapseBuilder {
             build_data.map.depth,
             build_data.map.width,
             build_data.map.height,
-            "Waveform Collapse",
+            &build_data.map.name,
         );
         loop {
             let mut solver = Solver::new(constraints.clone(), CHUNK_SIZE, &build_data.map);
@@ -56,10 +56,10 @@ impl WaveformCollapseBuilder {
         build_data: &mut BuilderMap,
     ) {
         build_data.map = Map::new(
-            0,
+            build_data.map.depth,
             build_data.map.width,
             build_data.map.height,
-            "Tile Gallery",
+            &build_data.map.name,
         );
         let mut counter = 0;
         let mut x = 1;
@@ -76,10 +76,10 @@ impl WaveformCollapseBuilder {
                 if y + chunk_size > build_data.map.height {
                     build_data.take_snapshot();
                     build_data.map = Map::new(
-                        0,
+                        build_data.map.depth,
                         build_data.map.width,
                         build_data.map.height,
-                        "Chunk Gallery",
+                        &build_data.map.name,
                     );
                     x = 1;
                     y = 1;
