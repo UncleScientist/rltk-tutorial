@@ -180,10 +180,85 @@
     { "name" : "Hungry Rodents", "responses": { "Default" : "attack", "Hungry Rodents" : "ignore" }},
     { "name" : "Dwarven Remnant", "responses": { "Default" : "attack", "Player" : "ignore", "Dwarven Remnant" : "ignore" }},
     { "name" : "Wyrm", "responses": { "Default" : "attack", "Wyrm" : "ignore", "Fungi" : "ignore" }},
+    { "name" : "DarkElf", "responses" : { "Default" : "attack", "DarkElf" : "ignore" } },
     { "name" : "Fungi", "responses": { "Default" : "attack", "Fungi" : "ignore", "Wyrm" : "ignore" }}
 ],
 
 "items" : [
+    {
+        "name" : "Drow Leggings",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#00FFFF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Legs",
+            "armor_class" : 0.4
+        },
+        "weight_lbs" : 10.0,
+        "base_value" : 50.0,
+        "initiative_penalty" : 0.1,
+        "vendor_category" : "clothes"
+    },
+
+    {
+        "name" : "Drow Chain",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#00FF00",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Torso",
+            "armor_class" : 3.0
+        },
+        "weight_lbs" : 5.0,
+        "base_value" : 50.0,
+        "initiative_penalty" : 0.0,
+        "vendor_category" : "armor"
+    },
+
+    {
+        "name" : "Drow Boots",
+        "renderable": {
+            "glyph" : "[",
+            "fg" : "#00FF00",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "wearable" : {
+            "slot" : "Feet",
+            "armor_class" : 0.4
+        },
+        "weight_lbs" : 2.0,
+        "base_value" : 10.0,
+        "initiative_penalty" : 0.1,
+        "vendor_category" : "armor"
+    },
+
+    {
+        "name" : "Scimitar",
+        "renderable": {
+            "glyph" : "/",
+            "fg" : "#FFAAFF",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "weapon" : {
+            "range" : "melee",
+            "attribute" : "might",
+            "base_damage" : "1d6+2",
+            "hit_bonus" : 1
+        },
+        "weight_lbs" : 2.5,
+        "base_value" : 25.0,
+        "initiative_penalty" : 1,
+        "vendor_category" : "weapon"
+    },
+
     {
         "name" : "Cloth Gloves",
         "renderable": {
@@ -1390,6 +1465,24 @@
 ],
 
 "mobs" : [
+    {
+        "name" : "Dark Elf",
+        "renderable": {
+            "glyph" : "e",
+            "fg" : "#FF0000",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 8,
+        "movement" : "random_waypoint",
+        "attributes" : {},
+        "equipped" : [ "Scimitar", "Buckler", "Drow Chain", "Drow Leggings", "Drow Boots" ],
+        "faction" : "DarkElf",
+        "gold" : "3d6",
+        "level" : 6
+    },
+
     {
         "name" : "Fungal Beast",
         "renderable": {

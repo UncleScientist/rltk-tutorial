@@ -226,6 +226,8 @@ pub fn level_builder(
         5 => limestone_transition_builder(new_depth, rng, width, height),
         6 => dwarf_fort_builder(new_depth, rng, width, height),
         7 => mushroom_entrance(new_depth, rng, width, height),
+        8 => mushroom_builder(new_depth, rng, width, height),
+        9 => mushroom_exit(new_depth, rng, width, height),
         _ => random_builder(new_depth, rng, width, height),
     }
 }
