@@ -52,10 +52,41 @@
     { "name" : "War Axe", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Town Portal Scroll", "weight" : 4, "min_depth" : 0, "max_depth" : 100 },
+    { "name" : "Fungal Beast", "weight" : 9, "min_depth" : 7, "max_depth" : 9 },
+    { "name" : "Fungus Man", "weight" : 8, "min_depth" : 7, "max_depth" : 9 },
+    { "name" : "Spore Zombie", "weight" : 7, "min_depth" : 7, "max_depth" : 9 },
+    { "name" : "Sporecap Mushroom", "weight" : 10, "min_depth" : 7, "max_depth" : 9 },
+    { "name" : "Deathcap Mushroom", "weight" : 7, "min_depth" : 7, "max_depth" : 9 },
     { "name" : "Firecap Mushroom", "weight" : 10, "min_depth" : 7, "max_depth" : 9 }
 ],
 
 "spells" : [
+    {
+        "name" : "PoisonCloud",
+        "mana_cost" : 1,
+        "effects" : {
+            "ranged" : "3",
+            "damage_over_time" : "4",
+            "area_of_effect" : "3",
+            "particle" : "*;#00FF00;400.0",
+            "single_activation" : "1",
+            "target_self" : "1"
+        }
+    },
+
+    {
+        "name" : "ConfusionCloud",
+        "mana_cost" : 1,
+        "effects" : {
+            "ranged" : "3",
+            "confusion" : "4",
+            "area_of_effect" : "3",
+            "particle" : "?;#FFFF00;400.0",
+            "single_activation" : "1",
+            "target_self" : "1"
+        }
+    },
+
     {
         "name" : "Explode",
         "mana_cost" : 1,
@@ -1069,6 +1100,105 @@
 ],
 
 "mobs" : [
+    {
+        "name" : "Fungal Beast",
+        "renderable": {
+            "glyph" : "F",
+            "fg" : "#995555",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 6,
+        "movement" : "random",
+        "attributes" : {},
+        "natural" : {
+            "armor_class" : 11,
+            "attacks" : [
+                { "name" : "bite", "hit_bonus" : 0, "damage" : "1d4" }
+            ]
+        },
+        "faction" : "Fungi"
+    },
+
+    {
+        "name" : "Spore Zombie",
+        "renderable": {
+            "glyph" : "z",
+            "fg" : "#FF0000",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 8,
+        "movement" : "random_waypoint",
+        "attributes" : {},
+        "faction" : "Fungi",
+        "gold" : "2d8",
+        "level" : 5
+    },
+    {
+        "name" : "Fungus Man",
+        "renderable": {
+            "glyph" : "f",
+            "fg" : "#FF0000",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 8,
+        "movement" : "random_waypoint",
+        "attributes" : {},
+        "faction" : "Fungi",
+        "gold" : "2d8",
+        "level" : 4,
+        "loot_table" : "Animal"
+    },
+
+    {
+        "name" : "Deathcap Mushroom",
+        "renderable": {
+            "glyph" : "♠",
+            "fg" : "#55FF55",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 3,
+        "movement" : "static",
+        "attributes" : {},
+        "faction" : "Fungi",
+        "level" : 1,
+        "abilities" : [
+            { "spell" : "PoisonCloud", "chance" : 1.0, "range" : 3.0, "min_range" : 0.0 }
+        ],
+        "on_death" : [
+            { "spell" : "PoisonCloud", "chance" : 1.0, "range" : 0.0, "min_range" : 0.0 }
+        ]
+    },
+
+    {
+        "name" : "Sporecap Mushroom",
+        "renderable": {
+            "glyph" : "♠",
+            "fg" : "#00AAFF",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 3,
+        "movement" : "static",
+        "attributes" : {},
+        "faction" : "Fungi",
+        "level" : 1,
+        "abilities" : [
+            { "spell" : "ConfusionCloud", "chance" : 1.0, "range" : 3.0, "min_range" : 0.0 }
+        ],
+        "on_death" : [
+            { "spell" : "ConfusionCloud", "chance" : 1.0, "range" : 0.0, "min_range" : 0.0 }
+        ]
+    },
+
     {
         "name" : "Firecap Mushroom",
         "renderable": {

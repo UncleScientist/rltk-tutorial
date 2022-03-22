@@ -15,3 +15,6 @@
    code
 
  - particle effects affect tooltip tips
+
+ - mushrooms will lock into chasing the player if the initial contact is outside
+   of the mushroom's trigger range
