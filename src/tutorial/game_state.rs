@@ -189,7 +189,6 @@ impl GameState for State {
                         }
                         RunState::TownPortal => newrunstate = RunState::TownPortal,
                         RunState::TeleportingToOtherLevel { x, y, depth } => {
-                            rltk::console::log(format!("Teleporting to {depth}"));
                             newrunstate = RunState::TeleportingToOtherLevel { x, y, depth }
                         }
                         RunState::ShowRemoveCurse => newrunstate = RunState::ShowRemoveCurse,
