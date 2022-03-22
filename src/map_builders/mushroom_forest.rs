@@ -14,8 +14,8 @@ pub fn mushroom_entrance(
     chain.with(WaveformCollapseBuilder::new());
     chain.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
     chain.with(CullUnreachable::new());
-    chain.with(AreaStartingPosition::new(XStart::Left, YStart::Center));
-    chain.with(AreaEndingPosition::new(XEnd::Right, YEnd::Center));
+    chain.with(AreaStartingPosition::new(XStart::Right, YStart::Center));
+    chain.with(AreaEndingPosition::new(XEnd::Left, YEnd::Center));
     chain.with(VoronoiSpawning::new());
     chain.with(PrefabBuilder::sectional(UNDERGROUND_FORT));
     chain

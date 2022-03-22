@@ -3,7 +3,7 @@ use crate::map;
 use rltk::{DistanceAlg, Point, RandomNumberGenerator};
 
 pub enum XEnd {
-    // Left,
+    Left,
     // Center,
     Right,
 }
@@ -32,7 +32,7 @@ impl AreaEndingPosition {
 
     fn build(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
         let seed_x = match self.x {
-            // XEnd::Left => 1,
+            XEnd::Left => 1,
             // XEnd::Center => build_data.map.width / 2,
             XEnd::Right => build_data.map.width - 2,
         };
