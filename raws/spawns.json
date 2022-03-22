@@ -44,7 +44,6 @@
     { "name" : "Leather Armor", "weight" : 1, "min_depth" : 2, "max_depth" : 100 },
     { "name" : "Leather Boots", "weight" : 1, "min_depth" : 2, "max_depth" : 100 },
     { "name" : "Chainmail Armor", "weight" : 1, "min_depth" : 4, "max_depth" : 100 },
-    { "name" : "Chain Coif", "weight" : 1, "min_depth" : 4, "max_depth" : 100 },
     { "name" : "Dragon Wyrmling", "weight" : 1, "min_depth" : 5, "max_depth" : 6 },
     { "name" : "Lizardman", "weight" : 10, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "Giant Lizard", "weight" : 4, "min_depth" : 5, "max_depth" : 7 },
@@ -60,7 +59,6 @@
     { "name" : "Leather Pants", "weight" : 5, "min_depth" : 1, "max_depth" : 100 },
     { "name" : "Chain Leggings", "weight" : 4, "min_depth" : 1, "max_depth" : 100 },
     { "name" : "Steel Greaves", "weight" : 3, "min_depth" : 5, "max_depth" : 100 },
-    { "name" : "Leather Boots", "weight" : 5, "min_depth" : 1, "max_depth" : 100 },
     { "name" : "Chain Boots", "weight" : 4, "min_depth" : 3, "max_depth" : 100 },
     { "name" : "Steel Boots", "weight" : 2, "min_depth" : 5, "max_depth" : 100 },
     { "name" : "Cloth Gloves", "weight" : 6, "min_depth" : 1, "max_depth" : 100 },
@@ -259,24 +257,6 @@
     },
 
     {
-        "name" : "Leather Boots",
-        "renderable": {
-            "glyph" : "[",
-            "fg" : "#00FF00",
-            "bg" : "#000000",
-            "order" : 2
-        },
-        "wearable" : {
-            "slot" : "Feet",
-            "armor_class" : 0.2
-        },
-        "weight_lbs" : 2.0,
-        "base_value" : 5.0,
-        "initiative_penalty" : 0.25,
-        "vendor_category" : "clothes"
-    },
-
-    {
         "name" : "Chain Boots",
         "renderable": {
             "glyph" : "[",
@@ -399,24 +379,6 @@
         "weight_lbs" : 0.5,
         "base_value" : 10.0,
         "initiative_penalty" : 0.2,
-        "vendor_category" : "armor"
-    },
-
-    {
-        "name" : "Chain Coif",
-        "renderable": {
-            "glyph" : "[",
-            "fg" : "#00FF00",
-            "bg" : "#000000",
-            "order" : 2
-        },
-        "wearable" : {
-            "slot" : "Head",
-            "armor_class" : 1.0
-        },
-        "weight_lbs" : 5.0,
-        "base_value" : 20.0,
-        "initiative_penalty" : 0.5,
         "vendor_category" : "armor"
     },
 
