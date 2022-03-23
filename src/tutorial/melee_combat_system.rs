@@ -160,8 +160,15 @@ impl<'a> System<'a> for MeleeCombatSystem {
                     // Proc effects
                     if let Some(chance) = &weapon_info.proc_chance {
                         if rng.roll_dice(1, 100) <= (chance * 100.0) as i32 {
-                            let effect_target = if weapon_info.proc_target.unwrap() == "Self" {
-                                Targets::Single { target: entity }
+                            let effect_target = if let Some(weapon_target) = weapon_info.proc_target
+                            {
+                                if weapon_target == "Self" {
+                                    Targets::Single { target: entity }
+                                } else {
+                                    Targets::Single {
+                                        target: wants_melee.target,
+                                    }
+                                }
                             } else {
                                 Targets::Single {
                                     target: wants_melee.target,

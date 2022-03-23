@@ -78,6 +78,7 @@ impl Editor {
             (Key7, '7'),
             (Key8, '8'),
             (Key9, '9'),
+            (Minus, '-'),
         ]);
         Self {
             text: "".to_string(),
@@ -98,13 +99,17 @@ impl Editor {
 
     pub fn insert_keycode(&mut self, code: rltk::VirtualKeyCode, is_shift: bool) {
         if is_shift {
-            self.text.extend(
-                self.keymap
-                    .get(&code)
-                    .unwrap()
-                    .to_uppercase()
-                    .collect::<Vec<_>>(),
-            );
+            if code == rltk::VirtualKeyCode::Equals {
+                self.text.push('+')
+            } else {
+                self.text.extend(
+                    self.keymap
+                        .get(&code)
+                        .unwrap()
+                        .to_uppercase()
+                        .collect::<Vec<_>>(),
+                );
+            }
         } else {
             self.text.push(*self.keymap.get(&code).unwrap())
         }

@@ -462,7 +462,7 @@ pub fn summon_item(gs: &mut State, ctx: &mut Rltk) -> (SummonItemResult, String)
         Some(key) => match key {
             A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U
             | V | W | X | Y | Z | Space | Key1 | Key2 | Key3 | Key4 | Key5 | Key6 | Key7 | Key8
-            | Key9 | Key0
+            | Key9 | Key0 | Equals | Minus
                 if txt.len() < 27 =>
             {
                 editor.insert_keycode(key, ctx.shift);
@@ -475,7 +475,7 @@ pub fn summon_item(gs: &mut State, ctx: &mut Rltk) -> (SummonItemResult, String)
             Escape => (SummonItemResult::Cancel, "".to_string()),
             Return => (SummonItemResult::Done, editor.to_string()),
             _ => {
-                // rltk::console::log(format!("keycode {:?}", key));
+                rltk::console::log(format!("keycode {:?}", key));
                 (SummonItemResult::NoResponse, "".to_string())
             }
         },

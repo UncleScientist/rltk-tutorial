@@ -22,6 +22,9 @@ use spell_structs::*;
 mod loot_structs;
 use loot_structs::*;
 
+mod weapon_traits;
+use weapon_traits::*;
+
 mod rawmaster;
 pub use rawmaster::*;
 
@@ -36,6 +39,7 @@ pub struct Raws {
     pub loot_tables: Vec<LootTable>,
     pub faction_table: Vec<FactionInfo>,
     pub spells: Vec<Spell>,
+    pub weapon_traits: Vec<WeaponTrait>,
 }
 
 use lazy_static::lazy_static;
