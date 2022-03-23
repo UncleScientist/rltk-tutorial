@@ -3,6 +3,7 @@ use rltk::{FontCharType, RGB};
 
 pub fn tile_glyph(idx: usize, map: &Map) -> RenderTile {
     let RenderTile(glyph, mut fg, mut bg) = match map.depth {
+        8 | 9 => get_mushroom_glyph(idx, map),
         7 => {
             let x = idx as i32 % map.width;
             if x > map.width - 16 {
