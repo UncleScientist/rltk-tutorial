@@ -105,11 +105,15 @@ impl RawMaster {
             weapon.hit_bonus += nmw.bonus;
             let (n, die, plus) = parse_dice_string(&weapon.base_damage);
             let final_bonus = plus + nmw.bonus;
-            if final_bonus > 0 {
-                weapon.base_damage = format!("{n}d{die}+{final_bonus}");
-            } else if final_bonus < 0 {
-                weapon.base_damage = format!("{n}d{die}{final_bonus}");
-            }
+            match final_bonus.cmp(&0) {
+                std::cmp::Ordering::Less => {
+                    weapon.base_damage = format!("{n}d{die}{final_bonus}");
+                }
+                std::cmp::Ordering::Greater => {
+                    weapon.base_damage = format!("{n}d{die}+{final_bonus}");
+                }
+                _ => {}
+            };
         }
 
         if let Some(mut armor) = base_item_copy.wearable.as_mut() {
@@ -120,7 +124,7 @@ impl RawMaster {
 
     fn build_magic_weapon_or_armor(&mut self, items_to_build: &[NewMagicItem]) {
         for nmw in items_to_build.iter() {
-            let base_item_copy = self.build_base_magic_item(&nmw);
+            let base_item_copy = self.build_base_magic_item(nmw);
 
             let real_name = base_item_copy.name.clone();
             self.raws.items.push(base_item_copy);
@@ -143,7 +147,7 @@ impl RawMaster {
             .filter(|i| i.bonus > 0)
             .for_each(|nmw| {
                 for wt in self.raws.weapon_traits.iter() {
-                    let mut base_item_copy = self.build_base_magic_item(&nmw);
+                    let mut base_item_copy = self.build_base_magic_item(nmw);
                     if let Some(mut weapon) = base_item_copy.weapon.as_mut() {
                         base_item_copy.name = format!("{} {}", wt.name, base_item_copy.name);
                         if let Some(base_value) = base_item_copy.base_value.as_mut() {
