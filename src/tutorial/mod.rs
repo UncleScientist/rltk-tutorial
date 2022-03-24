@@ -1,3 +1,6 @@
+pub mod editor;
+pub use editor::*;
+
 pub mod random_table;
 pub use random_table::*;
 

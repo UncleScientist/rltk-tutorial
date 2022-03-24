@@ -126,6 +126,8 @@ impl GameState for State {
                         newrunstate = RunState::AwaitingInput;
                     }
                     gui::CheatMenuResult::SummonItem => {
+                        let mut editor = self.ecs.fetch_mut::<Editor>();
+                        editor.reset();
                         newrunstate = RunState::SummonItem;
                     }
                 }
