@@ -1,4 +1,4 @@
-use super::{Hidden, Position, Renderable, TileSize};
+use super::{Hidden, Position, Renderable, Target, TileSize};
 use crate::map::{tile_glyph, RenderTile};
 use crate::Map;
 use rltk::{Point, Rltk, RGB};
@@ -51,11 +51,14 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
         }
     }
 
+    // Render entities
     let positions = ecs.read_storage::<Position>();
     let renderables = ecs.read_storage::<Renderable>();
     let hidden = ecs.read_storage::<Hidden>();
+    let map = ecs.fetch::<Map>();
     let sizes = ecs.read_storage::<TileSize>();
     let entities = ecs.entities();
+    let targets = ecs.read_storage::<Target>();
 
     let mut data = (&positions, &renderables, &entities, !&hidden)
         .join()
@@ -106,6 +109,25 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
                     );
                 }
             }
+        }
+
+        if targets.get(*entity).is_some() {
+            let entity_screen_x = pos.x - min_x;
+            let entity_screen_y = pos.y - min_y;
+            ctx.set(
+                entity_screen_x - 1,
+                entity_screen_y,
+                rltk::RGB::named(rltk::RED),
+                rltk::RGB::named(rltk::YELLOW),
+                rltk::to_cp437('['),
+            );
+            ctx.set(
+                entity_screen_x + 1,
+                entity_screen_y,
+                rltk::RGB::named(rltk::RED),
+                rltk::RGB::named(rltk::YELLOW),
+                rltk::to_cp437(']'),
+            );
         }
     }
 }

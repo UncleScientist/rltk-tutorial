@@ -182,10 +182,14 @@ impl GameState for State {
                 newrunstate = player_input(self, ctx);
             }
             RunState::Ticking => {
+                let mut should_change_target = false;
                 while newrunstate == RunState::Ticking {
                     self.run_systems();
                     match *self.ecs.fetch::<RunState>() {
-                        RunState::AwaitingInput => newrunstate = RunState::AwaitingInput,
+                        RunState::AwaitingInput => {
+                            newrunstate = RunState::AwaitingInput;
+                            should_change_target = true
+                        }
                         RunState::MagicMapReveal { .. } => {
                             newrunstate = RunState::MagicMapReveal { row: 0 }
                         }
@@ -197,6 +201,9 @@ impl GameState for State {
                         RunState::ShowIdentify => newrunstate = RunState::ShowIdentify,
                         _ => newrunstate = RunState::Ticking,
                     }
+                }
+                if should_change_target {
+                    player::end_turn_targeting(&mut self.ecs);
                 }
             }
             RunState::ShowInventory => {

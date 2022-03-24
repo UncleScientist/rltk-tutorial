@@ -249,6 +249,9 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
                         &name, weapon.damage_n_dice, weapon.damage_die_type, weapon.damage_bonus
                     ),
                 };
+                if let Some(range) = weapon.range {
+                    weapon_info += &format!(" (range: {range}, F to fire, V cycle targets)");
+                }
                 weapon_info += " ├";
                 ctx.print_color(3, 45, yellow, black, &weapon_info);
             }

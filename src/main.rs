@@ -57,7 +57,6 @@ fn main() -> rltk::BError {
     gs.ecs.register::<LootTable>();
     gs.ecs.register::<MagicItem>();
     gs.ecs.register::<MagicMapper>();
-    gs.ecs.register::<Weapon>();
     gs.ecs.register::<MoveMode>();
     gs.ecs.register::<MyTurn>();
     gs.ecs.register::<Name>();
@@ -87,6 +86,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<SpecialAbilities>();
     gs.ecs.register::<SpellTemplate>();
     gs.ecs.register::<StatusEffect>();
+    gs.ecs.register::<Target>();
     gs.ecs.register::<TeachesSpell>();
     gs.ecs.register::<TeleportTo>();
     gs.ecs.register::<TileSize>();
@@ -101,6 +101,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<WantsToPickupItem>();
     gs.ecs.register::<WantsToRemoveItem>();
     gs.ecs.register::<WantsToUseItem>();
+    gs.ecs.register::<Weapon>();
     gs.ecs.register::<Wearable>();
 
     game_state::load_raws();

@@ -11,6 +11,9 @@ use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
 
+#[derive(Component, Serialize, Deserialize, Clone)]
+pub struct Target {}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct SpecialAbility {
     pub spell: String,
