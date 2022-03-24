@@ -250,6 +250,12 @@ pub fn player(ecs: &mut World, player_x: i32, player_y: i32) -> Entity {
         "Old Boots",
         SpawnType::Equipped { by: player },
     );
+    spawn_named_entity(
+        &RAWS.lock().unwrap(),
+        ecs,
+        "Shortbow",
+        SpawnType::Carried { by: player },
+    );
 
     // Starting hangover
     ecs.create_entity()

@@ -1,6 +1,6 @@
 use crate::{
     effects::*, skill_bonus, Attributes, EquipmentSlot, Equipped, GameLog, HungerClock,
-    HungerState, MeleeWeapon, Name, NaturalAttackDefense, Pools, Skill, Skills, WantsToMelee,
+    HungerState, Name, NaturalAttackDefense, Pools, Skill, Skills, WantsToMelee, Weapon,
     WeaponAttribute, Wearable,
 };
 
@@ -20,7 +20,7 @@ type MeleeCombatData<'a> = (
     ReadStorage<'a, Pools>,
     WriteExpect<'a, RandomNumberGenerator>,
     ReadStorage<'a, Equipped>,
-    ReadStorage<'a, MeleeWeapon>,
+    ReadStorage<'a, Weapon>,
     ReadStorage<'a, Wearable>,
     ReadStorage<'a, NaturalAttackDefense>,
 );
@@ -59,7 +59,8 @@ impl<'a> System<'a> for MeleeCombatSystem {
             let target_attributes = attributes.get(wants_melee.target).unwrap();
             let target_skills = skills.get(wants_melee.target).unwrap();
 
-            let mut weapon_info = MeleeWeapon {
+            let mut weapon_info = Weapon {
+                range: None,
                 attribute: WeaponAttribute::Might,
                 hit_bonus: 0,
                 damage_n_dice: 1,

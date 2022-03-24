@@ -2,7 +2,7 @@ use crate::{
     camera, Attribute, Attributes, Consumable, CursedItem, Duration, Editor, Equipped, GameLog,
     Hidden, HungerClock, HungerState, InBackpack, Item, KnownSpells, MagicItem, MagicItemClass,
     Map, MasterDungeonMap, Name, ObfuscatedName, Owned, Pools, RexAssets, RunState, State,
-    StatusEffect, Vendor, VendorMode, Viewshed,
+    StatusEffect, Vendor, VendorMode, Viewshed, Weapon,
 };
 use rltk::{
     to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
@@ -221,8 +221,10 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     let mut y = 13;
     let entities = ecs.entities();
     let equipped = ecs.read_storage::<Equipped>();
+    let weapon = ecs.read_storage::<Weapon>();
     for (entity, equipped_by) in (&entities, &equipped).join() {
         if equipped_by.owner == *player_entity {
+            let name = get_item_display_name(ecs, entity);
             ctx.print_color(
                 50,
                 y,
@@ -231,6 +233,25 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
                 &get_item_display_name(ecs, entity),
             );
             y += 1;
+
+            if let Some(weapon) = weapon.get(entity) {
+                let mut weapon_info = match weapon.damage_bonus.cmp(&0) {
+                    std::cmp::Ordering::Less => format!(
+                        "┤ {} ({}d{}{})",
+                        &name, weapon.damage_n_dice, weapon.damage_die_type, weapon.damage_bonus
+                    ),
+                    std::cmp::Ordering::Equal => format!(
+                        "┤ {} ({}d{})",
+                        &name, weapon.damage_n_dice, weapon.damage_die_type
+                    ),
+                    std::cmp::Ordering::Greater => format!(
+                        "┤ {} ({}d{}+{})",
+                        &name, weapon.damage_n_dice, weapon.damage_die_type, weapon.damage_bonus
+                    ),
+                };
+                weapon_info += " ├";
+                ctx.print_color(3, 45, yellow, black, &weapon_info);
+            }
         }
     }
 

@@ -537,7 +537,12 @@ fn spawn_named_item(
                 slot: EquipmentSlot::Melee,
             });
             let (n_dice, die_type, bonus) = parse_dice_string(&weapon.base_damage);
-            let wpn = MeleeWeapon {
+            let wpn = Weapon {
+                range: if weapon.range == "melee" {
+                    None
+                } else {
+                    Some(weapon.range.parse::<i32>().expect("Not a number"))
+                },
                 attribute: match weapon.attribute.as_str() {
                     "Quickness" => WeaponAttribute::Quickness,
                     _ => WeaponAttribute::Might,

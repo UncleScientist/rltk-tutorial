@@ -57,7 +57,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<LootTable>();
     gs.ecs.register::<MagicItem>();
     gs.ecs.register::<MagicMapper>();
-    gs.ecs.register::<MeleeWeapon>();
+    gs.ecs.register::<Weapon>();
     gs.ecs.register::<MoveMode>();
     gs.ecs.register::<MyTurn>();
     gs.ecs.register::<Name>();
