@@ -69,7 +69,10 @@
     { "name" : "Landmine", "weight" : 1, "min_depth" : 5, "max_depth" : 6 },
     { "name" : "Breastplate", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
     { "name" : "War Axe", "weight" : 7, "min_depth" : 5, "max_depth" : 7 },
-    { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 }
+    { "name" : "Dwarf-Steel Shirt", "weight" : 1, "min_depth" : 5, "max_depth" : 7 },
+    { "name" : "Hand Crossbow", "weight" : 2, "min_depth" : 9, "max_depth" : 11 },
+    { "name" : "Shortbow", "weight" : 2, "min_depth" : 3, "max_depth" : 100 }
+
 ],
 
 "loot_tables" : [
@@ -104,6 +107,32 @@
 
 "items" : [
     {
+        "name" : "Hand Crossbow",
+        "renderable": {
+            "glyph" : ")",
+            "fg" : "#FFAAAA",
+            "bg" : "#000000",
+            "order" : 2
+        },
+        "weapon" : {
+            "range" : "6",
+            "attribute" : "Quickness",
+            "base_damage" : "1d6",
+            "hit_bonus" : 0
+        },
+        "weight_lbs" : 2.0,
+        "base_value" : 5.0,
+        "initiative_penalty" : 1,
+        "vendor_category" : "weapon",
+        "template_magic" : {
+            "unidentified_name" : "Unidentified Hand Crossbow",
+            "bonus_min" : 1,
+            "bonus_max" : 5,
+            "include_cursed" : true
+        }
+    },
+
+    {
         "name" : "Shortbow",
         "renderable": {
             "glyph" : ")",
@@ -120,7 +149,13 @@
         "weight_lbs" : 2.0,
         "base_value" : 5.0,
         "initiative_penalty" : 1,
-        "vendor_category" : "weapon"
+        "vendor_category" : "weapon",
+        "template_magic" : {
+            "unidentified_name": "Unidentified Shortbow",
+            "bonus_min": 1,
+            "bonus_max" : 5,
+            "include_cursed": true
+        }
     },
 
     {
@@ -1872,7 +1907,7 @@
         "vision_range" : 8,
         "movement" : "random_waypoint",
         "attributes" : {},
-        "equipped" : [ "Scimitar", "Buckler", "Drow Chain", "Drow Leggings", "Drow Boots" ],
+        "equipped" : [ "Hand Crossbow", "Scimitar", "Buckler", "Drow Chain", "Drow Leggings", "Drow Boots" ],
         "faction" : "DarkElf",
         "gold" : "3d6",
         "level" : 6
@@ -1926,6 +1961,23 @@
         "attributes" : {},
         "faction" : "Cave Goblins",
         "gold" : "1d6"
+    },
+
+    {
+        "name" : "Goblin Archer",
+        "renderable": {
+            "glyph" : "g",
+            "fg" : "#FFFF00",
+            "bg" : "#000000",
+            "order" : 1
+        },
+        "blocks_tile" : true,
+        "vision_range" : 8,
+        "movement" : "static",
+        "attributes" : {},
+        "faction" : "Cave Goblins",
+        "gold" : "1d6",
+        "equipped": [ "Shortbow", "Leather Armor", "Leather Boots"]
     },
 
     {
