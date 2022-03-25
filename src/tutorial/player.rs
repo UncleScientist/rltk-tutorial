@@ -215,6 +215,7 @@ pub fn player_input(gs: &mut State, ctx: &mut Rltk) -> RunState {
             Numpad3 | N => try_move_player(1, 1, &mut gs.ecs),
             Numpad1 | B => try_move_player(-1, 1, &mut gs.ecs),
             Numpad5 | Space => skip_turn(&mut gs.ecs),
+            F => fire_on_target(&mut gs.ecs),
             V => {
                 cycle_target(&mut gs.ecs);
                 RunState::AwaitingInput
@@ -379,6 +380,35 @@ pub fn end_turn_targeting(ecs: &mut World) {
         targets
             .insert(possible_targets[0].1, Target {})
             .expect("Insert fail");
+    }
+}
+
+fn fire_on_target(ecs: &mut World) -> RunState {
+    let targets = ecs.read_storage::<Target>();
+    let entities = ecs.entities();
+    let mut current_target = None;
+    let mut log = ecs.fetch_mut::<GameLog>();
+
+    for (e, _t) in (&entities, &targets).join() {
+        current_target = Some(e);
+    }
+
+    if let Some(target) = current_target {
+        let player_entity = ecs.fetch::<Entity>();
+        let mut shoot_store = ecs.write_storage::<WantsToShoot>();
+        let names = ecs.read_storage::<Name>();
+        if let Some(name) = names.get(target) {
+            log.entries.push(format!("You fire at {}", name.name));
+        }
+        shoot_store
+            .insert(*player_entity, WantsToShoot { target })
+            .expect("Insert fail");
+
+        RunState::Ticking
+    } else {
+        log.entries
+            .push("You don't have a target selected!".to_string());
+        RunState::AwaitingInput
     }
 }
 
