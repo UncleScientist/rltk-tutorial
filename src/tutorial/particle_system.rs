@@ -1,4 +1,4 @@
-use crate::{Map, ParticleLifetime, Position, Renderable};
+use crate::{ParticleLifetime, Position, Renderable};
 use rltk::{Rltk, RGB};
 use specs::prelude::*;
 
