@@ -1,3 +1,6 @@
+pub mod ranged_combat_system;
+pub use ranged_combat_system::*;
+
 pub mod editor;
 pub use editor::*;
 

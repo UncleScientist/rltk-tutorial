@@ -59,7 +59,7 @@ impl GameState for State {
         let mut newrunstate = *self.ecs.fetch::<RunState>();
 
         ctx.cls();
-        cull_dead_particles(&mut self.ecs, ctx);
+        update_particles(&mut self.ecs, ctx);
 
         match newrunstate {
             RunState::MainMenu { .. } => {}
@@ -519,6 +519,9 @@ impl State {
 
         let mut melee_combat_system = MeleeCombatSystem {};
         melee_combat_system.run_now(&self.ecs);
+
+        let mut ranged_combat_system = RangedCombatSystem {};
+        ranged_combat_system.run_now(&self.ecs);
 
         let mut pickup = inventory_system::ItemCollectionSystem {};
         pickup.run_now(&self.ecs);

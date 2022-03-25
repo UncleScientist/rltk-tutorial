@@ -11,6 +11,19 @@ use specs_derive::{Component, ConvertSaveload};
 
 pub struct SerializeMe;
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct ParticleAnimation {
+    pub step_time: f32,
+    pub path: Vec<Point>,
+    pub current_step: usize,
+    pub timer: f32,
+}
+
+#[derive(Component, ConvertSaveload, Clone)]
+pub struct WantsToShoot {
+    pub target: Entity,
+}
+
 #[derive(Component, Serialize, Deserialize, Clone)]
 pub struct Target {}
 
@@ -364,6 +377,7 @@ pub enum EquipmentSlot {
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct ParticleLifetime {
     pub lifetime_ms: f32,
+    pub animation: Option<ParticleAnimation>,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
