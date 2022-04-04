@@ -397,8 +397,7 @@ fn fire_on_target(ecs: &mut World) -> RunState {
             crate::gamelog::Logger::new()
                 .color(rltk::WHITE)
                 .append("You fire at")
-                .color(rltk::CYAN)
-                .append(&name.name)
+                .item_name(&name.name)
                 .log();
         }
         shoot_store

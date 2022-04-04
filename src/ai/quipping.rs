@@ -26,12 +26,10 @@ impl<'a> System<'a> for QuipSystem {
             {
                 if let Some(quip_index) = rng.random_slice_index(&quip.available) {
                     crate::gamelog::Logger::new()
-                        .color(rltk::YELLOW)
-                        .append(&name.name)
+                        .npc_name(&name.name)
                         .color(rltk::WHITE)
                         .append("says")
-                        .color(rltk::CYAN)
-                        .append(&quip.available[quip_index])
+                        .item_name(&quip.available[quip_index])
                         .log();
                     quip.available.remove(quip_index);
                 }

@@ -52,8 +52,7 @@ impl<'a> System<'a> for ItemEquipOnUse {
                             can_equip = false;
                             crate::gamelog::Logger::new()
                                 .append("You cannot unequip")
-                                .color(rltk::CYAN)
-                                .append(&name.name)
+                                .item_name(&name.name)
                                 .color(rltk::WHITE)
                                 .append("- it is cursed")
                                 .log()
@@ -62,8 +61,7 @@ impl<'a> System<'a> for ItemEquipOnUse {
                             if target == *player_entity {
                                 crate::gamelog::Logger::new()
                                     .append("You unequip")
-                                    .color(rltk::CYAN)
-                                    .append(&name.name)
+                                    .item_name(&name.name)
                                     .log()
                             }
                         }
@@ -104,8 +102,7 @@ impl<'a> System<'a> for ItemEquipOnUse {
                     if target == *player_entity {
                         crate::gamelog::Logger::new()
                             .append("You equip")
-                            .color(rltk::CYAN)
-                            .append(&names.get(useitem.item).unwrap().name)
+                            .item_name(&names.get(useitem.item).unwrap().name)
                             .log();
                     }
                 }

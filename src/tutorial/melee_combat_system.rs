@@ -151,16 +151,13 @@ impl<'a> System<'a> for MeleeCombatSystem {
                         },
                     );
                     crate::gamelog::Logger::new()
-                        .color(rltk::YELLOW)
-                        .append(&name.name)
+                        .npc_name(&name.name)
                         .color(rltk::WHITE)
                         .append("hits")
-                        .color(rltk::YELLOW)
-                        .append(&target_name.name)
+                        .npc_name(&target_name.name)
                         .color(rltk::WHITE)
                         .append("for")
-                        .color(rltk::RED)
-                        .append(format!("{damage}"))
+                        .damage(damage)
                         .color(rltk::WHITE)
                         .append("hp.")
                         .log();
@@ -194,12 +191,10 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 } else if natural_roll == 1 {
                     // Natural 1 miss
                     crate::gamelog::Logger::new()
-                        .color(rltk::CYAN)
-                        .append(&name.name)
+                        .item_name(&name.name)
                         .color(rltk::WHITE)
                         .append("considers attacking")
-                        .color(rltk::CYAN)
-                        .append(&target_name.name)
+                        .item_name(&target_name.name)
                         .color(rltk::WHITE)
                         .append("but misjudges the timing!")
                         .log();
@@ -218,12 +213,10 @@ impl<'a> System<'a> for MeleeCombatSystem {
                 } else {
                     // Miss
                     crate::gamelog::Logger::new()
-                        .color(rltk::CYAN)
-                        .append(&name.name)
+                        .item_name(&name.name)
                         .color(rltk::WHITE)
                         .append("attacks")
-                        .color(rltk::CYAN)
-                        .append(&target_name.name)
+                        .item_name(&target_name.name)
                         .color(rltk::WHITE)
                         .append("but can't connect")
                         .log();

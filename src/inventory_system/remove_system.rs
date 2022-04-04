@@ -26,8 +26,7 @@ impl<'a> System<'a> for ItemRemoveSystem {
                 crate::gamelog::Logger::new()
                     .color(rltk::WHITE)
                     .append("You cannot remove")
-                    .color(rltk::CYAN)
-                    .append(&names.get(to_remove.item).unwrap().name)
+                    .item_name(&names.get(to_remove.item).unwrap().name)
                     .color(rltk::WHITE)
                     .append("- it is cursed")
                     .log();

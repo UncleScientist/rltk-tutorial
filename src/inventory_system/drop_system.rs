@@ -57,8 +57,7 @@ impl<'a> System<'a> for ItemDropSystem {
             if entity == *player_entity {
                 crate::gamelog::Logger::new()
                     .append("You drop the {}.")
-                    .color(rltk::CYAN)
-                    .append(super::obfuscate_name(
+                    .item_name(super::obfuscate_name(
                         to_drop.item,
                         &names,
                         &magic_items,
