@@ -1,7 +1,6 @@
 use crate::{
-    effects::*, skill_bonus, Attributes, EquipmentSlot, Equipped, GameLog, HungerClock,
-    HungerState, Name, NaturalAttackDefense, Pools, Skill, Skills, WantsToMelee, Weapon,
-    WeaponAttribute, Wearable,
+    effects::*, skill_bonus, Attributes, EquipmentSlot, Equipped, HungerClock, HungerState, Name,
+    NaturalAttackDefense, Pools, Skill, Skills, WantsToMelee, Weapon, WeaponAttribute, Wearable,
 };
 
 use rltk::RandomNumberGenerator;
@@ -11,7 +10,6 @@ pub struct MeleeCombatSystem {}
 
 type MeleeCombatData<'a> = (
     Entities<'a>,
-    WriteExpect<'a, GameLog>,
     WriteStorage<'a, WantsToMelee>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, Attributes>,
@@ -31,7 +29,6 @@ impl<'a> System<'a> for MeleeCombatSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             entities,
-            mut log,
             mut wants_melee,
             names,
             attributes,
@@ -153,10 +150,20 @@ impl<'a> System<'a> for MeleeCombatSystem {
                             target: wants_melee.target,
                         },
                     );
-                    log.entries.push(format!(
-                        "{} hits {}, for {} hp",
-                        &name.name, &target_name.name, damage
-                    ));
+                    crate::gamelog::Logger::new()
+                        .color(rltk::YELLOW)
+                        .append(&name.name)
+                        .color(rltk::WHITE)
+                        .append("hits")
+                        .color(rltk::YELLOW)
+                        .append(&target_name.name)
+                        .color(rltk::WHITE)
+                        .append("for")
+                        .color(rltk::RED)
+                        .append(format!("{damage}"))
+                        .color(rltk::WHITE)
+                        .append("hp.")
+                        .log();
 
                     // Proc effects
                     if let Some(chance) = &weapon_info.proc_chance {
@@ -186,10 +193,16 @@ impl<'a> System<'a> for MeleeCombatSystem {
                     }
                 } else if natural_roll == 1 {
                     // Natural 1 miss
-                    log.entries.push(format!(
-                        "{} considers attacking {}, but misjudges the timing",
-                        &name.name, &target_name.name
-                    ));
+                    crate::gamelog::Logger::new()
+                        .color(rltk::CYAN)
+                        .append(&name.name)
+                        .color(rltk::WHITE)
+                        .append("considers attacking")
+                        .color(rltk::CYAN)
+                        .append(&target_name.name)
+                        .color(rltk::WHITE)
+                        .append("but misjudges the timing!")
+                        .log();
                     add_effect(
                         Some(entity),
                         EffectType::Particle {
@@ -204,10 +217,16 @@ impl<'a> System<'a> for MeleeCombatSystem {
                     );
                 } else {
                     // Miss
-                    log.entries.push(format!(
-                        "{} attacks {}, but can't connect",
-                        &name.name, &target_name.name
-                    ));
+                    crate::gamelog::Logger::new()
+                        .color(rltk::CYAN)
+                        .append(&name.name)
+                        .color(rltk::WHITE)
+                        .append("attacks")
+                        .color(rltk::CYAN)
+                        .append(&target_name.name)
+                        .color(rltk::WHITE)
+                        .append("but can't connect")
+                        .log();
                     add_effect(
                         Some(entity),
                         EffectType::Particle {

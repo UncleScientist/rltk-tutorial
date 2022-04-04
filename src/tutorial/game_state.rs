@@ -566,8 +566,10 @@ impl State {
         self.generate_world_map(current_depth + offset, offset);
 
         // Notify the player
-        let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
-        gamelog.entries.push("You change level".to_string());
+        crate::gamelog::Logger::new()
+            .color(rltk::WHITE)
+            .append("You change level")
+            .log();
     }
 
     pub fn game_over_cleanup(&mut self) {
@@ -595,11 +597,9 @@ impl State {
         // Build a new map and place the player
         self.generate_world_map(1, 0);
 
-        let mut gamelog = self.ecs.fetch_mut::<gamelog::GameLog>();
-        gamelog.entries.clear();
-        gamelog
-            .entries
-            .push("Welcome to Rusty Roguelike... again!".to_string());
+        crate::gamelog::Logger::new()
+            .color(rltk::WHITE)
+            .append("Welcome to Rusty Roguelike... again!");
     }
 
     pub fn generate_world_map(&mut self, new_depth: i32, offset: i32) {
@@ -612,6 +612,13 @@ impl State {
         } else {
             map::thaw_level_entities(&mut self.ecs);
         }
+
+        gamelog::clear_log();
+        gamelog::Logger::new()
+            .append("Welcome to")
+            .color(rltk::CYAN)
+            .append("Rusty Roguelike")
+            .log();
     }
 }
 

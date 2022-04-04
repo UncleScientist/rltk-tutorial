@@ -113,16 +113,11 @@ impl<'a> System<'a> for VisibleAI {
                             if !done {
                                 for (weapon, equip) in (&weapons, &equipped).join() {
                                     if let Some(wrange) = weapon.range {
-                                        if equip.owner == entity {
-                                            if wrange >= range as i32 {
-                                                wants_shoot
-                                                    .insert(
-                                                        entity,
-                                                        WantsToShoot { target: reaction.2 },
-                                                    )
-                                                    .expect("Insert fail");
-                                                done = true;
-                                            }
+                                        if equip.owner == entity && wrange >= range as i32 {
+                                            wants_shoot
+                                                .insert(entity, WantsToShoot { target: reaction.2 })
+                                                .expect("Insert fail");
+                                            done = true;
                                         }
                                     }
                                 }

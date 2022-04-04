@@ -1,11 +1,10 @@
 use specs::prelude::*;
 
-use crate::{CursedItem, EquipmentChanged, Equipped, GameLog, InBackpack, Name, WantsToRemoveItem};
+use crate::{CursedItem, EquipmentChanged, Equipped, InBackpack, Name, WantsToRemoveItem};
 
 pub struct ItemRemoveSystem;
 
 type ItemRemoveData<'a> = (
-    WriteExpect<'a, GameLog>,
     Entities<'a>,
     WriteStorage<'a, WantsToRemoveItem>,
     WriteStorage<'a, Equipped>,
@@ -19,23 +18,19 @@ impl<'a> System<'a> for ItemRemoveSystem {
     type SystemData = ItemRemoveData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            mut gamelog,
-            entities,
-            mut wants_remove,
-            mut equipped,
-            mut backpack,
-            names,
-            cursed,
-            mut dirty,
-        ) = data;
+        let (entities, mut wants_remove, mut equipped, mut backpack, names, cursed, mut dirty) =
+            data;
 
         for (entity, to_remove) in (&entities, &wants_remove).join() {
             if cursed.get(to_remove.item).is_some() {
-                gamelog.entries.push(format!(
-                    "You cannot remove {}, it is cursed",
-                    names.get(to_remove.item).unwrap().name
-                ));
+                crate::gamelog::Logger::new()
+                    .color(rltk::WHITE)
+                    .append("You cannot remove")
+                    .color(rltk::CYAN)
+                    .append(&names.get(to_remove.item).unwrap().name)
+                    .color(rltk::WHITE)
+                    .append("- it is cursed")
+                    .log();
             } else {
                 equipped.remove(to_remove.item);
                 backpack

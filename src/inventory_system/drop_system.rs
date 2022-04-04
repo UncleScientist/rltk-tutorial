@@ -1,15 +1,14 @@
 use specs::prelude::*;
 
 use crate::{
-    EquipmentChanged, GameLog, InBackpack, MagicItem, MasterDungeonMap, Name, ObfuscatedName,
-    Position, WantsToDropItem,
+    EquipmentChanged, InBackpack, MagicItem, MasterDungeonMap, Name, ObfuscatedName, Position,
+    WantsToDropItem,
 };
 
 pub struct ItemDropSystem;
 
 type ItemDropData<'a> = (
     ReadExpect<'a, Entity>,
-    WriteExpect<'a, GameLog>,
     Entities<'a>,
     WriteStorage<'a, WantsToDropItem>,
     ReadStorage<'a, Name>,
@@ -27,7 +26,6 @@ impl<'a> System<'a> for ItemDropSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             player_entity,
-            mut gamelog,
             entities,
             mut wants_drop,
             names,
@@ -57,16 +55,17 @@ impl<'a> System<'a> for ItemDropSystem {
                 .expect("Unable to insert");
 
             if entity == *player_entity {
-                gamelog.entries.push(format!(
-                    "You drop the {}.",
-                    super::obfuscate_name(
+                crate::gamelog::Logger::new()
+                    .append("You drop the {}.")
+                    .color(rltk::CYAN)
+                    .append(super::obfuscate_name(
                         to_drop.item,
                         &names,
                         &magic_items,
                         &obfuscated_names,
-                        &dm
-                    )
-                ));
+                        &dm,
+                    ))
+                    .log();
             }
         }
 

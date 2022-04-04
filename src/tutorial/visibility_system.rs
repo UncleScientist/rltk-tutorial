@@ -1,4 +1,4 @@
-use crate::{BlocksVisibility, GameLog, Hidden, Map, Name, Player, Position, Viewshed};
+use crate::{BlocksVisibility, Hidden, Map, Name, Player, Position, Viewshed};
 use rltk::{field_of_view, Point};
 use specs::prelude::*;
 
@@ -12,7 +12,6 @@ type VisibilityData<'a> = (
     ReadStorage<'a, Player>,
     WriteStorage<'a, Hidden>,
     WriteExpect<'a, rltk::RandomNumberGenerator>,
-    WriteExpect<'a, GameLog>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, BlocksVisibility>,
 );
@@ -29,7 +28,6 @@ impl<'a> System<'a> for VisibilitySystem {
             player,
             mut hidden,
             mut rng,
-            mut log,
             names,
             blocks_visibility,
         ) = data;
@@ -64,7 +62,11 @@ impl<'a> System<'a> for VisibilitySystem {
                         crate::spatial::for_each_tile_content(idx, |e| {
                             if hidden.get(e).is_some() && rng.roll_dice(1, 24) == 1 {
                                 if let Some(name) = names.get(e) {
-                                    log.entries.push(format!("You spotted a {}.", &name.name));
+                                    crate::gamelog::Logger::new()
+                                        .append("You spotted:")
+                                        .color(rltk::RED)
+                                        .append(&name.name)
+                                        .log();
                                 }
                                 hidden.remove(e);
                             }

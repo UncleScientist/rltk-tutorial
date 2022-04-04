@@ -1,12 +1,12 @@
 use crate::{
-    camera, Attribute, Attributes, Consumable, CursedItem, Duration, Editor, Equipped, GameLog,
+    camera, gamelog, Attribute, Attributes, Consumable, CursedItem, Duration, Editor, Equipped,
     Hidden, HungerClock, HungerState, InBackpack, Item, KnownSpells, MagicItem, MagicItemClass,
     Map, MasterDungeonMap, Name, ObfuscatedName, Owned, Pools, RexAssets, RunState, State,
     StatusEffect, Vendor, VendorMode, Viewshed, Weapon,
 };
 use rltk::{
-    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
-    RGB, WHITE, YELLOW,
+    to_cp437, Point, Rltk, TextBlock, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA,
+    ORANGE, RED, RGB, WHITE, YELLOW,
 };
 use specs::prelude::*;
 
@@ -330,14 +330,11 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     }
 
     // Draw the log
-    let log = ecs.fetch::<GameLog>();
-    let mut y = 46;
-    for s in log.entries.iter().rev() {
-        if y < 59 {
-            ctx.print(2, y, s);
-        }
-        y += 1;
-    }
+    let mut block = TextBlock::new(1, 46, 79, 58);
+    block
+        .print(&gamelog::log_display())
+        .expect("Failed to print gamelog");
+    block.render(&mut rltk::BACKEND_INTERNAL.lock().consoles[0].console);
 
     draw_tooltips(ecs, ctx);
 }

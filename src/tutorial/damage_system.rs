@@ -3,8 +3,8 @@ use rltk::RandomNumberGenerator;
 use crate::{
     effects::*,
     raws::{get_item_drop, spawn_named_entity, SpawnType, RAWS},
-    AreaOfEffect, Equipped, GameLog, InBackpack, LootTable, Map, Name, OnDeath, Player, Pools,
-    Position, RunState,
+    AreaOfEffect, Equipped, InBackpack, LootTable, Map, Name, OnDeath, Player, Pools, Position,
+    RunState,
 };
 use specs::prelude::*;
 
@@ -16,14 +16,18 @@ pub fn delete_the_dead(ecs: &mut World) {
         let players = ecs.read_storage::<Player>();
         let names = ecs.read_storage::<Name>();
         let entities = ecs.entities();
-        let mut log = ecs.write_resource::<GameLog>();
 
         for (entity, stats) in (&entities, &combat_stats).join() {
             if stats.hit_points.current < 1 {
                 match players.get(entity) {
                     None => {
                         if let Some(victim_name) = names.get(entity) {
-                            log.entries.push(format!("{} is dead", &victim_name.name));
+                            crate::gamelog::Logger::new()
+                                .color(rltk::YELLOW)
+                                .append(&victim_name.name)
+                                .color(rltk::WHITE)
+                                .append("is dead")
+                                .log();
                         }
                         dead.push(entity);
                     }

@@ -1,6 +1,6 @@
 use crate::{
-    gamelog::GameLog, CursedItem, EquipmentChanged, Equippable, Equipped, IdentifiedItem,
-    InBackpack, Name, WantsToUseItem,
+    CursedItem, EquipmentChanged, Equippable, Equipped, IdentifiedItem, InBackpack, Name,
+    WantsToUseItem,
 };
 use specs::prelude::*;
 
@@ -8,7 +8,6 @@ pub struct ItemEquipOnUse {}
 
 type OnUseData<'a> = (
     ReadExpect<'a, Entity>,
-    WriteExpect<'a, GameLog>,
     Entities<'a>,
     WriteStorage<'a, WantsToUseItem>,
     ReadStorage<'a, Name>,
@@ -26,7 +25,6 @@ impl<'a> System<'a> for ItemEquipOnUse {
     fn run(&mut self, data: Self::SystemData) {
         let (
             player_entity,
-            mut gamelog,
             entities,
             mut wants_use,
             names,
@@ -47,19 +45,26 @@ impl<'a> System<'a> for ItemEquipOnUse {
 
                 // Remove any items the target has in the item's slot
                 let mut can_equip = true;
-                let mut log_entries = Vec::new();
                 let mut to_unequip = Vec::new();
                 for (item_entity, already_equipped, name) in (&entities, &equipped, &names).join() {
                     if already_equipped.owner == target && already_equipped.slot == target_slot {
                         if cursed.get(item_entity).is_some() {
                             can_equip = false;
-                            gamelog
-                                .entries
-                                .push(format!("You cannot unequip {}, it is cursed", name.name))
+                            crate::gamelog::Logger::new()
+                                .append("You cannot unequip")
+                                .color(rltk::CYAN)
+                                .append(&name.name)
+                                .color(rltk::WHITE)
+                                .append("- it is cursed")
+                                .log()
                         } else {
                             to_unequip.push(item_entity);
                             if target == *player_entity {
-                                log_entries.push(format!("You unequip {}", name.name))
+                                crate::gamelog::Logger::new()
+                                    .append("You unequip")
+                                    .color(rltk::CYAN)
+                                    .append(&name.name)
+                                    .log()
                             }
                         }
                     }
@@ -85,10 +90,6 @@ impl<'a> System<'a> for ItemEquipOnUse {
                             .expect("Unable to insert backpack item");
                     }
 
-                    for le in log_entries.iter() {
-                        gamelog.entries.push(le.to_string());
-                    }
-
                     // Wield the item
                     equipped
                         .insert(
@@ -101,10 +102,11 @@ impl<'a> System<'a> for ItemEquipOnUse {
                         .expect("Unable to insert equipped component");
                     backpack.remove(useitem.item);
                     if target == *player_entity {
-                        gamelog.entries.push(format!(
-                            "You equip {}",
-                            names.get(useitem.item).unwrap().name
-                        ));
+                        crate::gamelog::Logger::new()
+                            .append("You equip")
+                            .color(rltk::CYAN)
+                            .append(&names.get(useitem.item).unwrap().name)
+                            .log();
                     }
                 }
 

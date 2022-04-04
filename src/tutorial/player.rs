@@ -142,10 +142,9 @@ fn try_previous_level(ecs: &mut World) -> bool {
     if map.tiles[player_idx] == TileType::UpStairs {
         true
     } else {
-        let mut gamelog = ecs.fetch_mut::<GameLog>();
-        gamelog
-            .entries
-            .push("There is no way up from here".to_string());
+        crate::gamelog::Logger::new()
+            .append("There is no way up from here")
+            .log();
         false
     }
 }
@@ -157,10 +156,9 @@ fn try_next_level(ecs: &mut World) -> bool {
     if map.tiles[player_idx] == TileType::DownStairs {
         true
     } else {
-        let mut gamelog = ecs.fetch_mut::<GameLog>();
-        gamelog
-            .entries
-            .push("There is no way down from here".to_string());
+        crate::gamelog::Logger::new()
+            .append("There is no way down from here")
+            .log();
         false
     }
 }
@@ -281,10 +279,9 @@ fn use_spell_hotkey(gs: &mut State, key: i32) -> RunState {
                 return RunState::Ticking;
             }
         } else {
-            let mut gamelog = gs.ecs.fetch_mut::<GameLog>();
-            gamelog
-                .entries
-                .push("You don't have enough mana to cast that!".to_string());
+            crate::gamelog::Logger::new()
+                .append("You don't have enough mana to cast that!")
+                .log();
         }
     }
 
@@ -387,7 +384,6 @@ fn fire_on_target(ecs: &mut World) -> RunState {
     let targets = ecs.read_storage::<Target>();
     let entities = ecs.entities();
     let mut current_target = None;
-    let mut log = ecs.fetch_mut::<GameLog>();
 
     for (e, _t) in (&entities, &targets).join() {
         current_target = Some(e);
@@ -398,7 +394,12 @@ fn fire_on_target(ecs: &mut World) -> RunState {
         let mut shoot_store = ecs.write_storage::<WantsToShoot>();
         let names = ecs.read_storage::<Name>();
         if let Some(name) = names.get(target) {
-            log.entries.push(format!("You fire at {}", name.name));
+            crate::gamelog::Logger::new()
+                .color(rltk::WHITE)
+                .append("You fire at")
+                .color(rltk::CYAN)
+                .append(&name.name)
+                .log();
         }
         shoot_store
             .insert(*player_entity, WantsToShoot { target })
@@ -406,8 +407,10 @@ fn fire_on_target(ecs: &mut World) -> RunState {
 
         RunState::Ticking
     } else {
-        log.entries
-            .push("You don't have a target selected!".to_string());
+        crate::gamelog::Logger::new()
+            .color(rltk::WHITE)
+            .append("You don't have a target selected!")
+            .log();
         RunState::AwaitingInput
     }
 }
@@ -496,7 +499,6 @@ fn get_item(ecs: &mut World) {
     let entities = ecs.entities();
     let items = ecs.read_storage::<Item>();
     let positions = ecs.read_storage::<Position>();
-    let mut gamelog = ecs.fetch_mut::<GameLog>();
 
     let mut target_item: Option<Entity> = None;
     for (item_entity, _, position) in (&entities, &items, &positions).join() {
@@ -507,9 +509,9 @@ fn get_item(ecs: &mut World) {
     }
 
     match target_item {
-        None => gamelog
-            .entries
-            .push("There is nothing here to pick up".to_string()),
+        None => crate::gamelog::Logger::new()
+            .append("There is nothing here to pick up")
+            .log(),
         Some(item) => {
             let mut pickup = ecs.write_storage::<WantsToPickupItem>();
             pickup

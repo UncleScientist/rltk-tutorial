@@ -121,10 +121,6 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(RunState::MapGeneration {});
 
-    gs.ecs.insert(gamelog::GameLog {
-        entries: vec!["Welcome to Rusty Roguelike".to_string()],
-    });
-
     gs.ecs.insert(particle_system::ParticleBuilder::new());
 
     gs.generate_world_map(1, 0);

@@ -1,6 +1,4 @@
-use crate::{
-    effects::*, gamelog::GameLog, AreaOfEffect, EntityMoved, EntryTrigger, Map, Name, Position,
-};
+use crate::{effects::*, AreaOfEffect, EntityMoved, EntryTrigger, Map, Name, Position};
 use specs::prelude::*;
 
 pub struct TriggerSystem;
@@ -12,7 +10,6 @@ type TriggerData<'a> = (
     ReadStorage<'a, EntryTrigger>,
     ReadStorage<'a, Name>,
     Entities<'a>,
-    WriteExpect<'a, GameLog>,
     ReadStorage<'a, AreaOfEffect>,
 );
 
@@ -20,16 +17,8 @@ impl<'a> System<'a> for TriggerSystem {
     type SystemData = TriggerData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            map,
-            mut entity_moved,
-            position,
-            entry_trigger,
-            names,
-            entities,
-            mut log,
-            area_of_effect,
-        ) = data;
+        let (map, mut entity_moved, position, entry_trigger, names, entities, area_of_effect) =
+            data;
 
         // Iterate the entities that moved and get their final position
         for (entity, mut _entity_moved, pos) in (&entities, &mut entity_moved, &position).join() {
@@ -38,7 +27,12 @@ impl<'a> System<'a> for TriggerSystem {
             crate::spatial::for_each_tile_content(idx, |entity_id| {
                 if entity != entity_id && entry_trigger.get(entity_id).is_some() {
                     if let Some(name) = names.get(entity_id) {
-                        log.entries.push(format!("{} triggers!", &name.name));
+                        crate::gamelog::Logger::new()
+                            .color(rltk::RED)
+                            .append(&name.name)
+                            .color(rltk::WHITE)
+                            .append("triggers!")
+                            .log();
                     }
 
                     // Call the effects system
