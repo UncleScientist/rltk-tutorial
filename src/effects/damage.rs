@@ -5,6 +5,7 @@ use specs::saveload::{MarkedBuilder, SimpleMarker};
 
 pub fn inflict_damage(ecs: &mut World, damage: &EffectSpawner, target: Entity) {
     let mut pools = ecs.write_storage::<Pools>();
+    let player_entity = ecs.fetch::<Entity>();
     if let Some(pool) = pools.get_mut(target) {
         if !pool.god_mode {
             if let Some(creator) = damage.creator {
@@ -14,13 +15,6 @@ pub fn inflict_damage(ecs: &mut World, damage: &EffectSpawner, target: Entity) {
             }
             if let EffectType::Damage { amount } = damage.effect_type {
                 pool.hit_points.current -= amount;
-                if pool.hit_points.current < 1 {
-                    add_effect(
-                        damage.creator,
-                        EffectType::EntityDeath,
-                        Targets::Single { target },
-                    );
-                }
                 add_effect(None, EffectType::Bloodstain, Targets::Single { target });
                 add_effect(
                     None,
@@ -32,6 +26,22 @@ pub fn inflict_damage(ecs: &mut World, damage: &EffectSpawner, target: Entity) {
                     },
                     Targets::Single { target },
                 );
+
+                if target == *player_entity {
+                    crate::gamelog::record_event("Damage Taken", amount);
+                }
+                if let Some(creator) = damage.creator {
+                    if creator == *player_entity {
+                        crate::gamelog::record_event("Damage Inflicted", amount);
+                    }
+                }
+                if pool.hit_points.current < 1 {
+                    add_effect(
+                        damage.creator,
+                        EffectType::EntityDeath,
+                        Targets::Single { target },
+                    );
+                }
             }
         }
     }

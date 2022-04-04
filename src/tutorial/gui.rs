@@ -1288,6 +1288,26 @@ pub fn game_over(ctx: &mut Rltk) -> GameOverResult {
 
     ctx.print_color_centered(
         20,
+        RGB::named(rltk::RED),
+        RGB::named(rltk::BLACK),
+        &format!(
+            "You suffered {} points of damage.",
+            crate::gamelog::get_event_count("Damage Taken")
+        ),
+    );
+
+    ctx.print_color_centered(
+        21,
+        RGB::named(rltk::RED),
+        RGB::named(rltk::BLACK),
+        &format!(
+            "You inflicted {} points of damage.",
+            crate::gamelog::get_event_count("Damage Inflicted")
+        ),
+    );
+
+    ctx.print_color_centered(
+        23,
         RGB::named(rltk::MAGENTA),
         RGB::named(rltk::BLACK),
         "Press ESC to return to the menu.",

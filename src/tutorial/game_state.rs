@@ -599,6 +599,7 @@ impl State {
 
         // Build a new map and place the player
         self.generate_world_map(1, 0);
+        gamelog::clear_events();
 
         crate::gamelog::Logger::new()
             .color(rltk::WHITE)
@@ -622,8 +623,6 @@ impl State {
             .color(rltk::CYAN)
             .append("Rusty Roguelike")
             .log();
-
-        gamelog::clear_events();
     }
 }
 
