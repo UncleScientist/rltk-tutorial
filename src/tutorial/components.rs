@@ -430,6 +430,7 @@ pub struct Equippable {
 pub struct DMSerializationHelper {
     pub map: MasterDungeonMap,
     pub log: Vec<Vec<crate::gamelog::LogFragment>>,
+    pub events: HashMap<String, i32>,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]
