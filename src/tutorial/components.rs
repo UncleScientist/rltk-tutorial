@@ -429,6 +429,7 @@ pub struct Equippable {
 #[derive(Component, ConvertSaveload, Clone)]
 pub struct DMSerializationHelper {
     pub map: MasterDungeonMap,
+    pub log: Vec<Vec<crate::gamelog::LogFragment>>,
 }
 
 #[derive(Component, ConvertSaveload, Clone)]

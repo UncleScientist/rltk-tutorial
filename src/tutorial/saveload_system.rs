@@ -59,6 +59,7 @@ pub fn save_game(ecs: &mut World) {
         .create_entity()
         .with(DMSerializationHelper {
             map: dungeon_master,
+            log: crate::gamelog::clone_log(),
         })
         .marked::<SimpleMarker<SerializeMe>>()
         .build();
@@ -297,6 +298,7 @@ pub fn load_game(ecs: &mut World) {
             let mut dungeonmaster = ecs.write_resource::<crate::MasterDungeonMap>();
             *dungeonmaster = h.map.clone();
             deleteme2 = Some(e);
+            crate::gamelog::restore_log(&mut h.log.clone());
         }
         for (e, _, pos) in (&entities, &player, &position).join() {
             let mut ppos = ecs.write_resource::<rltk::Point>();
