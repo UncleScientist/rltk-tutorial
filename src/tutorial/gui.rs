@@ -1277,6 +1277,16 @@ pub fn game_over(ctx: &mut Rltk) -> GameOverResult {
     );
 
     ctx.print_color_centered(
+        19,
+        RGB::named(rltk::WHITE),
+        RGB::named(rltk::BLACK),
+        &format!(
+            "You lived for {} turns.",
+            crate::gamelog::get_event_count("Turn")
+        ),
+    );
+
+    ctx.print_color_centered(
         20,
         RGB::named(rltk::MAGENTA),
         RGB::named(rltk::BLACK),

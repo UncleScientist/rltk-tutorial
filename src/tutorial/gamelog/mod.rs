@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 mod logstore;
 use logstore::*;
 
+mod events;
+pub use events::*;
+
 mod builder;
 pub use builder::*;
 
