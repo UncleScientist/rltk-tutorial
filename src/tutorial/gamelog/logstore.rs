@@ -21,18 +21,25 @@ pub fn clear_log() {
     LOG.lock().unwrap().clear();
 }
 
-pub fn log_display() -> TextBuilder {
-    let mut buf = TextBuilder::empty();
+pub fn print_log(console: &mut Box<dyn Console>, pos: Point) {
+    let mut y = pos.y;
+    let mut x = pos.x;
 
-    LOG.lock().unwrap().iter().rev().take(12).for_each(|log| {
+    LOG.lock().unwrap().iter().rev().take(6).for_each(|log| {
         log.iter().for_each(|frag| {
-            buf.fg(frag.color);
-            buf.line_wrap(&frag.text);
+            console.print_color(
+                x,
+                y,
+                frag.color.to_rgba(1.0),
+                RGBA::named(rltk::BLACK),
+                &frag.text,
+            );
+            x += frag.text.len() as i32;
+            x += 1
         });
-        buf.ln();
+        y += 1;
+        x = pos.x;
     });
-
-    buf
 }
 
 pub fn clone_log() -> Vec<Vec<crate::gamelog::LogFragment>> {

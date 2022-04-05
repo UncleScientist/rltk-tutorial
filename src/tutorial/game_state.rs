@@ -58,7 +58,11 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut Rltk) {
         let mut newrunstate = *self.ecs.fetch::<RunState>();
 
+        ctx.set_active_console(1);
         ctx.cls();
+        ctx.set_active_console(0);
+        ctx.cls();
+
         update_particles(&mut self.ecs, ctx);
 
         match newrunstate {

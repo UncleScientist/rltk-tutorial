@@ -9,7 +9,7 @@ pub use events::*;
 mod builder;
 pub use builder::*;
 
-pub use logstore::{clear_log, clone_log, log_display, restore_log};
+pub use logstore::{clear_log, clone_log, print_log, restore_log};
 
 use rltk::RGB;
 

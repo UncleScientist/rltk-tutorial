@@ -5,8 +5,8 @@ use crate::{
     StatusEffect, Vendor, VendorMode, Viewshed, Weapon,
 };
 use rltk::{
-    to_cp437, Point, Rltk, TextBlock, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA,
-    ORANGE, RED, RGB, WHITE, YELLOW,
+    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GOLD, GREY, MAGENTA, ORANGE, RED,
+    RGB, WHITE, YELLOW,
 };
 use specs::prelude::*;
 
@@ -330,11 +330,10 @@ pub fn draw_ui(ecs: &World, ctx: &mut Rltk) {
     }
 
     // Draw the log
-    let mut block = TextBlock::new(1, 46, 79, 58);
-    block
-        .print(&gamelog::log_display())
-        .expect("Failed to print gamelog");
-    block.render(&mut rltk::BACKEND_INTERNAL.lock().consoles[0].console);
+    gamelog::print_log(
+        &mut rltk::BACKEND_INTERNAL.lock().consoles[1].console,
+        Point::new(1, 23),
+    );
 
     draw_tooltips(ecs, ctx);
 }
