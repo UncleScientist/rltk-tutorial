@@ -477,6 +477,8 @@ impl GameState for State {
         }
 
         damage_system::delete_the_dead(&mut self.ecs);
+
+        rltk::render_draw_buffer(ctx).expect("Unable to draw buffer");
     }
 }
 

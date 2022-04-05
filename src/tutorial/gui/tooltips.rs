@@ -6,6 +6,12 @@ pub struct Tooltip {
     lines: Vec<String>,
 }
 
+impl Default for Tooltip {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Tooltip {
     pub fn new() -> Tooltip {
         Tooltip { lines: Vec::new() }

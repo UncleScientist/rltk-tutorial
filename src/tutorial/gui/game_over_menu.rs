@@ -68,4 +68,3 @@ pub fn game_over(ctx: &mut Rltk) -> GameOverResult {
         _ => GameOverResult::NoSelection,
     }
 }
-

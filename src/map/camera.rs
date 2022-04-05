@@ -1,7 +1,7 @@
 use super::{Hidden, Position, Renderable, Target, TileSize};
 use crate::map::{tile_glyph, RenderTile};
 use crate::Map;
-use rltk::{Point, Rltk, RGB};
+use rltk::prelude::*; // {Point, Rltk, RGB};
 use specs::prelude::*;
 
 const SHOW_BOUNDARIES: bool = true;
@@ -23,6 +23,8 @@ pub fn get_screen_bounds(ecs: &World, _ctx: &mut Rltk) -> (i32, i32, i32, i32) {
 }
 
 pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
+    let mut draw_batch = DrawBatch::new();
+
     let map = ecs.fetch::<Map>();
     let (min_x, max_x, min_y, max_y) = get_screen_bounds(ecs, ctx);
 
@@ -37,14 +39,12 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
                 let idx = map.xy_idx(tx, ty);
                 if map.revealed_tiles[idx] {
                     let RenderTile(glyph, fg, bg) = tile_glyph(idx, &*map);
-                    ctx.set(x, y, fg, bg, glyph);
+                    draw_batch.set(Point::new(x, y), ColorPair::new(fg, bg), glyph);
                 }
             } else if SHOW_BOUNDARIES {
-                ctx.set(
-                    x,
-                    y,
-                    RGB::named(rltk::GRAY),
-                    RGB::named(rltk::BLACK),
+                draw_batch.set(
+                    Point::new(x, y),
+                    ColorPair::new(RGB::named(rltk::GRAY), RGB::named(rltk::BLACK)),
                     rltk::to_cp437('·'),
                 );
             }
@@ -79,11 +79,9 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
                             && entity_screen_y > 0
                             && entity_screen_y < map_height
                         {
-                            ctx.set(
-                                entity_screen_x,
-                                entity_screen_y,
-                                render.fg,
-                                render.bg,
+                            draw_batch.set(
+                                Point::new(entity_screen_x, entity_screen_y),
+                                ColorPair::new(render.fg, render.bg),
                                 render.glyph,
                             );
                         }
@@ -100,11 +98,9 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
                     && entity_screen_y > 0
                     && entity_screen_y < map_height
                 {
-                    ctx.set(
-                        entity_screen_x,
-                        entity_screen_y,
-                        render.fg,
-                        render.bg,
+                    draw_batch.set(
+                        Point::new(entity_screen_x, entity_screen_y),
+                        ColorPair::new(render.fg, render.bg),
                         render.glyph,
                     );
                 }
@@ -114,22 +110,22 @@ pub fn render_camera(ecs: &World, ctx: &mut Rltk) {
         if targets.get(*entity).is_some() {
             let entity_screen_x = pos.x - min_x;
             let entity_screen_y = pos.y - min_y;
-            ctx.set(
-                entity_screen_x - 1,
-                entity_screen_y,
-                rltk::RGB::named(rltk::RED),
-                rltk::RGB::named(rltk::YELLOW),
+            draw_batch.set(
+                Point::new(entity_screen_x - 1, entity_screen_y),
+                ColorPair::new(rltk::RGB::named(rltk::RED), rltk::RGB::named(rltk::YELLOW)),
                 rltk::to_cp437('['),
             );
-            ctx.set(
-                entity_screen_x + 1,
-                entity_screen_y,
-                rltk::RGB::named(rltk::RED),
-                rltk::RGB::named(rltk::YELLOW),
+            draw_batch.set(
+                Point::new(entity_screen_x + 1, entity_screen_y),
+                ColorPair::new(rltk::RGB::named(rltk::RED), rltk::RGB::named(rltk::YELLOW)),
                 rltk::to_cp437(']'),
             );
         }
     }
+
+    draw_batch
+        .submit(0)
+        .expect("Unable to submit batch for drawing");
 }
 
 pub fn render_debug_map(map: &Map, ctx: &mut Rltk) {
