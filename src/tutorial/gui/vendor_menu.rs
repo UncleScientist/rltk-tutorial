@@ -1,4 +1,5 @@
 use super::*;
+use rltk::prelude::*;
 
 use crate::{Entity, InBackpack, Item, State, Vendor, VendorMode};
 

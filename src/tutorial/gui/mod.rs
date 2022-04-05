@@ -32,8 +32,3 @@ mod vendor_menu;
 pub use vendor_menu::*;
 
 use specs::prelude::*;
-
-use rltk::{
-    to_cp437, Point, Rltk, VirtualKeyCode, BLACK, BLUE, CYAN, GREY, MAGENTA, RED, RGB, WHITE,
-    YELLOW,
-};

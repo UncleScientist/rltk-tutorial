@@ -1,4 +1,5 @@
 use super::*;
+use rltk::prelude::*;
 
 use crate::{CursedItem, Entity, Equipped, InBackpack, Item, MasterDungeonMap, Name, State};
 

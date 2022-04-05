@@ -1,4 +1,4 @@
-use super::*;
+use rltk::prelude::*;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum GameOverResult {

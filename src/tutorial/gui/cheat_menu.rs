@@ -1,4 +1,4 @@
-use super::*;
+use rltk::prelude::*;
 
 use crate::{Editor, State};
 
@@ -58,7 +58,7 @@ pub fn summon_item(gs: &mut State, ctx: &mut Rltk) -> (SummonItemResult, String)
             Escape => (SummonItemResult::Cancel, "".to_string()),
             Return => (SummonItemResult::Done, editor.to_string()),
             _ => {
-                rltk::console::log(format!("keycode {:?}", key));
+                console::log(format!("keycode {:?}", key));
                 (SummonItemResult::NoResponse, "".to_string())
             }
         },
@@ -75,39 +75,39 @@ pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
     ctx.print_color(18, y - 2, yellow, black, "Cheating!");
     ctx.print_color(18, y + count as i32 + 1, yellow, black, "ESC to cancel");
 
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('T'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('T'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "Teleport to exit");
 
     y += 1;
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('H'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('H'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "Heal all wounds");
 
     y += 1;
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('R'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('R'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "Reveal the map");
 
     y += 1;
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('G'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('G'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "God Mode (no death)");
 
     y += 1;
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('M'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('M'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "Make some Money");
 
     y += 1;
-    ctx.set(17, y, white, black, rltk::to_cp437('('));
-    ctx.set(18, y, white, black, rltk::to_cp437('S'));
-    ctx.set(19, y, white, black, rltk::to_cp437(')'));
+    ctx.set(17, y, white, black, to_cp437('('));
+    ctx.set(18, y, white, black, to_cp437('S'));
+    ctx.set(19, y, white, black, to_cp437(')'));
     ctx.print(21, y, "Summon item by name");
 
     match ctx.key {

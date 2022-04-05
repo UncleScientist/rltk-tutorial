@@ -1,4 +1,5 @@
 use super::*;
+use rltk::prelude::*;
 
 use crate::{map::camera, State, Viewshed};
 

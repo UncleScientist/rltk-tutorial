@@ -1,4 +1,5 @@
 use super::*;
+use rltk::prelude::*;
 
 use crate::{Consumable, CursedItem, MagicItem, MagicItemClass, Name, ObfuscatedName};
 
