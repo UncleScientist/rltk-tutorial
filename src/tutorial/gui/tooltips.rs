@@ -1,6 +1,6 @@
 use super::*;
 
-use crate::{camera, Attributes, Duration, Hidden, Map, Name, Pools, StatusEffect};
+use crate::{map::camera, Attributes, Duration, Hidden, Map, Name, Pools, StatusEffect};
 
 pub struct Tooltip {
     lines: Vec<String>,

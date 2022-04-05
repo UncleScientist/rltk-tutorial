@@ -3,6 +3,9 @@ use rltk::{Algorithm2D, BaseMap, FontCharType, Point, RGB};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
+pub mod camera;
+pub use camera::*;
+
 mod themes;
 pub use themes::*;
 

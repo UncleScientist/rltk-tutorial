@@ -1,6 +1,6 @@
 use super::*;
 
-use crate::{camera, State, Viewshed};
+use crate::{map::camera, State, Viewshed};
 
 pub fn ranged_target(
     gs: &mut State,

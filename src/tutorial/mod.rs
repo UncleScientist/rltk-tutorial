@@ -58,9 +58,6 @@ pub use trigger_system::*;
 pub mod rex_assets;
 pub use rex_assets::*;
 
-pub mod camera;
-pub use camera::*;
-
 pub mod gamesystem;
 pub use gamesystem::*;
 

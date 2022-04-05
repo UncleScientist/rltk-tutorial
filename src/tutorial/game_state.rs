@@ -70,7 +70,7 @@ impl GameState for State {
             RunState::GameOver { .. } => {}
 
             _ => {
-                camera::render_camera(&self.ecs, ctx);
+                map::camera::render_camera(&self.ecs, ctx);
                 gui::draw_ui(&self.ecs, ctx);
             }
         }
@@ -80,7 +80,7 @@ impl GameState for State {
                 if SHOW_MAPGEN_VISUALIZER == -1 {
                     newrunstate = self.mapgen_next_state.unwrap();
                 } else if self.mapgen_index < self.mapgen_history.len() {
-                    camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);
+                    map::camera::render_debug_map(&self.mapgen_history[self.mapgen_index], ctx);
                     self.mapgen_timer += ctx.frame_time_ms;
                     if self.mapgen_timer > 300.0 {
                         self.mapgen_timer = 0.0;
