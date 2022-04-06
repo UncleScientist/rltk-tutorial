@@ -1,5 +1,6 @@
-use super::*;
+use super::ItemMenuResult;
 use rltk::prelude::*;
+use specs::prelude::*;
 
 use crate::{map::camera, State, Viewshed};
 
@@ -8,17 +9,17 @@ pub fn ranged_target(
     ctx: &mut Rltk,
     range: i32,
 ) -> (ItemMenuResult, Option<Point>) {
-    let (min_x, _, min_y, _) = camera::get_screen_bounds(&gs.ecs, ctx);
+    let (min_x, max_x, min_y, max_y) = camera::get_screen_bounds(&gs.ecs, ctx);
     let player_entity = gs.ecs.fetch::<Entity>();
     let player_pos = gs.ecs.fetch::<Point>();
     let viewsheds = gs.ecs.read_storage::<Viewshed>();
 
-    ctx.print_color(
-        5,
-        0,
-        RGB::named(YELLOW),
-        RGB::named(rltk::BLACK),
+    let mut draw_batch = DrawBatch::new();
+
+    draw_batch.print_color(
+        Point::new(5, 0),
         "Select Target:",
+        ColorPair::new(RGB::named(YELLOW), RGB::named(rltk::BLACK)),
     );
 
     let mut available_cells = Vec::new();
@@ -28,8 +29,14 @@ pub fn ranged_target(
             if dist <= range as f32 {
                 let screen_x = idx.x - min_x;
                 let screen_y = idx.y - min_y;
-                ctx.set_bg(screen_x, screen_y, RGB::named(BLUE));
-                available_cells.push(idx);
+                if screen_x > 1
+                    && screen_x < (max_x - min_x) - 1
+                    && screen_y > 1
+                    && screen_y < (max_y - min_y) - 1
+                {
+                    draw_batch.set_bg(Point::new(screen_x, screen_y), RGB::named(BLUE));
+                    available_cells.push(idx);
+                }
             }
         }
     } else {
@@ -50,7 +57,7 @@ pub fn ranged_target(
     }
 
     if valid_target {
-        ctx.set_bg(mouse_pos.0, mouse_pos.1, RGB::named(CYAN));
+        draw_batch.set_bg(Point::new(mouse_pos.0, mouse_pos.1), RGB::named(CYAN));
         if ctx.left_click {
             return (
                 ItemMenuResult::Selected,
@@ -58,11 +65,15 @@ pub fn ranged_target(
             );
         }
     } else {
-        ctx.set_bg(mouse_pos.0, mouse_pos.1, RGB::named(RED));
+        draw_batch.set_bg(Point::new(mouse_pos.0, mouse_pos.1), RGB::named(RED));
         if ctx.left_click {
             return (ItemMenuResult::Cancel, None);
         }
     }
+
+    draw_batch
+        .submit(5000)
+        .expect("Unable to draw mouse cursor");
 
     (ItemMenuResult::NoResponse, None)
 }
