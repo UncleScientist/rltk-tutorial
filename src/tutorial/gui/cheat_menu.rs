@@ -1,5 +1,6 @@
 use rltk::prelude::*;
 
+use super::{menu_box, menu_option};
 use crate::{Editor, State};
 
 #[derive(PartialEq, Copy, Clone)]
@@ -24,21 +25,27 @@ pub enum SummonItemResult {
 pub fn summon_item(gs: &mut State, ctx: &mut Rltk) -> (SummonItemResult, String) {
     use VirtualKeyCode::*;
 
+    let mut draw_batch = DrawBatch::new();
+
     let white = RGB::named(WHITE);
     let black = RGB::named(BLACK);
-    let yellow = RGB::named(YELLOW);
 
-    ctx.draw_box(15, 20, 31, 4, white, black);
-    ctx.print_color(18, 20, yellow, black, "Summon Item");
+    menu_box(&mut draw_batch, 15, 22, 4, "Summon Item");
 
     let mut editor = gs.ecs.fetch_mut::<Editor>();
     let txt = &editor.to_string();
-    ctx.print(18, 22, txt);
-    ctx.print(16, 22, ">");
+    draw_batch.print_color(Point::new(18, 22), txt, ColorPair::new(white, black));
+    draw_batch.print_color(Point::new(16, 22), ">", ColorPair::new(white, black));
 
     if editor.blink() {
-        ctx.print_color(txt.len() + 18, 22, black, white, " ");
+        draw_batch.print_color(
+            Point::new(txt.len() + 18, 22),
+            " ",
+            ColorPair::new(black, white),
+        );
     }
+
+    draw_batch.submit(6000).expect("Unable to draw editor menu");
 
     match ctx.key {
         None => (SummonItemResult::NoResponse, "".to_string()),
@@ -66,49 +73,44 @@ pub fn summon_item(gs: &mut State, ctx: &mut Rltk) -> (SummonItemResult, String)
 }
 
 pub fn show_cheat_mode(_gs: &mut State, ctx: &mut Rltk) -> CheatMenuResult {
-    let white = RGB::named(WHITE);
     let black = RGB::named(BLACK);
     let yellow = RGB::named(YELLOW);
     let count = 6;
+
+    let mut draw_batch = DrawBatch::new();
     let mut y = (25 - (count / 2)) as i32;
-    ctx.draw_box(15, y - 2, 31, (count + 3) as i32, white, black);
-    ctx.print_color(18, y - 2, yellow, black, "Cheating!");
-    ctx.print_color(18, y + count as i32 + 1, yellow, black, "ESC to cancel");
+    menu_box(&mut draw_batch, 15, y, (count + 3) as i32, "Cheating!");
 
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('T'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "Teleport to exit");
+    draw_batch.print_color(
+        Point::new(18, y + count as i32 + 1),
+        "ESCAPE to cancel",
+        ColorPair::new(yellow, black),
+    );
 
-    y += 1;
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('H'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "Heal all wounds");
-
-    y += 1;
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('R'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "Reveal the map");
+    menu_option(
+        &mut draw_batch,
+        17,
+        y,
+        to_cp437('T'),
+        "Teleport to next level",
+    );
 
     y += 1;
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('G'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "God Mode (no death)");
+    menu_option(&mut draw_batch, 17, y, to_cp437('H'), "Heal all wounds");
 
     y += 1;
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('M'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "Make some Money");
+    menu_option(&mut draw_batch, 17, y, to_cp437('R'), "Reveal the map");
 
     y += 1;
-    ctx.set(17, y, white, black, to_cp437('('));
-    ctx.set(18, y, white, black, to_cp437('S'));
-    ctx.set(19, y, white, black, to_cp437(')'));
-    ctx.print(21, y, "Summon item by name");
+    menu_option(&mut draw_batch, 17, y, to_cp437('G'), "God Mode (No Death)");
+
+    y += 1;
+    menu_option(&mut draw_batch, 17, y, to_cp437('M'), "Make some Money");
+
+    y += 1;
+    menu_option(&mut draw_batch, 17, y, to_cp437('S'), "Summon item by name");
+
+    draw_batch.submit(6000).expect("Unable to draw cheat menu");
 
     match ctx.key {
         None => CheatMenuResult::NoResponse,
