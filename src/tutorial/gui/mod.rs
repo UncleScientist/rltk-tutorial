@@ -1,3 +1,6 @@
+mod drop_item_menu;
+pub use drop_item_menu::*;
+
 mod cheat_menu;
 pub use cheat_menu::*;
 

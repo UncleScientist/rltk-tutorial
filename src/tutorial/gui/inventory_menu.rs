@@ -14,10 +14,6 @@ pub fn show_inventory(gs: &mut State, ctx: &mut Rltk) -> (ItemMenuResult, Option
     show_menu::<InBackpack>(gs, ctx, "Inventory")
 }
 
-pub fn drop_item_menu(gs: &mut State, ctx: &mut Rltk) -> (ItemMenuResult, Option<Entity>) {
-    show_menu::<InBackpack>(gs, ctx, "Drop Which Item?")
-}
-
 pub fn remove_item_menu(gs: &mut State, ctx: &mut Rltk) -> (ItemMenuResult, Option<Entity>) {
     show_menu::<Equipped>(gs, ctx, "Remove Which Item?")
 }
