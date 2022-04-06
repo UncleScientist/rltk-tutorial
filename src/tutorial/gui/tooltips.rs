@@ -30,21 +30,30 @@ impl Tooltip {
         self.lines.len() as i32 + 2
     }
 
-    pub fn render(&self, ctx: &mut Rltk, x: i32, y: i32) {
+    pub fn render(&self, draw_batch: &mut DrawBatch, x: i32, y: i32) {
         let box_grey = RGB::from_hex("#999999").expect("oops");
         let light_grey = RGB::from_hex("#DDDDDD").expect("oops");
         let white = RGB::named(WHITE);
         let black = RGB::named(BLACK);
 
-        ctx.draw_box(x, y, self.width() - 1, self.height() - 1, white, box_grey);
+        draw_batch.draw_box(
+            Rect::with_size(x, y, self.width() - 1, self.height() - 1),
+            ColorPair::new(white, box_grey),
+        );
         for (i, s) in self.lines.iter().enumerate() {
             let col = if i == 0 { white } else { light_grey };
-            ctx.print_color(x + 1, y + i as i32 + 1, col, black, &s);
+            draw_batch.print_color(
+                Point::new(x + 1, y + i as i32 + 1),
+                &s,
+                ColorPair::new(col, black),
+            );
         }
     }
 }
 
 pub fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
+    let mut draw_batch = DrawBatch::new();
+
     let (min_x, _, min_y, _) = camera::get_screen_bounds(ecs, ctx);
     let map = ecs.fetch::<Map>();
     let hidden = ecs.read_storage::<Hidden>();
@@ -67,7 +76,6 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
         return;
     }
 
-    // if !map.in_bounds(rltk::Point::new(mouse_map_pos.0, mouse_map_pos.1)) { return; }
     let mouse_idx = map.xy_idx(mouse_map_pos.0, mouse_map_pos.1);
     if !map.visible_tiles[mouse_idx] {
         return;
@@ -136,8 +144,7 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
         return;
     }
 
-    let box_grey = RGB::from_hex("#999999").expect("oops");
-    let white = RGB::named(WHITE);
+    let color_pair = ColorPair::new(RGB::named(WHITE), RGB::from_hex("#999999").expect("oops"));
 
     let arrow_y = mouse_pos.1;
     let (arrow, arrow_x) = if mouse_pos.0 < 40 {
@@ -145,7 +152,7 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
     } else {
         (to_cp437('←'), mouse_pos.0 + 1)
     };
-    ctx.set(arrow_x, arrow_y, white, box_grey, arrow);
+    draw_batch.set(Point::new(arrow_x, arrow_y), color_pair, arrow);
 
     let total_height = tip_boxes.iter().map(|tt| tt.height()).sum::<i32>();
     let mut y = mouse_pos.1 - (total_height / 2);
@@ -159,7 +166,9 @@ pub fn draw_tooltips(ecs: &World, ctx: &mut Rltk) {
         } else {
             mouse_pos.0 + (1 + tt.width())
         };
-        tt.render(ctx, x, y);
+        tt.render(&mut draw_batch, x, y);
         y += tt.height();
     }
+
+    draw_batch.submit(7000).expect("Unable to draw tool tips");
 }
