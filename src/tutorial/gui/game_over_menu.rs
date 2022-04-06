@@ -7,61 +7,60 @@ pub enum GameOverResult {
 }
 
 pub fn game_over(ctx: &mut Rltk) -> GameOverResult {
-    ctx.print_color_centered(
+    let mut draw_batch = DrawBatch::new();
+
+    draw_batch.print_color_centered(
         15,
-        RGB::named(rltk::YELLOW),
-        RGB::named(rltk::BLACK),
         "Your journey has ended!",
+        ColorPair::new(RGB::named(rltk::YELLOW), RGB::named(rltk::BLACK)),
     );
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         17,
-        RGB::named(rltk::WHITE),
-        RGB::named(rltk::BLACK),
         "One day, we'll tell you all about how you did.",
+        ColorPair::new(RGB::named(rltk::WHITE), RGB::named(rltk::BLACK)),
     );
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         18,
-        RGB::named(rltk::WHITE),
-        RGB::named(rltk::BLACK),
         "That day, sadly, is not in this chapter...",
+        ColorPair::new(RGB::named(rltk::WHITE), RGB::named(rltk::BLACK)),
     );
 
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         19,
-        RGB::named(rltk::WHITE),
-        RGB::named(rltk::BLACK),
         &format!(
             "You lived for {} turns.",
             crate::gamelog::get_event_count("Turn")
         ),
+        ColorPair::new(RGB::named(rltk::WHITE), RGB::named(rltk::BLACK)),
     );
 
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         20,
-        RGB::named(rltk::RED),
-        RGB::named(rltk::BLACK),
         &format!(
             "You suffered {} points of damage.",
             crate::gamelog::get_event_count("Damage Taken")
         ),
+        ColorPair::new(RGB::named(rltk::RED), RGB::named(rltk::BLACK)),
     );
 
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         21,
-        RGB::named(rltk::RED),
-        RGB::named(rltk::BLACK),
         &format!(
             "You inflicted {} points of damage.",
             crate::gamelog::get_event_count("Damage Inflicted")
         ),
+        ColorPair::new(RGB::named(rltk::RED), RGB::named(rltk::BLACK)),
     );
 
-    ctx.print_color_centered(
+    draw_batch.print_color_centered(
         23,
-        RGB::named(rltk::MAGENTA),
-        RGB::named(rltk::BLACK),
         "Press ESC to return to the menu.",
+        ColorPair::new(RGB::named(rltk::MAGENTA), RGB::named(rltk::BLACK)),
     );
+
+    draw_batch
+        .submit(6000)
+        .expect("Unable to draw Game Over menu");
 
     match ctx.key {
         Some(VirtualKeyCode::Escape) => GameOverResult::QuitToMenu,
