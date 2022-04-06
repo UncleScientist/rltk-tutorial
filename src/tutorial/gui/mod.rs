@@ -1,3 +1,6 @@
+mod remove_item_menu;
+pub use remove_item_menu::*;
+
 mod drop_item_menu;
 pub use drop_item_menu::*;
 
@@ -38,3 +41,10 @@ mod menus;
 pub use menus::*;
 
 use specs::prelude::*;
+
+#[derive(PartialEq, Copy, Clone)]
+pub enum ItemMenuResult {
+    Cancel,
+    NoResponse,
+    Selected,
+}
