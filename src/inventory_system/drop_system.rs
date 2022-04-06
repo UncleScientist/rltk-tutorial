@@ -56,7 +56,7 @@ impl<'a> System<'a> for ItemDropSystem {
 
             if entity == *player_entity {
                 crate::gamelog::Logger::new()
-                    .append("You drop the {}.")
+                    .append("You drop the")
                     .item_name(super::obfuscate_name(
                         to_drop.item,
                         &names,
