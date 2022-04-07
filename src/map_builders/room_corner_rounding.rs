@@ -1,11 +1,10 @@
 use super::{BuilderMap, MetaMapBuilder, TileType};
-use rltk::RandomNumberGenerator;
 
 pub struct RoomCornerRounder {}
 
 impl MetaMapBuilder for RoomCornerRounder {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -39,7 +38,7 @@ impl RoomCornerRounder {
         }
     }
 
-    fn build(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         let rooms = if let Some(rooms_builder) = &build_data.rooms {
             rooms_builder.clone()
         } else {

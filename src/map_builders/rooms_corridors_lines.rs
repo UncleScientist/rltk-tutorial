@@ -1,13 +1,13 @@
 use std::collections::HashSet;
 
 use super::{BuilderMap, MetaMapBuilder, TileType};
-use rltk::{line2d, DistanceAlg, LineAlg, Point, RandomNumberGenerator};
+use rltk::{line2d, DistanceAlg, LineAlg, Point};
 
 pub struct StraightLineCorridors {}
 
 impl MetaMapBuilder for StraightLineCorridors {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.corridors(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.corridors(build_data);
     }
 }
 
@@ -16,7 +16,7 @@ impl StraightLineCorridors {
         Box::new(StraightLineCorridors {})
     }
 
-    fn corridors(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn corridors(&mut self, build_data: &mut BuilderMap) {
         let rooms = if let Some(rooms_builder) = &build_data.rooms {
             rooms_builder.clone()
         } else {

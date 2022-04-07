@@ -1,13 +1,11 @@
 use super::{BuilderMap, MetaMapBuilder, TileType};
 use crate::draw_corridor;
 
-use rltk::RandomNumberGenerator;
-
 pub struct BspCorridors {}
 
 impl MetaMapBuilder for BspCorridors {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.corridors(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.corridors(build_data);
     }
 }
 
@@ -16,7 +14,7 @@ impl BspCorridors {
         Box::new(BspCorridors {})
     }
 
-    fn corridors(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn corridors(&mut self, build_data: &mut BuilderMap) {
         let rooms = if let Some(rooms_builder) = &build_data.rooms {
             rooms_builder.clone()
         } else {
@@ -30,8 +28,10 @@ impl BspCorridors {
             let room = rooms[i];
             let next_room = rooms[i + 1];
 
-            let mut start_x = room.x1 + (rng.roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
-            let mut start_y = room.y1 + (rng.roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
+            let mut start_x =
+                room.x1 + (crate::tutorial::rng::roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
+            let mut start_y =
+                room.y1 + (crate::tutorial::rng::roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
 
             let mut count = 0;
             while count < MAX_SEARCH {
@@ -39,8 +39,10 @@ impl BspCorridors {
                 if build_data.map.tiles[idx] == TileType::Floor {
                     break;
                 }
-                start_x = room.x1 + (rng.roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
-                start_y = room.y1 + (rng.roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
+                start_x =
+                    room.x1 + (crate::tutorial::rng::roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
+                start_y =
+                    room.y1 + (crate::tutorial::rng::roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
                 count += 1;
             }
             if count == MAX_SEARCH {
@@ -49,10 +51,10 @@ impl BspCorridors {
                 start_y = center.1;
             }
 
-            let mut end_x =
-                next_room.x1 + (rng.roll_dice(1, i32::abs(next_room.x1 - next_room.x2)) - 1);
-            let mut end_y =
-                next_room.y1 + (rng.roll_dice(1, i32::abs(next_room.y1 - next_room.y2)) - 1);
+            let mut end_x = next_room.x1
+                + (crate::tutorial::rng::roll_dice(1, i32::abs(next_room.x1 - next_room.x2)) - 1);
+            let mut end_y = next_room.y1
+                + (crate::tutorial::rng::roll_dice(1, i32::abs(next_room.y1 - next_room.y2)) - 1);
 
             count = 0;
             while count < MAX_SEARCH {
@@ -60,10 +62,12 @@ impl BspCorridors {
                 if build_data.map.tiles[idx] == TileType::Floor {
                     break;
                 }
-                end_x =
-                    next_room.x1 + (rng.roll_dice(1, i32::abs(next_room.x1 - next_room.x2)) - 1);
-                end_y =
-                    next_room.y1 + (rng.roll_dice(1, i32::abs(next_room.y1 - next_room.y2)) - 1);
+                end_x = next_room.x1
+                    + (crate::tutorial::rng::roll_dice(1, i32::abs(next_room.x1 - next_room.x2))
+                        - 1);
+                end_y = next_room.y1
+                    + (crate::tutorial::rng::roll_dice(1, i32::abs(next_room.y1 - next_room.y2))
+                        - 1);
                 count += 1;
             }
             if count == MAX_SEARCH {

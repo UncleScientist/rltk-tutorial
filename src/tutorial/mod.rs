@@ -38,3 +38,6 @@ pub mod gamesystem;
 pub use gamesystem::*;
 
 pub mod systems;
+
+pub mod rng;
+pub use rng::*;

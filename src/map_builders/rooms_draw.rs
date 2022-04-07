@@ -1,11 +1,11 @@
 use super::{BuilderMap, MetaMapBuilder, Rect, TileType};
-use rltk::{DistanceAlg, Point, RandomNumberGenerator};
+use rltk::{DistanceAlg, Point};
 
 pub struct RoomDrawer {}
 
 impl MetaMapBuilder for RoomDrawer {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -41,7 +41,7 @@ impl RoomDrawer {
         }
     }
 
-    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         let rooms = if let Some(rooms_builder) = &build_data.rooms {
             rooms_builder.clone()
         } else {
@@ -51,7 +51,7 @@ impl RoomDrawer {
         let max_idx = ((build_data.map.width * build_data.map.height) - 1) as usize;
 
         for room in rooms.iter() {
-            if rng.roll_dice(1, 4) == 1 {
+            if crate::tutorial::rng::roll_dice(1, 4) == 1 {
                 self.circle(max_idx, build_data, room);
             } else {
                 self.rectangle(max_idx, build_data, room);

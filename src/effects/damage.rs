@@ -1,6 +1,5 @@
 use crate::map::Map;
 use crate::*;
-use rltk::RandomNumberGenerator;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 
 pub fn inflict_damage(ecs: &mut World, damage: &EffectSpawner, target: Entity) {
@@ -140,8 +139,7 @@ pub fn death(ecs: &mut World, effect: &EffectSpawner, target: Entity) {
             .log();
 
         // Improve a random attribute
-        let mut rng = ecs.fetch_mut::<RandomNumberGenerator>();
-        let attr_to_boost = rng.roll_dice(1, 4);
+        let attr_to_boost = crate::tutorial::rng::roll_dice(1, 4);
         match attr_to_boost {
             1 => {
                 player_attributes.might.base += 1;

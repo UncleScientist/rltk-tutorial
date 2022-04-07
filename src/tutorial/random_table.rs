@@ -1,5 +1,4 @@
 use crate::raws::{spawn_type_by_name, RawMaster, SpawnTableType};
-use rltk::RandomNumberGenerator;
 
 pub struct RandomEntry {
     name: String,
@@ -39,11 +38,11 @@ impl MasterTable {
         };
     }
 
-    pub fn roll(&self, rng: &mut RandomNumberGenerator) -> String {
-        match rng.roll_dice(1, 4) {
-            1 => self.items.roll(rng),
-            2 => self.props.roll(rng),
-            3 => self.mobs.roll(rng),
+    pub fn roll(&self) -> String {
+        match crate::tutorial::rng::roll_dice(1, 4) {
+            1 => self.items.roll(),
+            2 => self.props.roll(),
+            3 => self.mobs.roll(),
             _ => "None".to_string(),
         }
     }
@@ -70,12 +69,12 @@ impl RandomTable {
         }
     }
 
-    pub fn roll(&self, rng: &mut RandomNumberGenerator) -> String {
+    pub fn roll(&self) -> String {
         if self.total_weight == 0 {
             return "None".to_string();
         }
 
-        let mut roll = rng.roll_dice(1, self.total_weight) - 1;
+        let mut roll = crate::tutorial::rng::roll_dice(1, self.total_weight) - 1;
         let mut index: usize = 0;
 
         while roll > 0 {

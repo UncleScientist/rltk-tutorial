@@ -20,14 +20,14 @@ pub struct DrunkardsWalkBuilder {
 }
 
 impl MetaMapBuilder for DrunkardsWalkBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
 impl InitialMapBuilder for DrunkardsWalkBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -86,7 +86,7 @@ impl DrunkardsWalkBuilder {
         })
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         let starting_position = Position {
             x: build_data.map.width / 2,
             y: build_data.map.height / 2,
@@ -118,8 +118,8 @@ impl DrunkardsWalkBuilder {
                         (starting_position.x, starting_position.y)
                     } else {
                         (
-                            rng.roll_dice(1, build_data.map.width - 3) + 1,
-                            rng.roll_dice(1, build_data.map.height - 3) + 1,
+                            crate::tutorial::rng::roll_dice(1, build_data.map.width - 3) + 1,
+                            crate::tutorial::rng::roll_dice(1, build_data.map.height - 3) + 1,
                         )
                     }
                 }
@@ -140,7 +140,7 @@ impl DrunkardsWalkBuilder {
                 );
                 build_data.map.tiles[drunk_idx] = TileType::DownStairs;
 
-                match rng.roll_dice(1, 4) {
+                match crate::tutorial::rng::roll_dice(1, 4) {
                     1 => {
                         if drunk_x > 2 {
                             drunk_x -= 1;

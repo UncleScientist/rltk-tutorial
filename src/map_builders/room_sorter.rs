@@ -1,5 +1,5 @@
 use super::{BuilderMap, MetaMapBuilder, Rect};
-use rltk::{DistanceAlg, Point, RandomNumberGenerator};
+use rltk::{DistanceAlg, Point};
 
 pub enum RoomSort {
     Leftmost,
@@ -14,8 +14,8 @@ pub struct RoomSorter {
 }
 
 impl MetaMapBuilder for RoomSorter {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.sorter(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.sorter(build_data);
     }
 }
 
@@ -24,7 +24,7 @@ impl RoomSorter {
         Box::new(RoomSorter { sort_by })
     }
 
-    fn sorter(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn sorter(&mut self, build_data: &mut BuilderMap) {
         match self.sort_by {
             RoomSort::Leftmost => build_data
                 .rooms

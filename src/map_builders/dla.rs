@@ -16,14 +16,14 @@ pub struct DLABuilder {
 }
 
 impl MetaMapBuilder for DLABuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
 impl InitialMapBuilder for DLABuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -94,7 +94,7 @@ impl DLABuilder {
         })
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         // Carve a starting seed
         let starting_position = Position {
             x: build_data.map.width / 2,
@@ -130,7 +130,7 @@ impl DLABuilder {
                     let mut digger_y = starting_position.y;
                     let mut digger_idx = build_data.map.xy_idx(digger_x, digger_y);
                     while build_data.map.tiles[digger_idx] == TileType::Floor {
-                        match rng.roll_dice(1, 4) {
+                        match crate::tutorial::rng::roll_dice(1, 4) {
                             1 => {
                                 if digger_x > 2 {
                                     digger_x -= 1
@@ -163,14 +163,16 @@ impl DLABuilder {
                     );
                 }
                 DLAAlgorithm::WalkInwards => {
-                    let mut digger_x = rng.roll_dice(1, build_data.map.width - 3) + 1;
-                    let mut digger_y = rng.roll_dice(1, build_data.map.height - 3) + 1;
+                    let mut digger_x =
+                        crate::tutorial::rng::roll_dice(1, build_data.map.width - 3) + 1;
+                    let mut digger_y =
+                        crate::tutorial::rng::roll_dice(1, build_data.map.height - 3) + 1;
                     let (mut prev_x, mut prev_y) = (digger_x, digger_y);
                     let mut digger_idx = build_data.map.xy_idx(digger_x, digger_y);
                     while build_data.map.tiles[digger_idx] == TileType::Wall {
                         prev_x = digger_x;
                         prev_y = digger_y;
-                        match rng.roll_dice(1, 4) {
+                        match crate::tutorial::rng::roll_dice(1, 4) {
                             1 => {
                                 if digger_x > 2 {
                                     digger_x -= 1
@@ -203,8 +205,10 @@ impl DLABuilder {
                     );
                 }
                 DLAAlgorithm::CentralAttractor => {
-                    let mut digger_x = rng.roll_dice(1, build_data.map.width - 3) + 1;
-                    let mut digger_y = rng.roll_dice(1, build_data.map.height - 3) + 1;
+                    let mut digger_x =
+                        crate::tutorial::rng::roll_dice(1, build_data.map.width - 3) + 1;
+                    let mut digger_y =
+                        crate::tutorial::rng::roll_dice(1, build_data.map.height - 3) + 1;
                     let (mut prev_x, mut prev_y) = (digger_x, digger_y);
                     let mut digger_idx = build_data.map.xy_idx(digger_x, digger_y);
 

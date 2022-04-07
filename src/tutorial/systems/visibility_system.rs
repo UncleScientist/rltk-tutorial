@@ -11,7 +11,6 @@ type VisibilityData<'a> = (
     WriteStorage<'a, Position>,
     ReadStorage<'a, Player>,
     WriteStorage<'a, Hidden>,
-    WriteExpect<'a, rltk::RandomNumberGenerator>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, BlocksVisibility>,
 );
@@ -20,17 +19,8 @@ impl<'a> System<'a> for VisibilitySystem {
     type SystemData = VisibilityData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            mut map,
-            entities,
-            mut viewshed,
-            pos,
-            player,
-            mut hidden,
-            mut rng,
-            names,
-            blocks_visibility,
-        ) = data;
+        let (mut map, entities, mut viewshed, pos, player, mut hidden, names, blocks_visibility) =
+            data;
 
         map.view_blocked.clear();
         for (block_pos, _block) in (&pos, &blocks_visibility).join() {
@@ -60,7 +50,9 @@ impl<'a> System<'a> for VisibilitySystem {
 
                         // Chance to reveal hidden things
                         crate::spatial::for_each_tile_content(idx, |e| {
-                            if hidden.get(e).is_some() && rng.roll_dice(1, 24) == 1 {
+                            if hidden.get(e).is_some()
+                                && crate::tutorial::rng::roll_dice(1, 24) == 1
+                            {
                                 if let Some(name) = names.get(e) {
                                     crate::gamelog::Logger::new()
                                         .append("You spotted:")

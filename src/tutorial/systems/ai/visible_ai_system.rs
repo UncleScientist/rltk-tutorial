@@ -1,5 +1,3 @@
-use rltk::RandomNumberGenerator;
-
 use crate::{
     raws::Reaction, Chasing, Equipped, Faction, Map, MyTurn, Name, Position, SpecialAbilities,
     SpellTemplate, Viewshed, WantsToApproach, WantsToCastSpell, WantsToFlee, WantsToShoot, Weapon,
@@ -20,7 +18,6 @@ type VisibleData<'a> = (
     ReadStorage<'a, Viewshed>,
     WriteStorage<'a, Chasing>,
     ReadStorage<'a, SpecialAbilities>,
-    WriteExpect<'a, RandomNumberGenerator>,
     WriteStorage<'a, WantsToCastSpell>,
     ReadStorage<'a, Name>,
     ReadStorage<'a, SpellTemplate>,
@@ -45,7 +42,6 @@ impl<'a> System<'a> for VisibleAI {
             viewsheds,
             mut chasing,
             abilities,
-            mut rng,
             mut casting,
             names,
             spells,
@@ -84,7 +80,8 @@ impl<'a> System<'a> for VisibleAI {
                                 for ability in abilities.abilities.iter() {
                                     if range >= ability.min_range
                                         && range <= ability.range
-                                        && rng.roll_dice(1, 100) <= (ability.chance * 100.0) as i32
+                                        && crate::tutorial::rng::roll_dice(1, 100)
+                                            <= (ability.chance * 100.0) as i32
                                     {
                                         use crate::raws::find_spell_entity_by_name;
                                         casting

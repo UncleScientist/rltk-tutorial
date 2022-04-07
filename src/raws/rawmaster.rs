@@ -1,5 +1,3 @@
-use rltk::RandomNumberGenerator;
-
 use crate::components::*;
 use crate::{mana_at_level, npc_hp, MasterTable, RandomTable};
 use specs::prelude::*;
@@ -299,18 +297,14 @@ pub fn get_potion_tags() -> Vec<String> {
     result
 }
 
-pub fn get_item_drop(
-    raws: &RawMaster,
-    rng: &mut RandomNumberGenerator,
-    table: &str,
-) -> Option<String> {
+pub fn get_item_drop(raws: &RawMaster, table: &str) -> Option<String> {
     if raws.loot_index.contains_key(table) {
         let mut rt = RandomTable::new();
         let available_options = &raws.raws.loot_tables[raws.loot_index[table]];
         for item in available_options.drops.iter() {
             rt.add(item.name.clone(), item.weight);
         }
-        return Some(rt.roll(rng));
+        return Some(rt.roll());
     }
 
     None
@@ -762,9 +756,8 @@ fn spawn_named_mob(raws: &RawMaster, ecs: &mut World, key: &str, pos: SpawnType)
             total_weight: 0.0,
             total_initiative_penalty: 0.0,
             gold: if let Some(gold) = &mob_template.gold {
-                let mut rng = rltk::RandomNumberGenerator::new();
                 let (n, d, b) = parse_dice_string(gold);
-                (rng.roll_dice(n, d) + b) as f32
+                (crate::tutorial::rng::roll_dice(n, d) + b) as f32
             } else {
                 0.0
             },

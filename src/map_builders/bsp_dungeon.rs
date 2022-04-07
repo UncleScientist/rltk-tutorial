@@ -5,8 +5,8 @@ pub struct BspDungeonBuilder {
 }
 
 impl InitialMapBuilder for BspDungeonBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -15,7 +15,7 @@ impl BspDungeonBuilder {
         Box::new(BspDungeonBuilder { rects: Vec::new() })
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         let mut rooms: Vec<Rect> = Vec::new();
 
         self.rects.clear();
@@ -31,8 +31,8 @@ impl BspDungeonBuilder {
         // Up to 240 times...
         let mut n_rooms = 0;
         while n_rooms < 240 {
-            let rect = self.get_random_rect(rng);
-            let candidate = self.get_random_sub_rect(rect, rng);
+            let rect = self.get_random_rect();
+            let candidate = self.get_random_sub_rect(rect);
 
             if self.is_possible(candidate, build_data, &rooms) {
                 rooms.push(candidate);
@@ -73,24 +73,30 @@ impl BspDungeonBuilder {
         ));
     }
 
-    fn get_random_rect(&mut self, rng: &mut rltk::RandomNumberGenerator) -> Rect {
+    fn get_random_rect(&mut self) -> Rect {
         if self.rects.len() == 1 {
             return self.rects[0];
         }
-        let idx = (rng.roll_dice(1, self.rects.len() as i32) - 1) as usize;
+        let idx = (crate::tutorial::rng::roll_dice(1, self.rects.len() as i32) - 1) as usize;
         self.rects[idx]
     }
 
-    fn get_random_sub_rect(&mut self, rect: Rect, rng: &mut rltk::RandomNumberGenerator) -> Rect {
+    fn get_random_sub_rect(&mut self, rect: Rect) -> Rect {
         let mut result = rect;
         let rect_width = i32::abs(rect.x1 - rect.x2);
         let rect_height = i32::abs(rect.y1 - rect.y2);
 
-        let w = i32::max(3, rng.roll_dice(1, i32::min(rect_width, 10)) - 1) + 1;
-        let h = i32::max(3, rng.roll_dice(1, i32::min(rect_height, 10)) - 1) + 1;
+        let w = i32::max(
+            3,
+            crate::tutorial::rng::roll_dice(1, i32::min(rect_width, 10)) - 1,
+        ) + 1;
+        let h = i32::max(
+            3,
+            crate::tutorial::rng::roll_dice(1, i32::min(rect_height, 10)) - 1,
+        ) + 1;
 
-        result.x1 += rng.roll_dice(1, 6) - 1;
-        result.y1 += rng.roll_dice(1, 6) - 1;
+        result.x1 += crate::tutorial::rng::roll_dice(1, 6) - 1;
+        result.y1 += crate::tutorial::rng::roll_dice(1, 6) - 1;
         result.x2 = result.x1 + w;
         result.y2 = result.y1 + h;
 

@@ -1,4 +1,4 @@
-use rltk::{Point, RandomNumberGenerator};
+use rltk::Point;
 use specs::prelude::*;
 use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 
@@ -116,7 +116,6 @@ fn main() -> rltk::BError {
     gs.ecs.insert(crate::MasterDungeonMap::new());
     gs.ecs.insert(Map::new(1, 64, 64, "New Map"));
     gs.ecs.insert(Point::new(0, 0));
-    gs.ecs.insert(RandomNumberGenerator::new());
     gs.ecs.insert(Editor::new());
 
     let player_entity = player(&mut gs.ecs, 0, 0);

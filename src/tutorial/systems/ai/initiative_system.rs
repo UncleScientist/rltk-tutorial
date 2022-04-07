@@ -2,7 +2,7 @@ use crate::{
     Attributes, DamageOverTime, Duration, EquipmentChanged, Initiative, MyTurn, Pools, Position,
     RunState, StatusEffect,
 };
-use rltk::{Point, RandomNumberGenerator};
+use rltk::Point;
 use specs::prelude::*;
 
 pub struct InitiativeSystem {}
@@ -12,7 +12,6 @@ type InitiativeData<'a> = (
     ReadStorage<'a, Position>,
     WriteStorage<'a, MyTurn>,
     Entities<'a>,
-    WriteExpect<'a, RandomNumberGenerator>,
     ReadStorage<'a, Attributes>,
     WriteExpect<'a, RunState>,
     ReadExpect<'a, Entity>,
@@ -33,7 +32,6 @@ impl<'a> System<'a> for InitiativeSystem {
             positions,
             mut turns,
             entities,
-            mut rng,
             attributes,
             mut runstate,
             player,
@@ -59,7 +57,7 @@ impl<'a> System<'a> for InitiativeSystem {
                 let mut myturn = true;
 
                 // Re-roll
-                initiative.current = 6 + rng.roll_dice(1, 6);
+                initiative.current = 6 + crate::tutorial::rng::roll_dice(1, 6);
 
                 // Give a bonus for quickness
                 if let Some(attr) = attributes.get(entity) {

@@ -1,4 +1,4 @@
-use rltk::{to_cp437, Point, RandomNumberGenerator, RGB};
+use rltk::{to_cp437, Point, RGB};
 use specs::prelude::*;
 use specs::saveload::{MarkedBuilder, SimpleMarker};
 
@@ -7,13 +7,7 @@ use std::collections::HashMap;
 use crate::*;
 
 /// Fills a room with stuff!
-pub fn spawn_room(
-    map: &Map,
-    rng: &mut RandomNumberGenerator,
-    room: &Rect,
-    map_depth: i32,
-    spawn_list: &mut Vec<(usize, String)>,
-) {
+pub fn spawn_room(map: &Map, room: &Rect, map_depth: i32, spawn_list: &mut Vec<(usize, String)>) {
     let mut possible_targets: Vec<usize> = Vec::new();
     {
         for y in room.y1 + 1..room.y2 {
@@ -26,15 +20,10 @@ pub fn spawn_room(
         }
     }
 
-    spawn_region(rng, &possible_targets, map_depth, spawn_list);
+    spawn_region(&possible_targets, map_depth, spawn_list);
 }
 
-pub fn spawn_region(
-    rng: &mut RandomNumberGenerator,
-    area: &[usize],
-    map_depth: i32,
-    spawn_list: &mut Vec<(usize, String)>,
-) {
+pub fn spawn_region(area: &[usize], map_depth: i32, spawn_list: &mut Vec<(usize, String)>) {
     const MAX_SPAWNS: i32 = 3;
 
     let spawn_table = room_table(map_depth);
@@ -44,7 +33,7 @@ pub fn spawn_region(
     {
         let num_spawns = i32::min(
             areas.len() as i32,
-            rng.roll_dice(1, MAX_SPAWNS + 3) + (map_depth - 1) - 3,
+            crate::tutorial::rng::roll_dice(1, MAX_SPAWNS + 3) + (map_depth - 1) - 3,
         );
         if num_spawns == 0 {
             return;
@@ -54,10 +43,10 @@ pub fn spawn_region(
             let array_index = if areas.len() == 1 {
                 0usize
             } else {
-                (rng.roll_dice(1, areas.len() as i32) - 1) as usize
+                (crate::tutorial::rng::roll_dice(1, areas.len() as i32) - 1) as usize
             };
             let map_idx = areas[array_index];
-            spawn_points.insert(map_idx, spawn_table.roll(rng));
+            spawn_points.insert(map_idx, spawn_table.roll());
             areas.remove(array_index);
         }
     }

@@ -1,11 +1,10 @@
 use super::{paint, BuilderMap, MetaMapBuilder, Symmetry, TileType};
-use rltk::RandomNumberGenerator;
 
 pub struct RoomExploder {}
 
 impl MetaMapBuilder for RoomExploder {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -14,7 +13,7 @@ impl RoomExploder {
         Box::new(RoomExploder {})
     }
 
-    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         if build_data.rooms.is_none() {
             panic!("Room explosions require a builder with room structures");
         }
@@ -23,7 +22,7 @@ impl RoomExploder {
 
         for room in rooms.iter() {
             let start = room.center();
-            let n_diggers = rng.roll_dice(1, 20) - 5;
+            let n_diggers = crate::tutorial::rng::roll_dice(1, 20) - 5;
 
             for _ in 0..n_diggers {
                 let mut drunk_x = start.0;
@@ -40,7 +39,7 @@ impl RoomExploder {
                     paint(&mut build_data.map, Symmetry::None, 1, drunk_x, drunk_y);
                     build_data.map.tiles[drunk_idx] = TileType::DownStairs;
 
-                    match rng.roll_dice(1, 4) {
+                    match crate::tutorial::rng::roll_dice(1, 4) {
                         1 => {
                             if drunk_x > 2 {
                                 drunk_x -= 1;

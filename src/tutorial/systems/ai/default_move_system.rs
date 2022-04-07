@@ -1,5 +1,4 @@
 use crate::{tile_walkable, ApplyMove, Map, MoveMode, Movement, MyTurn, Position};
-use rltk::RandomNumberGenerator;
 use specs::prelude::*;
 
 pub struct DefaultMoveAI {}
@@ -9,7 +8,6 @@ type DefaultMoveData<'a> = (
     WriteStorage<'a, MoveMode>,
     ReadStorage<'a, Position>,
     ReadExpect<'a, Map>,
-    WriteExpect<'a, RandomNumberGenerator>,
     Entities<'a>,
     WriteStorage<'a, ApplyMove>,
 );
@@ -18,7 +16,7 @@ impl<'a> System<'a> for DefaultMoveAI {
     type SystemData = DefaultMoveData<'a>;
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut turns, mut move_mode, positions, map, mut rng, entities, mut apply_move) = data;
+        let (mut turns, mut move_mode, positions, map, entities, mut apply_move) = data;
 
         let mut turn_done = Vec::new();
 
@@ -30,7 +28,7 @@ impl<'a> System<'a> for DefaultMoveAI {
                 Movement::Random => {
                     let mut x = pos.x;
                     let mut y = pos.y;
-                    let move_roll = rng.roll_dice(1, 5);
+                    let move_roll = crate::tutorial::rng::roll_dice(1, 5);
 
                     match move_roll {
                         1 => x -= 1,
@@ -64,8 +62,8 @@ impl<'a> System<'a> for DefaultMoveAI {
                             mode.mode = Movement::RandomWaypoint { path: None };
                         }
                     } else {
-                        let target_x = rng.roll_dice(1, map.width - 2);
-                        let target_y = rng.roll_dice(1, map.height - 2);
+                        let target_x = crate::tutorial::rng::roll_dice(1, map.width - 2);
+                        let target_y = crate::tutorial::rng::roll_dice(1, map.height - 2);
                         let idx = map.xy_idx(target_x, target_y);
                         if tile_walkable(map.tiles[idx]) {
                             let path = rltk::a_star_search(

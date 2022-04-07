@@ -54,7 +54,7 @@ impl Solver {
         neighbors
     }
 
-    pub fn iteration(&mut self, map: &mut Map, rng: &mut rltk::RandomNumberGenerator) -> bool {
+    pub fn iteration(&mut self, map: &mut Map) -> bool {
         if self.remaining.is_empty() {
             return true;
         }
@@ -78,7 +78,7 @@ impl Solver {
         // Pick a random chunk we haven't dealth with yet and get its index,
         // remove from remaining list
         let remaining_index = if !neighbors_exist {
-            (rng.roll_dice(1, self.remaining.len() as i32) - 1) as usize
+            (crate::tutorial::rng::roll_dice(1, self.remaining.len() as i32) - 1) as usize
         } else {
             0usize
         };
@@ -123,7 +123,8 @@ impl Solver {
 
         if neighbors == 0 {
             // There is nothing nearby, so we can have anything
-            let new_chunk_idx = (rng.roll_dice(1, self.constraints.len() as i32) - 1) as usize;
+            let new_chunk_idx =
+                (crate::tutorial::rng::roll_dice(1, self.constraints.len() as i32) - 1) as usize;
             self.chunks[chunk_index] = Some(new_chunk_idx);
             let left_x = chunk_x as i32 * self.chunk_size as i32;
             let right_x = (chunk_x as i32 + 1) * self.chunk_size as i32;
@@ -171,7 +172,7 @@ impl Solver {
             let new_chunk_idx = if possible_options.len() == 1 {
                 0
             } else {
-                rng.roll_dice(1, possible_options.len() as i32) - 1
+                crate::tutorial::rng::roll_dice(1, possible_options.len() as i32) - 1
             };
 
             self.chunks[chunk_index] = Some(new_chunk_idx as usize);

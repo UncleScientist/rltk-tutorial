@@ -1,5 +1,5 @@
 use super::*;
-use rltk::{a_star_search, DistanceAlg, Point, RandomNumberGenerator};
+use rltk::{a_star_search, DistanceAlg, Point};
 use std::collections::HashSet;
 
 enum BuildingTag {
@@ -25,8 +25,8 @@ pub fn town_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
 pub struct TownBuilder {}
 
 impl InitialMapBuilder for TownBuilder {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build_rooms(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build_rooms(build_data);
     }
 }
 
@@ -35,16 +35,16 @@ impl TownBuilder {
         Box::new(TownBuilder {})
     }
 
-    pub fn build_rooms(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    pub fn build_rooms(&mut self, build_data: &mut BuilderMap) {
         self.grass_layer(build_data);
-        self.water_and_piers(rng, build_data);
-        let (mut available_building_tiles, wall_gap_y) = self.town_walls(rng, build_data);
-        let mut buildings = self.buildings(rng, build_data, &mut available_building_tiles);
-        let doors = self.add_doors(rng, build_data, &mut buildings, wall_gap_y);
+        self.water_and_piers(build_data);
+        let (mut available_building_tiles, wall_gap_y) = self.town_walls(build_data);
+        let mut buildings = self.buildings(build_data, &mut available_building_tiles);
+        let doors = self.add_doors(build_data, &mut buildings, wall_gap_y);
         self.add_paths(build_data, &doors);
 
-        self.spawn_dockers(build_data, rng);
-        self.spawn_townsfolk(build_data, rng, &mut available_building_tiles);
+        self.spawn_dockers(build_data);
+        self.spawn_townsfolk(build_data, &mut available_building_tiles);
 
         for y in wall_gap_y - 3..wall_gap_y + 4 {
             let exit_idx = build_data.map.xy_idx(build_data.width - 2, y);
@@ -52,7 +52,7 @@ impl TownBuilder {
         }
 
         let building_size = self.sort_buildings(&buildings);
-        self.building_factory(rng, build_data, &buildings, &building_size);
+        self.building_factory(build_data, &buildings, &building_size);
 
         for t in build_data.map.visible_tiles.iter_mut() {
             *t = true;
@@ -67,11 +67,11 @@ impl TownBuilder {
         build_data.take_snapshot();
     }
 
-    fn water_and_piers(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        let mut n = (rng.roll_dice(1, 65535) as f32) / 65535.0;
+    fn water_and_piers(&mut self, build_data: &mut BuilderMap) {
+        let mut n = (crate::tutorial::rng::roll_dice(1, 65535) as f32) / 65535.0;
         let mut water_width: Vec<i32> = Vec::new();
         for y in 0..build_data.height {
-            let n_water = (f32::sin(n) * 10.0) as i32 + 14 + rng.roll_dice(1, 6);
+            let n_water = (f32::sin(n) * 10.0) as i32 + 14 + crate::tutorial::rng::roll_dice(1, 6);
             water_width.push(n_water);
             n += 0.1;
             for x in 0..n_water {
@@ -82,9 +82,9 @@ impl TownBuilder {
         build_data.take_snapshot();
 
         // Add piers
-        for _ in 0..rng.roll_dice(1, 4) + 6 {
-            let y = rng.roll_dice(1, build_data.height) - 1;
-            for x in 2 + rng.roll_dice(1, 6)..water_width[y as usize] + 4 {
+        for _ in 0..crate::tutorial::rng::roll_dice(1, 4) + 6 {
+            let y = crate::tutorial::rng::roll_dice(1, build_data.height) - 1;
+            for x in 2 + crate::tutorial::rng::roll_dice(1, 6)..water_width[y as usize] + 4 {
                 let idx = build_data.map.xy_idx(x, y);
                 build_data.map.tiles[idx] = TileType::Bridge;
             }
@@ -92,13 +92,9 @@ impl TownBuilder {
         build_data.take_snapshot();
     }
 
-    fn town_walls(
-        &mut self,
-        rng: &mut RandomNumberGenerator,
-        build_data: &mut BuilderMap,
-    ) -> (HashSet<usize>, i32) {
+    fn town_walls(&mut self, build_data: &mut BuilderMap) -> (HashSet<usize>, i32) {
         let mut available_building_tiles = HashSet::new();
-        let wall_gap_y = rng.roll_dice(1, build_data.height - 9) + 5;
+        let wall_gap_y = crate::tutorial::rng::roll_dice(1, build_data.height - 9) + 5;
         for y in 1..build_data.height - 2 {
             if !(y > wall_gap_y - 4 && y < wall_gap_y + 4) {
                 let idx = build_data.map.xy_idx(30, y);
@@ -133,17 +129,16 @@ impl TownBuilder {
 
     fn buildings(
         &mut self,
-        rng: &mut RandomNumberGenerator,
         build_data: &mut BuilderMap,
         available_building_tiles: &mut HashSet<usize>,
     ) -> Vec<Building> {
         let mut buildings: Vec<Building> = Vec::new();
         let mut n_buildings = 0;
         while n_buildings < 12 {
-            let bx = rng.roll_dice(1, build_data.map.width - 32) + 30;
-            let by = rng.roll_dice(1, build_data.map.height) - 2;
-            let bw = rng.roll_dice(1, 8) + 4;
-            let bh = rng.roll_dice(1, 8) + 4;
+            let bx = crate::tutorial::rng::roll_dice(1, build_data.map.width - 32) + 30;
+            let by = crate::tutorial::rng::roll_dice(1, build_data.map.height) - 2;
+            let bw = crate::tutorial::rng::roll_dice(1, 8) + 4;
+            let bh = crate::tutorial::rng::roll_dice(1, 8) + 4;
             let mut possible = true;
 
             'done: for y in by..by + bh {
@@ -207,7 +202,6 @@ impl TownBuilder {
 
     fn add_doors(
         &mut self,
-        rng: &mut RandomNumberGenerator,
         build_data: &mut BuilderMap,
         buildings: &mut Vec<Building>,
         wall_gap_y: i32,
@@ -215,7 +209,7 @@ impl TownBuilder {
         let mut doors = Vec::new();
 
         for building in buildings.iter() {
-            let door_x = building.0 + 1 + rng.roll_dice(1, building.2 - 3);
+            let door_x = building.0 + 1 + crate::tutorial::rng::roll_dice(1, building.2 - 3);
             let cy = building.1 + (building.3 / 2);
             let idx = if cy > wall_gap_y {
                 // Door on the north wall
@@ -302,7 +296,6 @@ impl TownBuilder {
 
     fn building_factory(
         &mut self,
-        rng: &mut RandomNumberGenerator,
         build_data: &mut BuilderMap,
         buildings: &[Building],
         building_index: &[(usize, i32, BuildingTag)],
@@ -310,14 +303,14 @@ impl TownBuilder {
         for (i, building) in buildings.iter().enumerate() {
             let build_type = &building_index[i].2;
             match build_type {
-                BuildingTag::Pub => self.build_pub(building, build_data, rng),
-                BuildingTag::Temple => self.build_temple(building, build_data, rng),
-                BuildingTag::Blacksmith => self.build_smith(building, build_data, rng),
-                BuildingTag::Clothier => self.build_clothier(building, build_data, rng),
-                BuildingTag::Alchemist => self.build_alchemist(building, build_data, rng),
-                BuildingTag::PlayerHouse => self.build_my_house(building, build_data, rng),
-                BuildingTag::Hovel => self.build_hovel(building, build_data, rng),
-                BuildingTag::AbandonedHouse => self.build_house(building, build_data, rng),
+                BuildingTag::Pub => self.build_pub(building, build_data),
+                BuildingTag::Temple => self.build_temple(building, build_data),
+                BuildingTag::Blacksmith => self.build_smith(building, build_data),
+                BuildingTag::Clothier => self.build_clothier(building, build_data),
+                BuildingTag::Alchemist => self.build_alchemist(building, build_data),
+                BuildingTag::PlayerHouse => self.build_my_house(building, build_data),
+                BuildingTag::Hovel => self.build_hovel(building, build_data),
+                BuildingTag::AbandonedHouse => self.build_house(building, build_data),
                 _ => {}
             }
         }
@@ -327,7 +320,6 @@ impl TownBuilder {
         &mut self,
         building: &Building,
         build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
         to_place: &mut Vec<&str>,
         player_idx: usize,
     ) {
@@ -336,7 +328,7 @@ impl TownBuilder {
                 let idx = build_data.map.xy_idx(x, y);
                 if build_data.map.tiles[idx] == TileType::WoodFloor
                     && idx != player_idx
-                    && rng.roll_dice(1, 3) == 1
+                    && crate::tutorial::rng::roll_dice(1, 3) == 1
                     && !to_place.is_empty()
                 {
                     let entity_tag = to_place[0];
@@ -347,12 +339,7 @@ impl TownBuilder {
         }
     }
 
-    fn build_pub(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_pub(&mut self, building: &Building, build_data: &mut BuilderMap) {
         // Place the player
         let (px, py) = (building.0 + (building.2 / 2), building.1 + (building.3 / 2));
         build_data.starting_position = Some(Position { x: px, y: py });
@@ -371,15 +358,10 @@ impl TownBuilder {
             "Table",
             "Chair",
         ];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, player_idx);
+        self.random_building_spawn(building, build_data, &mut to_place, player_idx);
     }
 
-    fn build_temple(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_temple(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec![
             "Priest",
             "Altar",
@@ -390,15 +372,10 @@ impl TownBuilder {
             "Candle",
             "Candle",
         ];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_smith(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_smith(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec![
             "Blacksmith",
             "Anvil",
@@ -406,61 +383,36 @@ impl TownBuilder {
             "Weapon Rack",
             "Armor Stand",
         ];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_clothier(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_clothier(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec!["Clothier", "Cabinet", "Table", "Loom", "Hide Rack"];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_alchemist(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_alchemist(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec!["Alchemist", "Chemistry Set", "Dead Thing", "Chair", "Table"];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_my_house(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_my_house(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec!["Mom", "Bed", "Cabinet", "Chair", "Table"];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_hovel(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_hovel(&mut self, building: &Building, build_data: &mut BuilderMap) {
         let mut to_place = vec!["Peasant", "Bed", "Chair", "Table"];
-        self.random_building_spawn(building, build_data, rng, &mut to_place, 0);
+        self.random_building_spawn(building, build_data, &mut to_place, 0);
     }
 
-    fn build_house(
-        &mut self,
-        building: &Building,
-        build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
-    ) {
+    fn build_house(&mut self, building: &Building, build_data: &mut BuilderMap) {
         for y in building.1..building.1 + building.3 {
             for x in building.0..building.0 + building.2 {
                 let idx = build_data.map.xy_idx(x, y);
                 if build_data.map.tiles[idx] == TileType::WoodFloor
                     && idx != 0
-                    && rng.roll_dice(1, 2) == 1
+                    && crate::tutorial::rng::roll_dice(1, 2) == 1
                 {
                     build_data.spawn_list.push((idx, "Rat".to_string()));
                 }
@@ -468,10 +420,10 @@ impl TownBuilder {
         }
     }
 
-    fn spawn_dockers(&mut self, build_data: &mut BuilderMap, rng: &mut RandomNumberGenerator) {
+    fn spawn_dockers(&mut self, build_data: &mut BuilderMap) {
         for (idx, &tt) in build_data.map.tiles.iter().enumerate() {
-            if tt == TileType::Bridge && rng.roll_dice(1, 6) == 1 {
-                match rng.roll_dice(1, 3) {
+            if tt == TileType::Bridge && crate::tutorial::rng::roll_dice(1, 6) == 1 {
+                match crate::tutorial::rng::roll_dice(1, 3) {
                     1 => build_data.spawn_list.push((idx, "Dock Worker".to_string())),
                     2 => build_data
                         .spawn_list
@@ -485,12 +437,11 @@ impl TownBuilder {
     fn spawn_townsfolk(
         &mut self,
         build_data: &mut BuilderMap,
-        rng: &mut RandomNumberGenerator,
         available_building_tiles: &mut HashSet<usize>,
     ) {
         for &idx in available_building_tiles.iter() {
-            if rng.roll_dice(1, 10) == 1 {
-                match rng.roll_dice(1, 4) {
+            if crate::tutorial::rng::roll_dice(1, 10) == 1 {
+                match crate::tutorial::rng::roll_dice(1, 4) {
                     1 => build_data.spawn_list.push((idx, "Peasant".to_string())),
                     2 => build_data.spawn_list.push((idx, "Drunk".to_string())),
                     3 => build_data.spawn_list.push((idx, "Dock Worker".to_string())),

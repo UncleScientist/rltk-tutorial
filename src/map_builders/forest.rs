@@ -3,14 +3,9 @@ use super::{
     MetaMapBuilder, TileType, VoronoiSpawning, XStart, YStart,
 };
 use crate::map;
-use rltk::{a_star_search, DistanceAlg, Point, RandomNumberGenerator};
+use rltk::{a_star_search, DistanceAlg, Point};
 
-pub fn forest_builder(
-    new_depth: i32,
-    _rng: &mut RandomNumberGenerator,
-    width: i32,
-    height: i32,
-) -> BuilderChain {
+pub fn forest_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
     let mut chain = BuilderChain::new(new_depth, width, height, "Into the Woods");
     chain.start_with(CellularAutomataBuilder::new());
     chain.with(AreaStartingPosition::new(XStart::Center, YStart::Center));
@@ -27,8 +22,8 @@ pub fn forest_builder(
 pub struct YellowBrickRoad {}
 
 impl MetaMapBuilder for YellowBrickRoad {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -73,7 +68,7 @@ impl YellowBrickRoad {
         }
     }
 
-    fn build(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         let starting_pos = build_data.starting_position.as_ref().unwrap().clone();
         let start_idx = build_data.map.xy_idx(starting_pos.x, starting_pos.y);
 
@@ -97,7 +92,7 @@ impl YellowBrickRoad {
         build_data.take_snapshot();
 
         // Place exit
-        let exit_dir = rng.roll_dice(1, 2);
+        let exit_dir = crate::tutorial::rng::roll_dice(1, 2);
         let (seed_x, seed_y, stream_startx, stream_starty) = if exit_dir == 1 {
             (build_data.map.width - 1, 1, 0, build_data.height - 1)
         } else {

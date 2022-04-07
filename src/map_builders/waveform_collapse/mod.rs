@@ -12,8 +12,8 @@ use solver::*;
 pub struct WaveformCollapseBuilder {}
 
 impl MetaMapBuilder for WaveformCollapseBuilder {
-    fn build_map(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.build(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.build(build_data);
     }
 }
 
@@ -22,7 +22,7 @@ impl WaveformCollapseBuilder {
         Box::new(WaveformCollapseBuilder {})
     }
 
-    fn build(&mut self, rng: &mut rltk::RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn build(&mut self, build_data: &mut BuilderMap) {
         const CHUNK_SIZE: i32 = 8;
 
         let patterns = build_patterns(&build_data.map, CHUNK_SIZE, true, true);
@@ -37,7 +37,7 @@ impl WaveformCollapseBuilder {
         );
         loop {
             let mut solver = Solver::new(constraints.clone(), CHUNK_SIZE, &build_data.map);
-            while !solver.iteration(&mut build_data.map, rng) {
+            while !solver.iteration(&mut build_data.map) {
                 build_data.take_snapshot();
             }
 

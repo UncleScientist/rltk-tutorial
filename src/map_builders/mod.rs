@@ -1,5 +1,3 @@
-use rltk::RandomNumberGenerator;
-
 use super::{spawner, Map, Position, Rect, TileType};
 use specs::prelude::*;
 
@@ -167,17 +165,17 @@ impl BuilderChain {
         self.builders.push(metabuilder);
     }
 
-    pub fn build_map(&mut self, rng: &mut RandomNumberGenerator) {
+    pub fn build_map(&mut self) {
         match &mut self.starter {
             None => panic!("Cannot run a map builder chain without a starting map"),
             Some(starter) => {
                 // Build the starting map
-                starter.build_map(rng, &mut self.build_data);
+                starter.build_map(&mut self.build_data);
             }
         }
 
         for metabuilder in self.builders.iter_mut() {
-            metabuilder.build_map(rng, &mut self.build_data);
+            metabuilder.build_map(&mut self.build_data);
         }
     }
 
@@ -189,21 +187,21 @@ impl BuilderChain {
 }
 // --------------------------------------------------------------------------------
 pub trait InitialMapBuilder {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap);
+    fn build_map(&mut self, build_data: &mut BuilderMap);
 }
 
 pub trait MetaMapBuilder {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap);
+    fn build_map(&mut self, build_data: &mut BuilderMap);
 }
 
-fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
-    let x_start = match rng.roll_dice(1, 3) {
+fn random_start_position() -> (XStart, YStart) {
+    let x_start = match crate::tutorial::rng::roll_dice(1, 3) {
         1 => XStart::Left,
         2 => XStart::Center,
         _ => XStart::Right,
     };
 
-    let y_start = match rng.roll_dice(1, 3) {
+    let y_start = match crate::tutorial::rng::roll_dice(1, 3) {
         1 => YStart::Bottom,
         2 => YStart::Center,
         _ => YStart::Top,
@@ -212,42 +210,32 @@ fn random_start_position(rng: &mut RandomNumberGenerator) -> (XStart, YStart) {
     (x_start, y_start)
 }
 
-pub fn level_builder(
-    new_depth: i32,
-    rng: &mut RandomNumberGenerator,
-    width: i32,
-    height: i32,
-) -> BuilderChain {
+pub fn level_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
     match new_depth {
         1 => town_builder(new_depth, width, height),
-        2 => forest_builder(new_depth, rng, width, height),
-        3 => limestone_cavern_builder(new_depth, rng, width, height),
-        4 => limestone_deep_cavern_builder(new_depth, rng, width, height),
-        5 => limestone_transition_builder(new_depth, rng, width, height),
-        6 => dwarf_fort_builder(new_depth, rng, width, height),
-        7 => mushroom_entrance(new_depth, rng, width, height),
-        8 => mushroom_builder(new_depth, rng, width, height),
-        9 => mushroom_exit(new_depth, rng, width, height),
-        _ => random_builder(new_depth, rng, width, height),
+        2 => forest_builder(new_depth, width, height),
+        3 => limestone_cavern_builder(new_depth, width, height),
+        4 => limestone_deep_cavern_builder(new_depth, width, height),
+        5 => limestone_transition_builder(new_depth, width, height),
+        6 => dwarf_fort_builder(new_depth, width, height),
+        7 => mushroom_entrance(new_depth, width, height),
+        8 => mushroom_builder(new_depth, width, height),
+        9 => mushroom_exit(new_depth, width, height),
+        _ => random_builder(new_depth, width, height),
     }
 }
 
-pub fn random_builder(
-    new_depth: i32,
-    rng: &mut RandomNumberGenerator,
-    width: i32,
-    height: i32,
-) -> BuilderChain {
+pub fn random_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
     let mut builder = BuilderChain::new(new_depth, width, height, "New Map");
 
     if std::env::var("QWER").is_err() {
-        let type_roll = rng.roll_dice(1, 2);
+        let type_roll = crate::tutorial::rng::roll_dice(1, 2);
         match type_roll {
-            1 => random_room_builder(rng, &mut builder),
-            _ => random_shape_builder(rng, &mut builder),
+            1 => random_room_builder(&mut builder),
+            _ => random_shape_builder(&mut builder),
         }
 
-        if rng.roll_dice(1, 20) == 1 {
+        if crate::tutorial::rng::roll_dice(1, 20) == 1 {
             builder.with(PrefabBuilder::sectional(
                 prefab_builders::prefab_sections::UNDERGROUND_FORT,
             ));
@@ -273,8 +261,8 @@ pub fn random_builder(
 
 // --------------------------------------------------------------------------------
 
-fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderChain) {
-    let build_roll = rng.roll_dice(1, 3);
+fn random_room_builder(builder: &mut BuilderChain) {
+    let build_roll = crate::tutorial::rng::roll_dice(1, 3);
     match build_roll {
         1 => builder.start_with(SimpleMapBuilder::new()),
         2 => builder.start_with(BspDungeonBuilder::new()),
@@ -283,7 +271,7 @@ fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCha
 
     // BSP Interior still makes holes in walls
     if build_roll != 3 {
-        match rng.roll_dice(1, 5) {
+        match crate::tutorial::rng::roll_dice(1, 5) {
             1 => builder.with(RoomSorter::new(RoomSort::Leftmost)),
             2 => builder.with(RoomSorter::new(RoomSort::Rightmost)),
             3 => builder.with(RoomSorter::new(RoomSort::Topmost)),
@@ -293,45 +281,45 @@ fn random_room_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCha
 
         builder.with(RoomDrawer::new());
 
-        match rng.roll_dice(1, 4) {
+        match crate::tutorial::rng::roll_dice(1, 4) {
             1 => builder.with(DoglegCorridors::new()),
             2 => builder.with(NearestCorridors::new()),
             3 => builder.with(StraightLineCorridors::new()),
             _ => builder.with(BspCorridors::new()),
         }
 
-        if rng.roll_dice(1, 2) == 1 {
+        if crate::tutorial::rng::roll_dice(1, 2) == 1 {
             builder.with(CorridorSpawner::new());
         }
 
-        match rng.roll_dice(1, 6) {
+        match crate::tutorial::rng::roll_dice(1, 6) {
             1 => builder.with(RoomExploder::new()),
             2 => builder.with(RoomCornerRounder::new()),
             _ => {}
         }
     }
 
-    match rng.roll_dice(1, 2) {
+    match crate::tutorial::rng::roll_dice(1, 2) {
         1 => builder.with(RoomBasedStartingPosition::new()),
         _ => {
-            let (start_x, start_y) = random_start_position(rng);
+            let (start_x, start_y) = random_start_position();
             builder.with(AreaStartingPosition::new(start_x, start_y));
         }
     }
 
-    match rng.roll_dice(1, 2) {
+    match crate::tutorial::rng::roll_dice(1, 2) {
         1 => builder.with(RoomBasedStairs::new()),
         _ => builder.with(DistantExit::new()),
     }
 
-    match rng.roll_dice(1, 2) {
+    match crate::tutorial::rng::roll_dice(1, 2) {
         1 => builder.with(RoomBasedSpawner::new()),
         _ => builder.with(VoronoiSpawning::new()),
     }
 }
 
-fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderChain) {
-    let builder_roll = rng.roll_dice(1, 19);
+fn random_shape_builder(builder: &mut BuilderChain) {
+    let builder_roll = crate::tutorial::rng::roll_dice(1, 19);
 
     builder.start_with(match builder_roll {
         1 => CellularAutomataBuilder::new(),
@@ -355,7 +343,7 @@ fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCh
         _ => PrefabBuilder::rex_level("../../resources/wfc-demo1.xp"),
     });
 
-    if rng.roll_dice(1, 3) == 1 {
+    if crate::tutorial::rng::roll_dice(1, 3) == 1 {
         builder.with(WaveformCollapseBuilder::new());
     }
 
@@ -364,7 +352,7 @@ fn random_shape_builder(rng: &mut RandomNumberGenerator, builder: &mut BuilderCh
     builder.with(CullUnreachable::new());
 
     // Now set the start to a random starting area
-    let (start_x, start_y) = random_start_position(rng);
+    let (start_x, start_y) = random_start_position();
     builder.with(AreaStartingPosition::new(start_x, start_y));
 
     // Set up an exit and spawn the mobs

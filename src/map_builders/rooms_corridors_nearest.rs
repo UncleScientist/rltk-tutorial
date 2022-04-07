@@ -1,15 +1,15 @@
 use std::collections::HashSet;
 
 use super::{BuilderMap, MetaMapBuilder};
-use rltk::{DistanceAlg, Point, RandomNumberGenerator};
+use rltk::{DistanceAlg, Point};
 
 use crate::draw_corridor;
 
 pub struct NearestCorridors {}
 
 impl MetaMapBuilder for NearestCorridors {
-    fn build_map(&mut self, rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
-        self.corridors(rng, build_data);
+    fn build_map(&mut self, build_data: &mut BuilderMap) {
+        self.corridors(build_data);
     }
 }
 
@@ -18,7 +18,7 @@ impl NearestCorridors {
         Box::new(NearestCorridors {})
     }
 
-    fn corridors(&mut self, _rng: &mut RandomNumberGenerator, build_data: &mut BuilderMap) {
+    fn corridors(&mut self, build_data: &mut BuilderMap) {
         let rooms = if let Some(rooms_builder) = &build_data.rooms {
             rooms_builder.clone()
         } else {
