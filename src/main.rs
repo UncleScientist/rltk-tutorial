@@ -23,6 +23,7 @@ fn main() -> rltk::BError {
         mapgen_index: 0,
         mapgen_history: Vec::new(),
         mapgen_timer: 0.0,
+        dispatcher: systems::build(),
     };
 
     gs.ecs.register::<AlwaysTargetsSelf>();
@@ -123,7 +124,7 @@ fn main() -> rltk::BError {
 
     gs.ecs.insert(RunState::MapGeneration {});
 
-    gs.ecs.insert(particle_system::ParticleBuilder::new());
+    gs.ecs.insert(crate::systems::ParticleBuilder::new());
 
     gs.generate_world_map(1, 0);
 

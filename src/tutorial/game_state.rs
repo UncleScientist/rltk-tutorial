@@ -52,6 +52,7 @@ pub struct State {
     pub mapgen_history: Vec<Map>,
     pub mapgen_index: usize,
     pub mapgen_timer: f32,
+    pub dispatcher: Box<dyn systems::UnifiedDispatcher + 'static>,
 }
 
 impl GameState for State {
@@ -63,7 +64,7 @@ impl GameState for State {
         ctx.set_active_console(0);
         ctx.cls();
 
-        update_particles(&mut self.ecs, ctx);
+        crate::tutorial::systems::particle_system::update_particles(&mut self.ecs, ctx);
 
         match newrunstate {
             RunState::MainMenu { .. } => {}
@@ -476,7 +477,7 @@ impl GameState for State {
             *runwriter = newrunstate;
         }
 
-        damage_system::delete_the_dead(&mut self.ecs);
+        crate::tutorial::damage_system::delete_the_dead(&mut self.ecs);
 
         rltk::render_draw_buffer(ctx).expect("Unable to draw buffer");
     }
@@ -484,86 +485,7 @@ impl GameState for State {
 
 impl State {
     fn run_systems(&mut self) {
-        let mut mapindex = MapIndexingSystem {};
-        mapindex.run_now(&self.ecs);
-
-        let mut vis = VisibilitySystem {};
-        vis.run_now(&self.ecs);
-
-        let mut encumbrance = ai::EncumbranceSystem {};
-        encumbrance.run_now(&self.ecs);
-
-        let mut initiative = ai::InitiativeSystem {};
-        initiative.run_now(&self.ecs);
-
-        let mut turnstatus = ai::TurnStatusSystem {};
-        turnstatus.run_now(&self.ecs);
-
-        let mut quipper = ai::QuipSystem {};
-        quipper.run_now(&self.ecs);
-
-        let mut adjacent = ai::AdjacentAI {};
-        adjacent.run_now(&self.ecs);
-
-        let mut visible = ai::VisibleAI {};
-        visible.run_now(&self.ecs);
-
-        let mut approach = ai::ApproachAI {};
-        approach.run_now(&self.ecs);
-
-        let mut flee = ai::FleeAI {};
-        flee.run_now(&self.ecs);
-
-        let mut chasing = ai::ChaseAI {};
-        chasing.run_now(&self.ecs);
-
-        let mut defaultmove = ai::DefaultMoveAI {};
-        defaultmove.run_now(&self.ecs);
-
-        let mut moving = movement_system::MovementSystem {};
-        moving.run_now(&self.ecs);
-
-        let mut triggers = TriggerSystem {};
-        triggers.run_now(&self.ecs);
-
-        let mut melee_combat_system = MeleeCombatSystem {};
-        melee_combat_system.run_now(&self.ecs);
-
-        let mut ranged_combat_system = RangedCombatSystem {};
-        ranged_combat_system.run_now(&self.ecs);
-
-        let mut pickup = inventory_system::ItemCollectionSystem {};
-        pickup.run_now(&self.ecs);
-
-        let mut itemequip = inventory_system::ItemEquipOnUse {};
-        itemequip.run_now(&self.ecs);
-
-        let mut items = ItemUseSystem {};
-        items.run_now(&self.ecs);
-
-        let mut spells = SpellUseSystem {};
-        spells.run_now(&self.ecs);
-
-        let mut drop_items = ItemDropSystem {};
-        drop_items.run_now(&self.ecs);
-
-        let mut remove_items = ItemRemoveSystem {};
-        remove_items.run_now(&self.ecs);
-
-        let mut item_id = ItemIdentificationSystem {};
-        item_id.run_now(&self.ecs);
-
-        let mut hunger = hunger_system::HungerSystem {};
-        hunger.run_now(&self.ecs);
-
-        effects::run_effects_queue(&mut self.ecs);
-
-        let mut particles = ParticleSpawnSystem {};
-        particles.run_now(&self.ecs);
-
-        let mut lighting = lighting_system::LightingSystem {};
-        lighting.run_now(&self.ecs);
-
+        self.dispatcher.run_now(&mut self.ecs);
         self.ecs.maintain();
     }
 

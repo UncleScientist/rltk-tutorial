@@ -1,8 +1,9 @@
+use super::obfuscate_name;
 use specs::prelude::*;
 
 use crate::{
-    inventory_system::obfuscate_name, EquipmentChanged, InBackpack, MagicItem, MasterDungeonMap,
-    Name, ObfuscatedName, Position, WantsToPickupItem,
+    EquipmentChanged, InBackpack, MagicItem, MasterDungeonMap, Name, ObfuscatedName, Position,
+    WantsToPickupItem,
 };
 
 pub struct ItemCollectionSystem {}

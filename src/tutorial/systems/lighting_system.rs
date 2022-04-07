@@ -1,5 +1,5 @@
-use super::{LightSource, Position, Viewshed};
 use crate::Map;
+use crate::{LightSource, Position, Viewshed};
 use rltk::{DistanceAlg, Point, RGB};
 use specs::prelude::*;
 

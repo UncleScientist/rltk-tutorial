@@ -1,6 +1,6 @@
 use super::*;
 use crate::map::Map;
-use crate::particle_system::ParticleBuilder;
+use crate::tutorial::systems::particle_system::ParticleBuilder;
 use crate::{ParticleAnimation, ParticleLifetime, Position, Renderable};
 
 pub fn particle_to_tile(ecs: &mut World, tile_idx: i32, effect: &EffectSpawner) {
