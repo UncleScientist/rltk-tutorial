@@ -1,6 +1,7 @@
 use specs::prelude::*;
 
 pub const SHOW_MAPGEN_VISUALIZER: i32 = -1;
+pub const SHOW_FPS: bool = true;
 
 pub mod map;
 pub use map::*;
