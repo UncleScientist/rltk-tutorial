@@ -6,6 +6,9 @@ use crate::SHOW_MAPGEN_VISUALIZER;
 mod common;
 use common::*;
 
+mod dark_elves;
+use dark_elves::*;
+
 mod mushroom_forest;
 use mushroom_forest::*;
 
@@ -221,6 +224,7 @@ pub fn level_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
         7 => mushroom_entrance(new_depth, width, height),
         8 => mushroom_builder(new_depth, width, height),
         9 => mushroom_exit(new_depth, width, height),
+        10 => dark_elf_city(new_depth, width, height),
         _ => random_builder(new_depth, width, height),
     }
 }
