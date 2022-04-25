@@ -2308,6 +2308,40 @@
     },
 
     {
+        "name" : "Vokoth",
+        "renderable": {
+            "glyph" : "&",
+            "fg" : "#FF0000",
+            "bg" : "#000000",
+            "order" : 1,
+            "x_size" : 2,
+            "y_size" : 2
+        },
+        "blocks_tile" : true,
+        "vision_range" : 6,
+        "movement" : "static",
+        "attributes" : {
+            "might" : 13,
+            "fitness" : 13
+        },
+        "skills" : {
+            "Melee" : 18,
+            "Defense" : 16
+        },
+        "natural" : {
+            "armor_class" : 17,
+            "attacks" : [
+                { "name" : "whip", "hit_bonus" : 4, "damage" : "1d10+2" }
+            ]
+        },
+        "loot_table" : "Wyrms",
+        "faction" : "Wyrm",
+        "level" : 8,
+        "gold" : "20d10",
+        "abilities" : []
+    },
+
+    {
         "name" : "Lizardman",
         "renderable": {
             "glyph" : "l",

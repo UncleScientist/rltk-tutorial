@@ -225,6 +225,7 @@ pub fn level_builder(new_depth: i32, width: i32, height: i32) -> BuilderChain {
         8 => mushroom_builder(new_depth, width, height),
         9 => mushroom_exit(new_depth, width, height),
         10 => dark_elf_city(new_depth, width, height),
+        11 => dark_elf_plaza(new_depth, width, height),
         _ => random_builder(new_depth, width, height),
     }
 }
